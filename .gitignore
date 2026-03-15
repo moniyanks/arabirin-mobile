@@ -22,3 +22,4 @@ yarn-error.*
 *.tsbuildinfo
 /ios
 /android
+assets/fonts/
