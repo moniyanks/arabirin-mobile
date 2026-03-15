@@ -22,5 +22,4 @@ yarn-error.*
 *.tsbuildinfo
 /ios
 /android
-assets/fonts/
 package-lock.json
