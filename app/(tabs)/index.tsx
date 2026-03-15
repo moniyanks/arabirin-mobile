@@ -11,6 +11,7 @@ import {
   Brain,
 } from 'lucide-react-native'
 
+import Svg, { Circle } from 'react-native-svg'
 import { useColors } from '../../styles'
 import { useAppData } from '../../context/AppDataContext'
 import { makeHomeStyles } from '../../styles/screens/home'
@@ -21,6 +22,8 @@ import {
   getBodyIntelligenceMessage,
   getModeContext,
   getPhaseLabel,
+  getRingInnerLabel,
+  getPhaseSupportMessage,
 } from '../../utils/homeHelper'
 
 const SYMPTOM_SHORTCUTS = [
@@ -30,6 +33,19 @@ const SYMPTOM_SHORTCUTS = [
   { key: 'flow', label: 'Flow', icon: '◉' },
   { key: 'sleep', label: 'Sleep', icon: '◌' },
 ]
+
+const RING_SIZE = 220
+const STROKE_WIDTH = 14
+const RADIUS = (RING_SIZE - STROKE_WIDTH) / 2
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+
+function getCycleRingProgress(
+  currentCycleDay: number | null,
+  cycleLength: number
+) {
+  if (!currentCycleDay || !cycleLength || cycleLength <= 0) return 0
+  return Math.min(currentCycleDay / cycleLength, 1)
+}
 
 export default function HomeScreen() {
   const colors = useColors()
@@ -55,8 +71,13 @@ export default function HomeScreen() {
     symptomLogs,
     periodsCount: periods.length,
   })
+  
+  const ringInnerLabel = getRingInnerLabel(phaseInfo.phase)
+  const phaseSupportMessage = getPhaseSupportMessage(phaseInfo.phase)
 
   const nextPeriodDisplay = nextPeriodDate ? formatDate(nextPeriodDate) : '—'
+  const ringProgress = getCycleRingProgress(currentCycleDay, cycleLength)
+  const strokeDashoffset = CIRCUMFERENCE * (1 - ringProgress)
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -85,28 +106,68 @@ export default function HomeScreen() {
           </Text>
           <Text style={styles.context}>{getModeContext(mode)}</Text>
         </View>
+      {mode === 'cycle' ? (
+        <View style={styles.ringHeroCard}>
+            <View style={styles.phaseBadge}>
+              <Text style={styles.phaseBadgeText}>{getPhaseLabel(phaseInfo.phase)}</Text>
+            </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.phaseBadge}>
-            <Text style={styles.phaseBadgeText}>
-              {mode === 'cycle' ? getPhaseLabel(phaseInfo.phase) : getModeContext(mode)}
+            <View style={styles.ringWrap}>
+              <Svg width={RING_SIZE} height={RING_SIZE}>
+                <Circle
+                  stroke={colors.borderRose}
+                  fill="none"
+                  cx={RING_SIZE / 2}
+                  cy={RING_SIZE / 2}
+                  r={RADIUS}
+                  strokeWidth={STROKE_WIDTH}
+                />
+                <Circle
+                  stroke={colors.accentRose}
+                  fill="none"
+                  cx={RING_SIZE / 2}
+                  cy={RING_SIZE / 2}
+                  r={RADIUS}
+                  strokeWidth={STROKE_WIDTH}
+                  strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  rotation="-90"
+                  origin={`${RING_SIZE / 2}, ${RING_SIZE / 2}`}
+                />
+              </Svg>
+
+              <View style={styles.ringCenter}>
+                {phaseInfo.phase === 'period' ? (
+                  <>
+                    <Text style={styles.ringCenterValue}>
+                      {currentCycleDay ? `Day ${currentCycleDay}` : '—'}
+                    </Text>
+                    <Text style={styles.ringCenterSubLabel}>{ringInnerLabel}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.ringCenterValueAlt}>{ringInnerLabel}</Text>
+                  </>
+                )}
+              </View>
+            </View>
+
+            <Text style={styles.heroMessage}>
+              {phaseSupportMessage}
             </Text>
           </View>
+        ) : (
+          <View style={styles.heroCard}>
+            <View style={styles.phaseBadge}>
+              <Text style={styles.phaseBadgeText}>{getModeContext(mode)}</Text>
+            </View>
 
-          <Text style={styles.heroTitle}>
-            {mode === 'cycle'
-              ? currentCycleDay
-                ? `Cycle Day ${currentCycleDay}`
-                : 'Your cycle overview'
-              : 'Your journey today'}
-          </Text>
+            <Text style={styles.heroTitle}>Your journey today</Text>
 
-          <Text style={styles.heroMessage}>
-            {mode === 'cycle' && phaseInfo.message
-              ? phaseInfo.message
-              : bodyIntelligence.message}
-          </Text>
-        </View>
+            <Text style={styles.heroMessage}>{bodyIntelligence.message}</Text>
+          </View>
+        )}
 
         {mode === 'cycle' && nextPeriodDate && predictionConfidence && (
           <View style={styles.predictionRow}>
@@ -246,21 +307,6 @@ export default function HomeScreen() {
             </Text>
           </Pressable>
         </View>
-
-        <Pressable
-          style={styles.sistersTeaser}
-          onPress={() => router.push('/(tabs)/sisters')}
-        >
-          <View style={styles.sistersTeaserTextWrap}>
-            <Text style={styles.sistersEyebrow}>Sisters Circle</Text>
-            <Text style={styles.sistersTitle}>You are not alone in this.</Text>
-            <Text style={styles.sistersDesc}>
-              Join the founding sisters and help shape a safer support space.
-            </Text>
-          </View>
-
-          <ChevronRight color={colors.accentRose} size={20} strokeWidth={1.8} />
-        </Pressable>
       </ScrollView>
     </SafeAreaView>
   )

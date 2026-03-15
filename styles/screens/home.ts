@@ -296,40 +296,70 @@ export function makeHomeStyles(c: any) {
       lineHeight: 18,
       color: c.textMuted,
     },
-    sistersTeaser: {
+
+    ringHeroCard: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
       borderColor: c.borderRose,
-      borderRadius: 16,
-      padding: 16,
-      flexDirection: 'row',
+      borderRadius: 20,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 24,
       alignItems: 'center',
-      gap: 12,
-      marginBottom: 8,
+      marginBottom: 14,
+      shadowColor: c.shadow,
+      shadowOpacity: 0.25,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
     },
-    sistersTeaserTextWrap: {
-      flex: 1,
+
+    ringWrap: {
+      width: 220,
+      height: 220,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 16,
     },
-    sistersEyebrow: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-      color: c.accentRose,
-      marginBottom: 6,
+
+    ringCenter: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    sistersTitle: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 24,
-      lineHeight: 28,
-      color: c.accentGold,
-      marginBottom: 6,
-    },
-    sistersDesc: {
+
+    ringCenterLabel: {
       fontFamily: theme.fonts.sans,
-      fontSize: 13,
-      lineHeight: 20,
+      fontSize: 12,
+      letterSpacing: 1,
+      textTransform: 'uppercase',
       color: c.textMuted,
+      marginBottom: 4,
+    },
+
+    ringCenterValue: {
+      fontFamily: theme.fonts.serifSemiBold,
+      fontSize: 34,
+      color: c.accentGold,
+      lineHeight: 40,
+      textAlign: 'center'
+    },
+
+    ringCenterSubLabel: {
+      fontFamily: theme.fonts.sans,
+      fontSize: 14,
+      color: c.textMuted,
+      marginTop: 4,
+      textAlign: 'center',
+    },
+
+    ringCenterValueAlt: {
+      fontFamily: theme.fonts.serifSemiBold,
+      fontSize: 28,
+      color: c.accentGold,
+      lineHeight: 34,
+      textAlign: 'center',
+      maxWidth: 120,
     },
   })
 }
