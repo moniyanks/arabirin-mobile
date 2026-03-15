@@ -21,17 +21,51 @@ export function getModeContext(mode?: string) {
 export function getPhaseLabel(phase: PhaseKey) {
   switch (phase) {
     case 'period':
-      return 'Period'
+      return 'MENSTRUAL'
     case 'follicular':
-      return 'Follicular'
+      return 'FOLLICULAR'
+    case 'fertile':
+      return 'FERTILE'
+    case 'ovulation':
+      return 'OVULATION'
+    case 'luteal':
+      return 'LUTEAL'
+    default:
+      return 'CYCLE'
+  }
+}
+
+export function getRingInnerLabel(phase: PhaseKey) {
+  switch (phase) {
+    case 'period':
+      return 'Menstrual'
+    case 'follicular':
+      return 'Low Flow'
     case 'fertile':
       return 'Fertile'
     case 'ovulation':
-      return 'Ovulation'
+      return 'Peak Day'
     case 'luteal':
-      return 'Luteal'
+      return 'Wind Down'
     default:
-      return 'Journey'
+      return 'Cycle'
+  }
+}
+
+export function getPhaseSupportMessage(phase: PhaseKey) {
+  switch (phase) {
+    case 'period':
+      return 'Rest and be gentle with yourself. Your body is releasing.'
+    case 'follicular':
+      return 'Energy levels may be rising. A good time to begin gently.'
+    case 'fertile':
+      return 'You may feel more open, social, or energised right now.'
+    case 'ovulation':
+      return 'This can be a high-energy point in your cycle. Notice how you feel.'
+    case 'luteal':
+      return 'Turn inward. Slow down where you can and nourish yourself.'
+    default:
+      return 'We’re learning your rhythm.'
   }
 }
 
