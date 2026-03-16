@@ -132,8 +132,7 @@ export default function HomeScreen() {
                   strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
                   strokeDashoffset={strokeDashoffset}
                   strokeLinecap="round"
-                  rotation="-90"
-                  origin={`${RING_SIZE / 2}, ${RING_SIZE / 2}`}
+                  transform={`rotate(-90, ${RING_SIZE / 2}, ${RING_SIZE / 2})`}
                 />
               </Svg>
 
