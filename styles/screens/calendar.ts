@@ -225,5 +225,26 @@ export function makeCalendarStyles(c: any) {
       fontSize: 15,
       color: c.bgPrimary,
     },
+    logSummary: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginTop: 4,
+      marginBottom: 12,
+    },
+    logChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      backgroundColor: c.bgSecondary,
+    },
+    logChipText: {
+      fontFamily: theme.fonts.sans,
+      fontSize: 12,
+      color: c.textPrimary,
+      textTransform: 'capitalize',
+    },
   })
 }
