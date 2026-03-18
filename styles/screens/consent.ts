@@ -63,7 +63,7 @@ export const makeConsentStyles = (c: ThemeColors) =>
 
     // ── Legal document typography ──
     docTitle: {
-      fontFamily: theme.fonts.serif,
+      fontFamily: theme.fonts.sansMedium,
       fontSize: 22,
       color: c.accentRose,
       marginBottom: 4,
@@ -273,7 +273,7 @@ export const makeConsentStyles = (c: ThemeColors) =>
       paddingTop: 32,
     },
     confirmTitle: {
-      fontFamily: theme.fonts.serif,
+      fontFamily: theme.fonts.sansMedium,
       fontSize: 22,
       color: c.accentGold,
       marginBottom: 6,

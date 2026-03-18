@@ -66,7 +66,7 @@ export function makeCalendarSheetStyles(c: any) {
       marginBottom: 20,
     },
     sectionTitle: {
-      fontFamily: theme.fonts.serifSemiBold,
+      fontFamily: theme.fonts.sansSemiBold,
       fontSize: 20,
       marginBottom: 10,
     },
@@ -207,6 +207,28 @@ export function makeCalendarSheetStyles(c: any) {
     secondaryBtnText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 15,
+    },
+    periodStartBtn: {
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      backgroundColor: c.bgSecondary,
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    periodStartBtnActive: {
+      borderColor: c.accentRose,
+      backgroundColor: 'rgba(217,155,155,0.1)',
+    },
+    periodStartBtnText: {
+      fontFamily: theme.fonts.sansMedium,
+      fontSize: 14,
+      color: c.textMuted,
+    },
+    periodStartBtnTextActive: {
+      color: c.accentRose,
     },
   })
 }

@@ -16,22 +16,6 @@ export function makeCalendarStyles(c: any) {
       paddingTop: 8,
       paddingBottom: 32,
     },
-    header: {
-      marginBottom: 18,
-    },
-    title: {
-      fontFamily: theme.fonts.serif,
-      fontSize: 30,
-      color: c.accentRose,
-      marginBottom: 4,
-      textAlign: 'center',
-    },
-    subtitle: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 13,
-      color: c.textMuted,
-      textAlign: 'center',
-    },
     monthNav: {
       flexDirection: 'row',
       alignItems: 'center',

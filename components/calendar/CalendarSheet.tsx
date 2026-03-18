@@ -314,11 +314,12 @@ export function CalendarSheet({
   onSaved,
 }: Props) {
   const s = useMemo(() => makeCalendarSheetStyles(colors), [colors])
-  const { periodLength } = useAppData()
+  const { periodLength, addPeriod} = useAppData()
 
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const [isPeriodStart, setIsPeriodStart] = useState(false)
   const [mood, setMood] = useState<string | null>(existingLog?.mood ?? null)
   const [flow, setFlow] = useState<string | null>(existingLog?.flow ?? null)
   const [cramps, setCramps] = useState<string | null>(existingLog?.cramps ?? null)
@@ -338,6 +339,7 @@ export function CalendarSheet({
       setSaved(false)
       setError('')
       setLoading(false)
+      setIsPeriodStart(false)
     }
   }, [visible])
 
@@ -365,6 +367,7 @@ export function CalendarSheet({
           { onConflict: 'user_id,log_date' }
         )
       if (upsertError) throw upsertError
+      if (isPeriodStart) await addPeriod(dateStr)
       if (onSaved) await onSaved()
       setSaved(true)
       setTimeout(() => handleClose(), 1000)
@@ -430,6 +433,16 @@ export function CalendarSheet({
           <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
             {(mode === 'log' || mode === 'symptoms') && (
               <>
+                {mode === 'log' && (
+                  <Pressable
+                    style={[s.periodStartBtn, isPeriodStart && s.periodStartBtnActive]}
+                    onPress={() => setIsPeriodStart(!isPeriodStart)}
+                  >
+                    <Text style={[s.periodStartBtnText, isPeriodStart && s.periodStartBtnTextActive]}>
+                      {isPeriodStart ? '◉ Period started this day ✓' : '◉ My period started this day'}
+                    </Text>
+                  </Pressable>
+                )}
                 <MoodSection styles={s} colors={colors} value={mood} onChange={setMood} />
                 <FlowSection styles={s} colors={colors} value={flow} onChange={setFlow} />
                 <ChipSection title="Cramps" styles={s} colors={colors} options={crampOptions} value={cramps} onChange={setCramps} />
@@ -450,7 +463,6 @@ export function CalendarSheet({
                 </View>
 
                 {!!error && <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>}
-
                 <Pressable
                   style={[s.primaryBtn, { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }]}
                   onPress={saveSymptomLog}

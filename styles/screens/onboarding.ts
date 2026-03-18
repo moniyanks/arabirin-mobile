@@ -222,7 +222,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       backgroundColor: c.bgSecondary,
     },
     modeTitle: {
-      fontFamily: theme.fonts.serif,
+      fontFamily: theme.fonts.sansMedium,
       fontSize: 20,
       color: c.accentGold,
       marginBottom: 6,
