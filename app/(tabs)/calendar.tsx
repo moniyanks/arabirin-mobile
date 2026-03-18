@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { View, Text, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { ChevronLeft, ChevronRight } from 'lucide-react-native'
-import { format } from 'date-fns'
+import { ChevronLeft, ChevronRight, History } from 'lucide-react-native'
+import { format, addDays } from 'date-fns'
 
 import { useColors } from '../../styles'
 import { makeCalendarStyles } from '../../styles/screens/calendar'
@@ -23,7 +23,7 @@ import {
 import { CalendarDayCell } from '../../components/calendar/CalendarDayCell'
 import { CalendarSheet } from '../../components/calendar/CalendarSheet'
 
-type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation'
+type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation' | 'extend'
 
 export default function CalendarScreen() {
   const colors = useColors()
@@ -41,10 +41,10 @@ export default function CalendarScreen() {
 
   const mode = ((profile as any)?.mode as string | undefined) || 'cycle'
 
-  const [monthDate, setMonthDate] = useState(new Date())
+  const [monthDate, setMonthDate]     = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [sheetVisible, setSheetVisible] = useState(false)
-  const [sheetMode, setSheetMode] = useState<SheetMode | null>(null)
+  const [sheetMode, setSheetMode]     = useState<SheetMode | null>(null)
 
   const predictedPeriods =
     mode === 'cycle'
@@ -82,7 +82,7 @@ export default function CalendarScreen() {
   })
 
   const selectedLog = symptomLogs.find(
-  (log) => log.log_date === selectedDateStr
+    (log) => log.log_date === selectedDateStr
   )
 
   const selectedDateInfo = getSelectedDateInfo({
@@ -124,6 +124,16 @@ export default function CalendarScreen() {
 
     const todayStr = format(new Date(), 'yyyy-MM-dd')
     if (day.dateStr <= todayStr) {
+      // Check if this day is the day after a period ended
+      const yesterday = format(addDays(day.date, -1), 'yyyy-MM-dd')
+      const periodEndedYesterday = periods.find((p) => p.endDate === yesterday)
+
+      if (periodEndedYesterday) {
+        setSheetMode('extend')
+        setSheetVisible(true)
+        return
+      }
+
       setSheetMode('log')
       setSheetVisible(true)
     }
@@ -219,17 +229,14 @@ export default function CalendarScreen() {
                 <View style={[styles.legendDot, styles.legendDotPeriod]} />
                 <Text style={styles.legendText}>Period</Text>
               </View>
-
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotPredicted]} />
                 <Text style={styles.legendText}>Predicted</Text>
               </View>
-
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotFertile]} />
                 <Text style={styles.legendText}>Fertile</Text>
               </View>
-
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotOvulation]} />
                 <Text style={styles.legendText}>Ovulation</Text>
@@ -306,6 +313,17 @@ export default function CalendarScreen() {
             </Text>
           </Pressable>
         </View>
+
+        {/* Period history link */}
+        <Pressable
+          style={styles.historyBtn}
+          onPress={() => router.push('/(modals)/periods')}
+        >
+          <History color={colors.textMuted} size={16} strokeWidth={1.5} />
+          <Text style={styles.historyBtnText}>View & manage period history</Text>
+          <ChevronRight color={colors.textMuted} size={16} strokeWidth={1.5} />
+        </Pressable>
+
       </ScrollView>
 
       {sheetVisible && (
@@ -315,7 +333,7 @@ export default function CalendarScreen() {
           dateLabel={format(selectedDate, 'EEEE, d MMMM')}
           dateStr={selectedDateStr}
           colors={colors}
-          existingLog = {selectedLog}
+          existingLog={selectedLog}
           onClose={() => {
             setSheetVisible(false)
             setSheetMode(null)

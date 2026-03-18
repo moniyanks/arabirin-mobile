@@ -13,8 +13,9 @@ import { supabase } from '../../lib/supabase'
 import { makeCalendarSheetStyles } from '../../styles/components/calendarSheet'
 import { useAppData } from '../../context/AppDataContext'
 import type { ThemeColors } from '../../constants/theme'
+import { format, subDays, parseISO } from 'date-fns'
 
-type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation'
+type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation' | 'extend'
 
 type Props = {
   visible: boolean
@@ -404,11 +405,38 @@ export function CalendarSheet({
     }
   }
 
+  const extendPeriod = async () => {
+  try {
+    setLoading(true)
+    setError('')
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('No authenticated user')
+
+    const yesterday = format(subDays(parseISO(dateStr), 1), 'yyyy-MM-dd')
+
+    const { error,data } = await supabase
+      .from('periods')
+      .update({ end_date: dateStr })
+      .eq('user_id', user.id)
+      .eq('end_date', yesterday)
+      
+
+
+    if (error) throw error
+    if (onSaved) await onSaved()
+    handleClose()
+  } catch (err: any) {
+    setError(err.message || 'Unable to extend period.')
+    setLoading(false)
+  }
+}
+
   const title =
     mode === 'symptoms' ? 'Log symptoms'
     : mode === 'predicted' ? 'Predicted period'
     : mode === 'fertile' ? 'Fertile window'
     : mode === 'ovulation' ? 'Ovulation'
+    : mode === 'extend'    ? 'Still bleeding?'
     : 'Log for this day'
 
   return (
@@ -524,6 +552,41 @@ export function CalendarSheet({
                 <Text style={[s.description, { color: colors.textMuted }]}>
                   Ovulation timing can vary from cycle to cycle, so treat this as a guide rather than a guarantee.
                 </Text>
+              </>
+            )}
+
+            {mode === 'extend' && (
+              <>
+                <Text style={[s.description, { color: colors.textMuted }]}>
+                  Your period was logged as ending yesterday. Is it still going?
+                </Text>
+                <Text style={[s.description, { color: colors.textMuted }]}>
+                  Tap below to extend it by one day.
+                </Text>
+                {!!error && (
+                  <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>
+                )}
+                <Pressable
+                  style={[s.primaryBtn, { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }]}
+                  onPress={extendPeriod}
+                  disabled={loading}
+                >
+                  {loading
+                    ? <ActivityIndicator color={colors.bgPrimary} />
+                    : <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>
+                        Yes, extend by one day
+                      </Text>
+                  }
+                </Pressable>
+                <Pressable
+                  style={[s.secondaryBtn, { borderColor: colors.borderRose, backgroundColor: colors.bgSecondary }]}
+                  onPress={handleClose}
+                  disabled={loading}
+                >
+                  <Text style={[s.secondaryBtnText, { color: colors.textPrimary }]}>
+                    No, it ended
+                  </Text>
+                </Pressable>
               </>
             )}
           </ScrollView>

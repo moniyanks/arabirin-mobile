@@ -63,6 +63,10 @@ export default function RootLayout() {
                 name="(modals)/appointment"
                 options={{ presentation: 'modal', headerShown: false }}
               />
+              <Stack.Screen
+                name="(modals)/periods"
+                options={{ presentation: 'modal', headerShown: false }}
+              />
             </Stack>
           </AppDataProvider>
         </AuthProvider>

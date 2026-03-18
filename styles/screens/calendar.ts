@@ -230,5 +230,23 @@ export function makeCalendarStyles(c: any) {
       color: c.textPrimary,
       textTransform: 'capitalize',
     },
+    historyBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 14,
+      marginTop: 4,
+    },
+    historyBtnText: {
+      flex: 1,
+      fontFamily: theme.fonts.sans,
+      fontSize: 14,
+      color: c.textMuted,
+    },
   })
 }
