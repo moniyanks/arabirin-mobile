@@ -132,7 +132,7 @@ export function makeHomeStyles(c: any) {
       marginBottom: 4,
     },
     predictionDate: {
-      fontFamily: theme.fonts.serif,
+      fontFamily: theme.fonts.sansSemiBold,
       fontSize: 22,
       color: c.accentRose,
     },
@@ -287,7 +287,7 @@ export function makeHomeStyles(c: any) {
     },
     quickActionTitle: {
       fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 20,
+      fontSize: 22,
       color: c.accentGold,
     },
     quickActionDesc: {

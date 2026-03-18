@@ -168,13 +168,6 @@ export default function CalendarScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Calendar</Text>
-          <Text style={styles.subtitle}>
-            Track your rhythm, symptoms, and what your body may be doing.
-          </Text>
-        </View>
-
         <View style={styles.monthNav}>
           <Pressable
             style={styles.monthBtn}
