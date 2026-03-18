@@ -261,5 +261,30 @@ export function makeHealthStyles(c: ThemeColors) {
       fontSize: 15,
       color: c.textPrimary,
     },
+    appointmentBtn: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.accentRose,
+      borderRadius: 16,
+      padding: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    appointmentBtnLeft: {
+      flex: 1,
+      gap: 4,
+    },
+    appointmentBtnTitle: {
+      fontFamily: theme.fonts.sansSemiBold,
+      fontSize: 15,
+      color: c.accentRose,
+    },
+    appointmentBtnDesc: {
+      fontFamily: theme.fonts.sans,
+      fontSize: 12,
+      color: c.textMuted,
+      lineHeight: 18,
+    },
   })
 }
