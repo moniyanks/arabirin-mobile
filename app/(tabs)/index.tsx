@@ -16,6 +16,10 @@ import {
   getPredictionConfidence, getBodyIntelligenceMessage,
   getModeContext, getPhaseLabel, getRingInnerLabel, getPhaseSupportMessage,
 } from '../../utils/homeHelper'
+import { calculateFertilityInsight, FERTILE_STATUS_MESSAGES } from '../../utils/fertilityIntelligence'
+import { format, parseISO } from 'date-fns'
+
+
 
 const SYMPTOM_SHORTCUTS = [
   { key: 'cramps', label: 'Cramps', icon: '⚡' },
@@ -23,6 +27,14 @@ const SYMPTOM_SHORTCUTS = [
   { key: 'energy', label: 'Energy', icon: '✦'  },
   { key: 'flow',   label: 'Flow',   icon: '◉'  },
   { key: 'sleep',  label: 'Sleep',  icon: '◌'  },
+]
+
+const TTC_SHORTCUTS = [
+  { key: 'cervicalMucus',  label: 'CM',        icon: '💧' },
+  { key: 'ovulationPain',  label: 'O-Pain',    icon: '⚡' },
+  { key: 'spotting',       label: 'Spotting',  icon: '◉'  },
+  { key: 'mood',           label: 'Mood',      icon: '💭' },
+  { key: 'energy',         label: 'Energy',    icon: '✦'  },
 ]
 
 const RING_SIZE    = 220
@@ -33,6 +45,82 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 function getCycleRingProgress(currentCycleDay: number | null, cycleLength: number) {
   if (!currentCycleDay || !cycleLength || cycleLength <= 0) return 0
   return Math.min(currentCycleDay / cycleLength, 1)
+}
+
+function TtcHeroCard({
+  colors, styles, periods, symptomLogs, profile,
+}: {
+  colors:      any
+  styles:      any
+  periods:     any[]
+  symptomLogs: any[]
+  profile:     any
+}) {
+  const insight = useMemo(
+    () => calculateFertilityInsight(periods, symptomLogs, profile),
+    [periods, symptomLogs, profile]
+  )
+
+  const formatShort = (d: string | null) =>
+    d ? format(parseISO(d), 'd MMM') : '—'
+
+  const statusMessage = FERTILE_STATUS_MESSAGES[insight.fertileWindowStatus]
+
+  const heroText =
+    insight.fertileWindowStatus === 'no_data'
+      ? 'Log your first period to unlock your fertile window predictions.'
+      : insight.fertileWindowStatus === 'in_fertile'
+        ? 'You are in your fertile window.'
+        : insight.fertileWindowStatus === 'ovulation_day'
+          ? 'Today is your estimated ovulation day.'
+          : insight.fertileWindowStatus === 'after_ovulation'
+            ? 'Your fertile window has passed this cycle.'
+            : `${insight.daysUntilFertile} day${insight.daysUntilFertile !== 1 ? 's' : ''} until your fertile window`
+
+  return (
+    <View style={styles.heroCard}>
+      <View style={styles.phaseBadge}>
+        <Text style={styles.phaseBadgeText}>
+          {insight.fertileWindowStatus === 'in_fertile' || insight.fertileWindowStatus === 'ovulation_day'
+            ? 'FERTILE WINDOW'
+            : 'TRYING TO CONCEIVE'
+          }
+        </Text>
+      </View>
+
+      <Text style={styles.heroTitle}>{heroText}</Text>
+
+      {insight.fertileStart && (
+        <View style={{ gap: 6, alignItems: 'center' }}>
+          <Text style={styles.heroMessage}>
+            Fertile window: {formatShort(insight.fertileStart)} — {formatShort(insight.fertileEnd)}
+          </Text>
+          <Text style={styles.heroMessage}>
+            Ovulation day: {formatShort(insight.ovulationDay)}
+          </Text>
+        </View>
+      )}
+
+      {insight.fertileWindowStatus === 'no_data' && (
+        <Text style={styles.heroMessage}>
+          {statusMessage}
+        </Text>
+      )}
+
+      <View style={[styles.confidencePill,
+        insight.confidence === 'high'   ? styles.confidenceHigh   :
+        insight.confidence === 'medium' ? styles.confidenceMedium : styles.confidenceLow
+      ]}>
+        <Text style={[styles.confidenceText,
+          insight.confidence === 'high'   ? styles.confidenceHighText   :
+          insight.confidence === 'medium' ? styles.confidenceMediumText : styles.confidenceLowText
+        ]}>
+          {insight.confidence === 'high'   ? 'High confidence' :
+           insight.confidence === 'medium' ? 'Good confidence' : 'Building accuracy'}
+        </Text>
+      </View>
+    </View>
+  )
 }
 
 export default function HomeScreen() {
@@ -171,6 +259,17 @@ export default function HomeScreen() {
                 </View>
                 <Text style={styles.heroMessage}>{phaseSupportMessage}</Text>
               </View>
+            
+            ) : mode === 'ttc' ? (
+              <TtcHeroCard
+                colors={colors}
+                styles={styles}
+                periods={periods}
+                symptomLogs={symptomLogs}
+                profile={profile}
+              />
+
+
             ) : (
               <View style={styles.heroCard}>
                 <View style={styles.phaseBadge}>
@@ -208,7 +307,7 @@ export default function HomeScreen() {
 
             {/* Log banner */}
             <Pressable style={styles.logBanner} onPress={() => router.push('/(tabs)/calendar')}>
-              <Text style={styles.logBannerText}>Log today's symptoms</Text>
+              <Text style={styles.logBannerText}>{mode === 'ttc' ? 'Log today\'s signs' : 'Log today\'s symptoms'}</Text>
               <ChevronRight color={colors.bgPrimary} size={20} strokeWidth={1.8} />
             </Pressable>
 
@@ -218,7 +317,7 @@ export default function HomeScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.shortcutRow}
             >
-              {SYMPTOM_SHORTCUTS.map((item) => (
+              {(mode === 'ttc' ? TTC_SHORTCUTS : SYMPTOM_SHORTCUTS).map((item) => (
                 <Pressable
                   key={item.key}
                   style={styles.shortcutBtn}

@@ -11,6 +11,7 @@ import { useAppData } from '../../context/AppDataContext'
 import { getPhaseInfo } from '../../utils/cycleHelper'
 import type { PhaseKey } from '../../utils/cycleHelper'
 import { ConditionIntelligence } from '../../components/health/ConditionIntelligence'
+import { FertilityIntelligence } from '../../components/health/FertilityIntelligence'
 
 // ── Phase education content ──
 const PHASE_EDUCATION: Record<string, {
@@ -208,6 +209,7 @@ export default function HealthScreen() {
 
           {/* Condition Intelligence Score */}
          <ConditionIntelligence colors={colors} /> 
+         <FertilityIntelligence colors={colors} />
 
 
         {/* Health Hub */}

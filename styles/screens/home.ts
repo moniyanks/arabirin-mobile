@@ -99,7 +99,7 @@ export function makeHomeStyles(c: any) {
     },
     heroTitle: {
       fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 26,
+      fontSize: 24,
       color: c.accentGold,
       textAlign: 'center',
       marginBottom: 8,
