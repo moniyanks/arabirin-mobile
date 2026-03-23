@@ -59,6 +59,14 @@ export default function RootLayout() {
                 name="(modals)/terms"
                 options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
               />
+              <Stack.Screen
+                name="(modals)/appointment"
+                options={{ presentation: 'modal', headerShown: false }}
+              />
+              <Stack.Screen
+                name="(modals)/periods"
+                options={{ presentation: 'modal', headerShown: false }}
+              />
             </Stack>
           </AppDataProvider>
         </AuthProvider>

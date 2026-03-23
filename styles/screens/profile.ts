@@ -245,5 +245,13 @@ export function makeProfileStyles(c: ThemeColors) {
       textAlign: 'center',
       lineHeight: 16,
     },
+
+    cardHint: {
+      fontFamily: theme.fonts.sans,
+      fontSize: 12,
+      color: c.textMuted,
+      lineHeight: 18,
+      marginTop: -4,
+    },
   })
 }

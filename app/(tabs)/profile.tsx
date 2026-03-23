@@ -61,6 +61,7 @@ function buildFormState(profile: any) {
     weight:       profile?.weight?.toString()       || '',
     height:       profile?.height?.toString()       || '',
     mode:         profile?.mode         || 'cycle',
+    conditions:   profile?.conditions   || [] as string[],
     cycleLength:  profile?.cycle_length?.toString() || '28',
     periodLength: profile?.period_length?.toString()|| '5',
   }
@@ -121,6 +122,7 @@ export default function ProfileScreen() {
       const { error } = await supabase.from('profiles').update({
         name:          form.name.trim(),
         mode:          form.mode,
+        conditions:    form.conditions,
         age:           form.age    ? parseInt(form.age)    : null,
         weight:        form.weight ? parseFloat(form.weight) : null,
         height:        form.height ? parseFloat(form.height) : null,
@@ -237,6 +239,40 @@ export default function ProfileScreen() {
                 </Text>
               </Pressable>
             ))}
+          </View>
+        </View>
+
+        {/* Conditions */}
+        <View style={s.card}>
+          <Text style={s.cardLabel}>Conditions</Text>
+          <Text style={s.cardHint}>
+            Select any conditions you have or suspect. This personalises your health insights.
+          </Text>
+          <View style={s.modeGrid}>
+            {[
+              { key: 'fibroids', label: 'Fibroids'      },
+              { key: 'endo',     label: 'Endometriosis' },
+              { key: 'pcos',     label: 'PCOS'          },
+            ].map((c) => {
+              const active = (form.conditions ?? []).includes(c.key)
+              return (
+                <Pressable
+                  key={c.key}
+                  style={[s.modeBtn, active && s.modeBtnSelected]}
+                  onPress={() => {
+                    const current = form.conditions ?? []
+                    const updated = current.includes(c.key)
+                      ? current.filter((x:string) => x !== c.key)
+                      : [...current, c.key]
+                    updateField('conditions', updated)
+                  }}
+                >
+                  <Text style={[s.modeBtnText, active && s.modeBtnTextSelected]}>
+                    {c.label}
+                  </Text>
+                </Pressable>
+              )
+            })}
           </View>
         </View>
 
