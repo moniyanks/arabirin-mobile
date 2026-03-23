@@ -16,8 +16,8 @@ import { useColors } from '../../../styles'
 import { makeOnboardingStyles } from '../../../styles/screens/onboarding'
 import { useAppData } from '../../../context/AppDataContext'
 
-type Step = 'name' | 'mode' | 'final'
-const STEPS: Step[] = ['name', 'mode', 'final']
+type Step = 'name' | 'mode' | 'conditions' | 'final'
+const STEPS: Step[] = ['name', 'mode', 'conditions', 'final']
 
 const MODES = [
   {
@@ -52,6 +52,12 @@ const MODES = [
   },
 ]
 
+const CONDITIONS = [
+  { key: 'fibroids', label: 'Fibroids',      desc: 'Uterine fibroids or suspected fibroids' },
+  { key: 'endo',     label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis'   },
+  { key: 'pcos',     label: 'PCOS',          desc: 'Polycystic ovary syndrome'              },
+]
+
 export default function OnboardingScreen() {
   const colors = useColors()
   const s = makeOnboardingStyles(colors)
@@ -61,6 +67,7 @@ export default function OnboardingScreen() {
   const [step, setStep] = useState<Step>('name')
   const [name, setName] = useState('')
   const [mode, setMode] = useState('cycle')
+  const [conditions, setConditions] = useState<string[]>([])
 
   const [periodLength, setPeriodLength] = useState(5)
   const [cycleLength, setCycleLength] = useState(28)
@@ -144,6 +151,7 @@ export default function OnboardingScreen() {
             id: user.id,
             name: name.trim(),
             mode,
+            conditions,
             cycle_length: finalCycleLength,
             period_length: mode === 'cycle' ? periodLength : null,
             updated_at: new Date().toISOString(),
@@ -184,6 +192,11 @@ export default function OnboardingScreen() {
     }
 
     if (step === 'mode') {
+      setStep('conditions')
+      return
+    }
+
+    if (step === 'conditions') {
       setStep('final')
       return
     }
@@ -197,6 +210,12 @@ export default function OnboardingScreen() {
   const back = () => {
     const prev = STEPS[stepIndex - 1]
     if (prev) setStep(prev)
+  }
+  
+  const toggleCondition = (key: string) => {
+    setConditions((prev) =>
+      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
+    )
   }
 
   return (
@@ -220,7 +239,7 @@ export default function OnboardingScreen() {
       {step === 'name' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>1 of 3</Text>
+            <Text style={s.stepCount}>1 of 4</Text>
             <Text style={s.question}>What shall we call you?</Text>
             <Text style={s.hint}>Just your first name is fine 🌸</Text>
 
@@ -255,7 +274,7 @@ export default function OnboardingScreen() {
       {step === 'mode' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>2 of 3</Text>
+            <Text style={s.stepCount}>2 of 4</Text>
             <Text style={s.question}>Where are you in your journey?</Text>
             <Text style={s.hint}>This shapes everything you see in Àràbìrín</Text>
 
@@ -294,6 +313,60 @@ export default function OnboardingScreen() {
               )}
             </Pressable>
 
+            <Pressable style={s.ghostBtn} onPress={back}>
+              <Text style={s.ghostBtnText}>← Back</Text>
+            </Pressable>
+          </View>
+        </>
+      )}
+
+      {step === 'conditions' && (
+        <>
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
+            <Text style={s.stepCount}>4 of 4</Text>
+            <Text style={s.question}>Do you have any of these conditions?</Text>
+            <Text style={s.hint}>
+              Select all that apply. This helps us personalise your health insights.
+            </Text>
+
+            <View style={s.modeList}>
+              {CONDITIONS.map((item) => {
+                const active = conditions.includes(item.key)
+                return (
+                  <Pressable
+                    key={item.key}
+                    style={[s.modeCard, active && s.modeCardActive]}
+                    onPress={() => toggleCondition(item.key)}
+                  >
+                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>
+                      {item.label}
+                    </Text>
+                    <Text style={[s.modeDesc, active && s.modeDescActive]}>
+                      {item.desc}
+                    </Text>
+                  </Pressable>
+                )
+              })}
+            </View>
+
+            <Text style={s.hint}>
+              None of these apply or not sure? That's okay — you can update this anytime in your profile.
+            </Text>
+          </ScrollView>
+
+          <View style={s.footer}>
+            {!!error && <Text style={s.error}>{error}</Text>}
+            <Pressable
+              style={[s.btn, loading && s.btnDisabled]}
+              onPress={advance}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.bgPrimary} />
+              ) : (
+                <Text style={s.btnText}>Continue →</Text>
+              )}
+            </Pressable>
             <Pressable style={s.ghostBtn} onPress={back}>
               <Text style={s.ghostBtnText}>← Back</Text>
             </Pressable>

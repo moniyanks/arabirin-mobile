@@ -29,15 +29,39 @@ export type SymptomLog = {
   extras: string[]
   notes: string | null
 }
+export type Profile = {
+  id: string
+  name: string
+  mode: string
+  cycle_length: number
+  period_length: number
+  conditions: string[]
+  age?: number | null
+  height?: number | null
+  weight?: number | null
+  updated_at?: string
+} | null
 
-type ProfileRecord = Record<string, unknown> | null
-type ConsentRecord = Record<string, unknown> | null
-type SettingsRecord = Record<string, unknown> | null
+export type Consent = {
+  user_id: string
+  accepted_at: string
+  age_confirmed: boolean
+  health_data_consent: boolean
+  privacy_policy_version: string
+  terms_version: string
+} | null
+
+export type Settings = {
+  user_id: string
+  reminders_enabled: boolean
+  analytics_opt_in: boolean
+  app_language: string
+} | null
 
 type AppDataContextValue = {
-  profile: ProfileRecord
-  consent: ConsentRecord
-  settings: SettingsRecord
+  profile: Profile
+  consent: Consent
+  settings: Settings
   periods: Period[]
   symptomLogs: SymptomLog[]
   bootstrapStatus: BootstrapStatus
@@ -60,9 +84,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const { user, status: authStatus } = useAuth()
 
   const [bootstrapStatus, setBootstrapStatus] = useState<BootstrapStatus>('idle')
-  const [profile, setProfile] = useState<ProfileRecord>(null)
-  const [consent, setConsent] = useState<ConsentRecord>(null)
-  const [settings, setSettings] = useState<SettingsRecord>(null)
+  const [profile, setProfile] = useState<Profile>(null)
+  const [consent, setConsent] = useState<Consent>(null)
+  const [settings, setSettings] = useState<Settings>(null)
   const [periods, setPeriods] = useState<Period[]>([])
   const [symptomLogs, setSymptomLogs] = useState<SymptomLog[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -148,8 +172,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     void bootstrap(user.id)
   }, [authStatus, user?.id, bootstrap, resetState])
 
-  const cycleLength = (profile as any)?.cycle_length ?? 28
-  const periodLength = (profile as any)?.period_length ?? 5
+  const cycleLength = profile?.cycle_length ?? 28
+  const periodLength = profile?.period_length ?? 5
 
   const addPeriod = async (startDate: string) => {
     if (!user?.id) return

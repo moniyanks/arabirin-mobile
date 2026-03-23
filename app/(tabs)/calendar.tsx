@@ -39,7 +39,7 @@ export default function CalendarScreen() {
     refetchAll,
   } = useAppData()
 
-  const mode = ((profile as any)?.mode as string | undefined) || 'cycle'
+  const mode = profile?.mode || 'cycle'
 
   const [monthDate, setMonthDate]     = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())

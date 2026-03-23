@@ -361,5 +361,75 @@ export function makeHomeStyles(c: any) {
       textAlign: 'center',
       maxWidth: 120,
     },
+    
+    emptyStateCard: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 20,
+      padding: 24,
+      alignItems: 'center',
+      gap: 12,
+    },
+    emptyStateIcon: {
+      fontSize: 48,
+      color: c.accentRose,
+    },
+  emptyStateTitle: {
+    fontFamily: theme.fonts.serifSemiBold,
+    fontSize: 24,
+    color: c.accentGold,
+    textAlign: 'center',
+  },
+  emptyStateDesc: {
+    fontFamily: theme.fonts.sans,
+    fontSize: 14,
+    color: c.textMuted,
+    textAlign: 'center',
+    lineHeight: 22,
+    paddingHorizontal: 8,
+  },
+  emptyStateBtn: {
+    backgroundColor: c.accentRose,
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 4,
+  },
+  emptyStateBtnText: {
+    fontFamily: theme.fonts.sansSemiBold,
+    fontSize: 15,
+    color: c.bgPrimary,
+  },
+  emptyStateGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    marginTop: 8,
+  },
+  emptyStateGridCard: {
+    flex: 1,
+    backgroundColor: c.bgPrimary,
+    borderWidth: 1,
+    borderColor: c.borderRose,
+    borderRadius: 14,
+    padding: 14,
+    gap: 6,
+  },
+  emptyStateGridTitle: {
+    fontFamily: theme.fonts.serifSemiBold,
+    fontSize: 16,
+    color: c.accentGold,
+  },
+  emptyStateGridDesc: {
+    fontFamily: theme.fonts.sans,
+    fontSize: 12,
+    color: c.textMuted,
+    lineHeight: 17,
+  },
+
+
   })
 }

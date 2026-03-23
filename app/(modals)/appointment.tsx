@@ -95,8 +95,8 @@ export default function AppointmentScreen() {
   const [expandedSection, setExpandedSection] = useState<string | null>('symptoms')
   const [sharing, setSharing] = useState(false)
 
-  const mode = (profile as any)?.mode as string ?? 'cycle'
-  const name = (profile as any)?.name as string ?? 'Sister'
+  const mode = profile?.mode ?? 'cycle'
+  const name = profile?.name ?? 'Sister'
   const questions = DOCTOR_QUESTIONS[mode] ?? DOCTOR_QUESTIONS.cycle
 
   const metrics = useMemo(() =>

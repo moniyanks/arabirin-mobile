@@ -10,6 +10,7 @@ import { makeHealthStyles } from '../../styles/screens/health'
 import { useAppData } from '../../context/AppDataContext'
 import { getPhaseInfo } from '../../utils/cycleHelper'
 import type { PhaseKey } from '../../utils/cycleHelper'
+import { ConditionIntelligence } from '../../components/health/ConditionIntelligence'
 
 // ── Phase education content ──
 const PHASE_EDUCATION: Record<string, {
@@ -204,6 +205,9 @@ export default function HealthScreen() {
             </View>
             <ChevronRight color={colors.accentRose} size={20} strokeWidth={1.5} />
           </Pressable>
+
+          {/* Condition Intelligence Score */}
+         <ConditionIntelligence colors={colors} /> 
 
 
         {/* Health Hub */}
