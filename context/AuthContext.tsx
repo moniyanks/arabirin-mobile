@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for ALL auth changes including OTP verification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth event:', event)
         setUser(session?.user ?? null)
         setStatus(session?.user ? 'signed_in' : 'signed_out')
       }
