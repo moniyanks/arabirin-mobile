@@ -7,7 +7,7 @@ export const MIN_WEEKS_FOR_SCORE = 8
 
 // ── Types ──
 export type ScoreLevel    = 'low' | 'moderate' | 'notable'
-export type ConditionKey  = 'fibroids' | 'endo' | 'pcos'
+export type ConditionKey  = 'fibroids' | 'endo' | 'pcos' | 'thalassemia'
 
 export type SignalResult = {
   label:  string
@@ -150,6 +150,40 @@ function scorePcos(m: BodyMetrics): SignalResult[] {
   ]
 }
 
+function scoreThalassemia(m: BodyMetrics): SignalResult[] {
+  const sf = m.symptomFrequency
+  return [
+    {
+      label:  'Heavy flow pattern',
+      met:    m.heavyFlowCount >= 3,
+      weight: 30,
+      detail: `Heavy flow logged ${m.heavyFlowCount} time${m.heavyFlowCount !== 1 ? 's' : ''}`,
+    },
+    {
+      label:  'Severe fatigue pattern',
+      met:    (sf['fatigue'] ?? 0) >= 3,
+      weight: 25,
+      detail: `Fatigue logged ${sf['fatigue'] ?? 0} time${(sf['fatigue'] ?? 0) !== 1 ? 's' : ''}`,
+    },
+    {
+      label:  'Extended period length',
+      met:    m.periodLengths.some((l) => l > 7),
+      weight: 25,
+      detail: m.periodLengths.some((l) => l > 7)
+        ? 'One or more periods lasted longer than 7 days'
+        : 'No periods longer than 7 days logged',
+    },
+    {
+      label:  'Irregular cycle pattern',
+      met:    (m.cycleVariance ?? 0) > 7,
+      weight: 20,
+      detail: m.cycleVariance !== null
+        ? `Cycle length varies by up to ${Math.round(m.cycleVariance)} days`
+        : 'Not enough cycles to assess regularity',
+    },
+  ]
+}
+
 // ── Main export ──
 export function calculateConditionScore(
   condition:   ConditionKey,
@@ -162,9 +196,10 @@ export function calculateConditionScore(
   const hasEnoughData = logs.length >= MIN_LOGS_FOR_SCORE && weeksOfData >= MIN_WEEKS_FOR_SCORE
 
   const signals =
-    condition === 'fibroids' ? scoreFibroids(metrics) :
-    condition === 'endo'     ? scoreEndo(metrics)     :
-                               scorePcos(metrics)
+    condition === 'fibroids'    ? scoreFibroids(metrics)    :
+    condition === 'endo'        ? scoreEndo(metrics)        :
+    condition === 'pcos'        ? scorePcos(metrics)        :
+                                  scoreThalassemia(metrics)
 
   const percentage = signals
     .filter((s) => s.met)
@@ -190,12 +225,14 @@ export const CONDITION_LABELS: Record<ConditionKey, string> = {
   fibroids: 'Fibroids',
   endo:     'Endometriosis',
   pcos:     'PCOS',
+  thalassemia: 'Thalassemia',
 }
 
 export const CONDITION_COLORS: Record<ConditionKey, string> = {
   fibroids: '#D99B9B',
   endo:     '#9B8FD9',
   pcos:     '#9BB5D9',
+  thalassemia: '#C17B7B',
 }
 
 export const SCORE_LEVEL_LABELS: Record<ScoreLevel, string> = {
@@ -219,5 +256,10 @@ export const SCORE_DESCRIPTIONS: Record<ConditionKey, Record<ScoreLevel, string>
     low:      'Your logged patterns show low similarity to PCOS-associated profiles. Continue logging to build a clearer picture.',
     moderate: 'Some of your logged patterns are consistent with symptoms commonly associated with PCOS. Worth mentioning to your healthcare provider.',
     notable:  'Several logged patterns show notable similarity to PCOS-associated profiles. We recommend discussing this with your healthcare provider.',
+  },
+  thalassemia: {
+    low:      'Your logged patterns show low similarity to thalassemia-associated profiles. Continue logging to build a clearer picture.',
+    moderate: 'Some of your logged patterns are consistent with symptoms commonly associated with thalassemia. Worth mentioning to your healthcare provider, especially if you have not been tested.',
+    notable:  'Several logged patterns show notable similarity to thalassemia-associated profiles. We recommend asking your healthcare provider about haemoglobin electrophoresis testing.',
   },
 }

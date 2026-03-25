@@ -71,6 +71,14 @@ const DOCTOR_QUESTIONS: Record<string, string[]> = {
     'What changes in my cycle should prompt me to seek care?',
     'Are there lifestyle factors that could improve my cycle health?',
   ],
+  thalassemia: [
+    'Have I been tested for thalassemia trait or thalassemia major?',
+    'Can we arrange a haemoglobin electrophoresis test?',
+    'Could my heavy periods and fatigue be related to thalassemia?',
+    'Should I be taking iron supplements given my period heaviness?',
+    'How might thalassemia affect my fertility and pregnancy planning?',
+    'Should my partner be tested for thalassemia trait given family planning?',
+  ],
 }
 
 const SYMPTOM_LABELS: Record<string, string> = {

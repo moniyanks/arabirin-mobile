@@ -253,6 +253,7 @@ export default function ProfileScreen() {
               { key: 'fibroids', label: 'Fibroids'      },
               { key: 'endo',     label: 'Endometriosis' },
               { key: 'pcos',     label: 'PCOS'          },
+              { key: 'thalassemia', label: 'Thalassemia' },
             ].map((c) => {
               const active = (form.conditions ?? []).includes(c.key)
               return (

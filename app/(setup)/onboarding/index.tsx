@@ -56,6 +56,7 @@ const CONDITIONS = [
   { key: 'fibroids', label: 'Fibroids',      desc: 'Uterine fibroids or suspected fibroids' },
   { key: 'endo',     label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis'   },
   { key: 'pcos',     label: 'PCOS',          desc: 'Polycystic ovary syndrome'              },
+  { key: 'thalassemia', label: 'Thalassemia',   desc: 'Thalassemia trait or thalassemia major' },
 ]
 
 export default function OnboardingScreen() {

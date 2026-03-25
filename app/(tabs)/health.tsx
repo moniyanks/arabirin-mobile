@@ -136,6 +136,26 @@ const HEALTH_CONDITIONS = [
     action: 'Advocate clearly for yourself at every appointment. Bring a support person when possible. If a concern is dismissed, you have the right to ask again, request documentation, and seek a second opinion.',
     source: 'CDC MMWR: Racial/Ethnic Disparities in Pregnancy-Related Deaths, 2019',
   },
+  {
+    key: 'thalassemia',
+    emoji: '🩸',
+    color: '#C17B7B',
+    title: 'Thalassemia',
+    desc: 'A blood disorder that significantly impacts menstrual health in women of colour',
+    what: 'Thalassemia is an inherited blood disorder that affects haemoglobin production. Women with thalassemia or thalassemia trait may experience significant menstrual and reproductive health challenges that are frequently overlooked.',
+    stats: 'Thalassemia trait is significantly more common in people of African, Mediterranean, Middle Eastern, and South Asian descent. Many women carry the trait without knowing it, yet it can significantly affect their menstrual health and fertility. (Weatherall, Am J Human Genetics, 2010)',
+    symptoms: [
+      'Delayed onset of periods',
+      'Irregular or absent periods',
+      'Unusually heavy periods',
+      'Severe fatigue during menstruation',
+      'Pale skin or yellowing',
+      'Difficulty getting pregnant',
+      'Bone pain',
+    ],
+    action: 'If you experience heavy periods alongside persistent fatigue, ask your healthcare provider about a full blood count and haemoglobin electrophoresis test. Knowing your thalassemia status matters for your reproductive health planning.',
+    source: 'Weatherall DJ. American Journal of Human Genetics, 2010. De Sanctis V et al. Journal of Pediatric Endocrinology and Metabolism, 2013.',
+  },
 ]
 
 type Condition = typeof HEALTH_CONDITIONS[number] | null

@@ -334,6 +334,7 @@ export default function CalendarScreen() {
           dateStr={selectedDateStr}
           colors={colors}
           existingLog={selectedLog}
+          journeyMode={mode}
           onClose={() => {
             setSheetVisible(false)
             setSheetMode(null)
