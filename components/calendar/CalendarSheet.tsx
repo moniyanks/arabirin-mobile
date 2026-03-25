@@ -23,6 +23,7 @@ type Props = {
   dateLabel: string
   dateStr: string
   colors: ThemeColors
+  journeyMode?: string
   existingLog?: {
     mood: string | null
     flow: string | null
@@ -72,6 +73,36 @@ const extraOptions = [
   { key: 'nausea', label: 'Nausea' },
   { key: 'insomnia', label: 'Insomnia' },
 ]
+
+const CONDITION_EXTRAS: Record<string, Array<{ key: string; label: string }>> = {
+  fibroids: [
+    { key: 'pelvicPressure',    label: 'Pelvic pressure'     },
+    { key: 'urinaryFrequency',  label: 'Frequent urination'  },
+    { key: 'painDuringSex',     label: 'Pain during sex'     },
+  ],
+  endo: [
+    { key: 'pelvicPain',             label: 'Pelvic pain'               },
+    { key: 'painDuringSex',          label: 'Pain during sex'           },
+    { key: 'painBowelMovements',     label: 'Pain with bowel movements' },
+    { key: 'fatigue',                label: 'Fatigue'                   },
+  ],
+  pcos: [
+    { key: 'hairLoss',   label: 'Hair thinning' },
+    { key: 'acne',       label: 'Acne'          },
+    { key: 'spotting',   label: 'Spotting'      },
+  ],
+  thalassemia: [
+    { key: 'fatigue',        label: 'Severe fatigue'  },
+    { key: 'paleSkin',       label: 'Pale skin'       },
+    { key: 'boneAche',       label: 'Bone ache'       },
+    { key: 'breathlessness', label: 'Breathlessness'  },
+  ],
+  ttc: [
+    { key: 'cervicalMucus',   label: 'Cervical mucus changes' },
+    { key: 'ovulationPain',   label: 'Ovulation pain'         },
+    { key: 'spotting',        label: 'Spotting'                },
+  ],
+}
 
 // ── Sub-components — styles passed from parent, no useMemo inside ──
 
@@ -311,6 +342,7 @@ export function CalendarSheet({
   dateStr,
   colors,
   existingLog,
+  journeyMode,
   onClose,
   onSaved,
 }: Props) {
@@ -476,6 +508,37 @@ export function CalendarSheet({
                 <ChipSection title="Cramps" styles={s} colors={colors} options={crampOptions} value={cramps} onChange={setCramps} />
                 <EnergySection styles={s} colors={colors} value={energy} onChange={setEnergy} />
                 <ExtrasSection styles={s} colors={colors} values={extras} onToggle={toggleExtra} />
+                {journeyMode && CONDITION_EXTRAS[journeyMode] && (
+                  <View style={s.sectionWrap}>
+                    <Text style={[s.sectionEyebrow, { color: colors.accentRose }]}>
+                      {journeyMode.toUpperCase()} SYMPTOMS
+                    </Text>
+                    <View style={s.optionRow}>
+                      {CONDITION_EXTRAS[journeyMode].map((option) => {
+                        const active = extras.includes(option.key)
+                        return (
+                          <Pressable
+                            key={option.key}
+                            style={[
+                              s.optionBtn,
+                              {
+                                borderColor: active ? colors.accentRose : colors.borderRose,
+                                backgroundColor: colors.bgSecondary,
+                              },
+                            ]}
+                            onPress={() => toggleExtra(option.key)}
+                          >
+                            <Text style={[s.optionText, {
+                              color: active ? colors.accentRose : colors.textPrimary,
+                            }]}>
+                              {active ? '✓ ' : ''}{option.label}
+                            </Text>
+                          </Pressable>
+                        )
+                      })}
+                    </View>
+                  </View>
+                )}
 
                 <View style={s.sectionWrap}>
                   <Text style={[s.sectionEyebrow, { color: colors.textMuted }]}>NOTES (OPTIONAL)</Text>
