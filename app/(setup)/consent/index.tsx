@@ -16,7 +16,7 @@ type Step = 'age' | 'privacy' | 'terms' | 'confirm'
 
 const STEPS: Step[] = ['age', 'privacy', 'terms', 'confirm']
 
-const EFFECTIVE_DATE = '13 March 2026'
+const EFFECTIVE_DATE = '5 April 2026'
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0'
 
 export default function ConsentScreen() {
@@ -108,10 +108,8 @@ export default function ConsentScreen() {
       
       // 3. LOGIC CHECK: Is there a listener in your App.tsx that 
       // redirects the user once 'user_consents' exists?
-      console.log("Consent saved successfully!")
 
     } catch (err: any) {
-      console.error('Consent Submission Error:', err)
       setError(err.message || 'Connection error. Please try again.')
     } finally {
       setLoading(false)
@@ -430,6 +428,17 @@ function PrivacyPolicyContent({ s, effectiveDate }: { s: any; effectiveDate: str
         data against unauthorised access, alteration, disclosure, or destruction, in
         accordance with Article 32 of the GDPR.
       </Text>
+      <Text style={s.docBody}>
+        In the event of a data breach that is likely to result in a risk to your 
+        rights and freedoms, we will notify the relevant supervisory authority within 
+        72 hours of becoming aware of the breach, and will notify affected users 
+        without undue delay where required by applicable law.
+      </Text>
+      <Text style={s.docBody}>
+        Supabase acts as a data processor on our behalf under a Data Processing 
+        Agreement that complies with GDPR requirements. For more information on 
+        Supabase's security practices, visit supabase.com/security.
+      </Text>
 
       <Text style={s.docSection}>6. Data Retention</Text>
       <Text style={s.docBody}>
@@ -454,26 +463,54 @@ function PrivacyPolicyContent({ s, effectiveDate }: { s: any; effectiveDate: str
       <Text style={s.docBullet}>• <Text style={s.docHighlight}>CCPA Rights: </Text>California residents have the right to know, delete, and opt-out of sale of personal information</Text>
       <Text style={s.docBody}>
         To exercise any of these rights, contact us at titayanks@gmail.com. We will
-        respond within 30 days. You also have the right to lodge a complaint with your
-        local data protection authority.
+        respond within 30 days.
       </Text>
-
-      <Text style={s.docSection}>8. International Data Transfers</Text>
       <Text style={s.docBody}>
-        As a global application, your data may be processed in countries outside your
-        country of residence. Where data is transferred outside the European Economic
-        Area, we ensure appropriate safeguards are in place in accordance with
-        Chapter V of the GDPR, including Standard Contractual Clauses where required.
+        You also have the right to lodge a complaint with your local data protection 
+        authority:
+      </Text>
+      <Text style={s.docBullet}>• <Text style={s.docHighlight}>UK: </Text>Information Commissioner's Office — ico.org.uk</Text>
+      <Text style={s.docBullet}>• <Text style={s.docHighlight}>EU: </Text>Your national data protection authority</Text>
+      <Text style={s.docBullet}>• <Text style={s.docHighlight}>Canada: </Text>Office of the Privacy Commissioner — priv.gc.ca</Text>
+      <Text style={s.docBullet}>• <Text style={s.docHighlight}>USA: </Text>Federal Trade Commission — ftc.gov</Text>
+      <Text style={s.docSection}>8. Reproductive Health Data and Law Enforcement</Text>
+      <Text style={s.docBody}>
+        Àràbìrín will never voluntarily share your reproductive health data with 
+        law enforcement or government agencies. In the event of a legal order 
+        compelling disclosure, we will:
+      </Text>
+      <Text style={s.docBullet}>• Notify you to the fullest extent permitted by law</Text>
+      <Text style={s.docBullet}>• Challenge any order we believe is overbroad</Text>
+      <Text style={s.docBullet}>• Only disclose the minimum information legally required</Text>
+      <Text style={s.docBody}>
+        We are aware that in some jurisdictions, reproductive health data may be 
+        subject to legal scrutiny. We have designed our data practices to minimise 
+        the data we hold and to protect your privacy to the greatest extent possible 
+        under law.
       </Text>
 
-      <Text style={s.docSection}>9. Children's Privacy</Text>
+      <Text style={s.docSection}>9. International Data Transfers</Text>
+      <Text style={s.docBody}>
+        Your data is stored on Supabase infrastructure. Supabase stores data in 
+        data centres that may be located outside your country of residence. Where 
+        data is transferred outside the European Economic Area, Supabase maintains 
+        Standard Contractual Clauses as required under GDPR Article 46.
+      </Text>
+      <Text style={s.docBody}>
+        By using the App, you acknowledge that your data may be transferred to and 
+        processed in countries that may not have the same data protection laws as 
+        your country of residence. We take all reasonable steps to ensure your data 
+        is treated securely and in accordance with this Privacy Policy.
+      </Text>
+
+      <Text style={s.docSection}>10. Children's Privacy</Text>
       <Text style={s.docBody}>
         The App is not intended for use by individuals under the age of 18. We do not
         knowingly collect personal data from minors. If we become aware that a minor
         has provided us with personal data, we will delete that data immediately.
       </Text>
 
-      <Text style={s.docSection}>10. Changes to This Policy</Text>
+      <Text style={s.docSection}>11. Changes to This Policy</Text>
       <Text style={s.docBody}>
         We may update this Privacy Policy from time to time. We will notify you of
         material changes via the App and will require your renewed consent where required
@@ -481,7 +518,7 @@ function PrivacyPolicyContent({ s, effectiveDate }: { s: any; effectiveDate: str
         last revised.
       </Text>
 
-      <Text style={s.docSection}>11. Contact Us</Text>
+      <Text style={s.docSection}>12. Contact Us</Text>
       <Text style={s.docBody}>
         For any questions, concerns, or requests regarding this Privacy Policy or your
         personal data, please contact:{'\n\n'}
@@ -654,11 +691,16 @@ function TermsOfServiceContent({ s, effectiveDate }: { s: any; effectiveDate: st
 
       <Text style={s.docSection}>12. Governing Law and Dispute Resolution</Text>
       <Text style={s.docBody}>
-        These Terms shall be governed by and construed in accordance with applicable
-        international law. Any disputes arising out of or in connection with these
-        Terms shall be resolved through good faith negotiation. If negotiation fails,
-        disputes may be referred to binding arbitration or the courts of competent
-        jurisdiction in the user's country of residence.
+        These Terms shall be governed by the laws of the jurisdiction in which 
+        Àràbìrín Technologies operates. For users in the EU or UK, the mandatory 
+        consumer protection laws of your country of residence apply regardless 
+        of this clause.
+      </Text>
+      <Text style={s.docBody}>
+        Any disputes arising out of or in connection with these Terms shall first 
+        be attempted to be resolved through good faith negotiation. If negotiation 
+        fails within 30 days, disputes may be referred to binding arbitration or 
+        the courts of competent jurisdiction in the user's country of residence.
       </Text>
 
       <Text style={s.docSection}>13. Changes to Terms</Text>
@@ -676,7 +718,26 @@ function TermsOfServiceContent({ s, effectiveDate }: { s: any; effectiveDate: st
         that the remaining Terms will otherwise remain in full force and effect.
       </Text>
 
-      <Text style={s.docSection}>15. Contact</Text>
+      <Text style={s.docSection}>15. App Store Terms</Text>
+      <Text style={s.docBody}>
+        Your use of Àràbìrín downloaded from the Apple App Store is also subject 
+        to Apple's Media Services Terms and Conditions. In the event of any 
+        conflict between these Terms and Apple's terms, Apple's terms shall 
+        prevail with respect to App Store usage only.
+      </Text>
+      <Text style={s.docBody}>
+        Apple is not responsible for the App or its content. Apple has no 
+        obligation to provide maintenance or support for the App. Apple is 
+        not a party to these Terms and is not responsible for any claims 
+        relating to the App.
+      </Text>
+      <Text style={s.docBody}>
+        In the event of any third party claim that the App infringes intellectual 
+        property rights, Apple is not responsible for the investigation, defence, 
+        settlement or discharge of such claim.
+      </Text>
+
+      <Text style={s.docSection}>16. Contact</Text>
       <Text style={s.docBody}>
         For questions regarding these Terms, please contact:{'\n\n'}
         <Text style={s.docHighlight}>Àràbìrín Technologies{'\n'}</Text>

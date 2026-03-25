@@ -167,8 +167,6 @@ export function ConditionIntelligence({ colors }: { colors: ThemeColors }) {
   const [expandedCondition, setExpandedCondition] = useState<string | null>(null)
 
   const conditions = getConditionsFromProfile(profile?.conditions ?? [])
-  console.log('profile conditions:', profile?.conditions)
-  console.log('parsed conditions:', conditions)
 
   if (!conditions.length) return null
 

@@ -9,6 +9,8 @@ import {
 } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
+import { registerAndSaveToken, rescheduleAllReminders } from '../utils/notifications'
+import { getNextPeriodDate, getFertileWindow } from '../utils/cycleHelper'
 
 type BootstrapStatus = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -160,6 +162,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       setPeriods(periodsData)
       setSymptomLogs(logsData)
       setBootstrapStatus('ready')
+
+      const mode       = profileData?.mode ?? 'cycle'
+      const nextPeriod = getNextPeriodDate(periodsData, profileData?.cycle_length ?? 28)
+      const fertile    = getFertileWindow(periodsData, profileData?.cycle_length ?? 28)
+
+      registerAndSaveToken().catch(() => {})
+      rescheduleAllReminders(
+        nextPeriod,
+        fertile?.fertileStart ?? null,
+        mode
+      ).catch(() => {})
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load app data')
       setBootstrapStatus('error')
