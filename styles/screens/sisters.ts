@@ -30,7 +30,7 @@ export function makeSistersStyles(c: ThemeColors) {
     subtitle: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textPrimary,
       lineHeight: 20,
     },
 
@@ -50,7 +50,7 @@ export function makeSistersStyles(c: ThemeColors) {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       lineHeight: 18,
-      color: c.textMuted,
+      color: c.textPrimary,
     },
 
     // Waitlist card
@@ -91,7 +91,7 @@ export function makeSistersStyles(c: ThemeColors) {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       lineHeight: 20,
-      color: c.textMuted,
+      color: c.textPrimary,
     },
     waitlistInput: {
       backgroundColor: c.bgPrimary,
@@ -255,6 +255,42 @@ export function makeSistersStyles(c: ThemeColors) {
       color: c.textMuted,
       textAlign: 'center',
       lineHeight: 20,
+    },
+
+    introCard: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 16,
+    },
+
+    introTitle: {
+      fontSize: 16,
+      color: c.accentGold,
+      marginBottom: 8,
+    },
+
+    introText: {
+      fontSize: 14,
+      lineHeight: 22,
+      color: c.textPrimary,
+      marginBottom: 10,
+    },
+
+    introFootnote: {
+      fontSize: 13,
+      lineHeight: 19,
+      color: c.textMuted,
+    },
+
+    emptyFootnote: {
+      fontSize: 13,
+      lineHeight: 19,
+      color: c.textMuted,
+      marginTop: 10,
+      textAlign: 'center',
     },
   })
 }

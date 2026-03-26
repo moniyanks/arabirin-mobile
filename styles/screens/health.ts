@@ -286,5 +286,43 @@ export function makeHealthStyles(c: ThemeColors) {
       color: c.textMuted,
       lineHeight: 18,
     },
+    emptyStateCard: {
+      marginTop: 16,
+      padding: 18,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      backgroundColor: c.bgSecondary,
+    },
+
+    emptyStateTitle: {
+      fontSize: 16,
+      color: c.accentGold,
+      marginBottom: 6,
+    },
+
+    emptyStateText: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: c.textMuted,
+      marginBottom: 12,
+    },
+
+    emptyStateBtn: {
+      alignSelf: 'flex-start',
+    },
+
+    emptyStateBtnText: {
+      color: c.accentRose,
+      fontSize: 14,
+    },
+
+    modalFootnote: {
+      fontSize: 13,
+      lineHeight: 18,
+      color: c.textMuted,
+      marginTop: 12,
+      marginBottom: 8,
+    },
   })
 }

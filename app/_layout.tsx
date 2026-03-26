@@ -3,19 +3,16 @@ import { Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useColorScheme } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthProvider } from '../context/AuthContext'
 import { AppDataProvider } from '../context/AppDataContext'
-import { theme } from '../constants/theme'
+import { useColors } from '../styles'
+import { ThemeModeProvider, useThemeMode } from '../context/ThemeModeContext'
 
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  const scheme = useColorScheme()
-  const colors = scheme === 'dark' ? theme.dark : theme.light
-
   const [fontsLoaded, fontError] = useFonts({
     'CormorantGaramond-Regular': require('../assets/fonts/CormorantGaramond-Regular.ttf'),
     'CormorantGaramond-Italic': require('../assets/fonts/CormorantGaramond-Italic.ttf'),
@@ -34,11 +31,22 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null
 
   return (
+    <ThemeModeProvider>
+      <RootLayoutContent />
+    </ThemeModeProvider>
+  )
+}
+
+function RootLayoutContent() {
+  const { resolvedScheme } = useThemeMode()
+  const colors = useColors()
+
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <AuthProvider>
           <AppDataProvider>
-            <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+            <StatusBar style={resolvedScheme === 'dark' ? 'light' : 'dark'} />
             <Stack
               screenOptions={{
                 headerShown: false,

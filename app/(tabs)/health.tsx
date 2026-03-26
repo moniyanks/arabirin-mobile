@@ -12,6 +12,7 @@ import { getPhaseInfo } from '../../utils/cycleHelper'
 import type { PhaseKey } from '../../utils/cycleHelper'
 import { ConditionIntelligence } from '../../components/health/ConditionIntelligence'
 import { FertilityIntelligence } from '../../components/health/FertilityIntelligence'
+import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
 // ── Phase education content ──
 const PHASE_EDUCATION: Record<string, {
@@ -214,6 +215,22 @@ export default function HealthScreen() {
             </Pressable>
           )}
         </View>
+        <MedicalDisclaimer />
+        {periods.length === 0 && (
+          <View style={s.emptyStateCard}>
+            <Text style={s.emptyStateTitle}>Start building your health picture</Text>
+            <Text style={s.emptyStateText}>
+              Log your first period to unlock personalised insights, fertility awareness, and condition tracking tailored to your body.
+            </Text>
+
+            <Pressable
+              style={s.emptyStateBtn}
+              onPress={() => router.push('/(tabs)/calendar')}
+            >
+              <Text style={s.emptyStateBtnText}>Log my first period</Text>
+            </Pressable>
+          </View>
+        )}
          <Pressable
             style={s.appointmentBtn}
             onPress={() => router.push('/(modals)/appointment')}
@@ -235,7 +252,9 @@ export default function HealthScreen() {
         {/* Health Hub */}
         <View style={s.hubSection}>
           <Text style={s.hubTitle}>Black Women's Health Hub</Text>
-          <Text style={s.hubSubtitle}>Conditions that disproportionately affect us</Text>
+          <Text style={s.hubSubtitle}>
+            Conditions that disproportionately affect Black women, based on current research
+          </Text>
 
           <View style={s.hubCards}>
             {HEALTH_CONDITIONS.map((condition) => (
@@ -307,6 +326,11 @@ export default function HealthScreen() {
                   <View style={s.actionBox}>
                     <Text style={s.actionText}>💛 {activeCondition.action}</Text>
                   </View>
+                  <MedicalDisclaimer />
+
+                  <Text style={s.modalFootnote}>
+                    This information is educational. For diagnosis or treatment, speak to a qualified healthcare professional.
+                  </Text>
 
                   <Pressable style={s.closeFullBtn} onPress={() => setActiveCondition(null)}>
                     <Text style={s.closeFullBtnText}>Close</Text>

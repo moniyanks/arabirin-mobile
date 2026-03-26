@@ -1,4 +1,5 @@
 import type { PhaseKey } from './cycleHelper'
+import { normalizeConditionKeys } from './conditions'
 
 export function getModeContext(mode?: string) {
   switch (mode) {
@@ -161,5 +162,107 @@ export function getBodyIntelligenceMessage(params: {
     title: 'Body Intelligence',
     message:
       'Your recent logs are starting to form a clearer picture. The more consistently you track, the more helpful your insights become.',
+  }
+}
+
+export function getEnhancedBodyInsight({
+  mode,
+  phase,
+  cycleDay,
+  nextPeriodDisplay,
+  conditions = [],
+}: {
+  mode: string
+  phase: string
+  cycleDay: number | null
+  nextPeriodDisplay: string
+  conditions?: string[]
+}) {
+ const normalizedConditions = normalizeConditionKeys(conditions)
+
+  const hasFibroids = normalizedConditions.includes('fibroids')
+  const hasPCOS = normalizedConditions.includes('pcos')
+  const hasSickleCell = normalizedConditions.includes('sickle_cell')
+  const hasThalassemia = normalizedConditions.includes('thalassemia')
+
+  if (mode !== 'cycle') {
+    return {
+      title: 'Your body is speaking',
+      message:
+        'Keep logging to uncover patterns in your energy, symptoms, and overall rhythm.',
+    }
+  }
+
+  if (hasFibroids && phase === 'period') {
+    return {
+      title: 'This phase may need closer attention',
+      message:
+        'If your bleeding, pain, or fatigue feels heavier than usual, it may be helpful to keep a close record this cycle.',
+    }
+  }
+
+  if (hasPCOS) {
+    return {
+      title: 'Your rhythm may not always feel predictable',
+      message:
+        'Keep tracking changes in timing, mood, energy, and body signals so patterns become easier to recognise over time.',
+    }
+  }
+
+  if ((hasSickleCell || hasThalassemia) && phase === 'period') {
+    return {
+      title: 'This phase may call for gentler pacing',
+      message:
+        'Pay attention to energy, pain, and how your body feels through bleeding days so your patterns are easier to understand over time.',
+    }
+  }
+
+  if (phase === 'period') {
+    return {
+      title: 'Your body may need more softness right now',
+      message: cycleDay
+        ? `You’re in day ${cycleDay} of your cycle. This is a good time to notice bleeding, pain, energy, and rest needs.`
+        : 'This is a good time to notice bleeding, pain, energy, and rest needs.',
+    }
+  }
+
+  if (phase === 'follicular') {
+    return {
+      title: 'Your body may be rebuilding energy',
+      message: cycleDay
+        ? `Cycle day ${cycleDay} can bring a sense of renewal, steadier energy, and more openness to routine.`
+        : 'This phase can bring a sense of renewal, steadier energy, and more openness to routine.',
+    }
+  }
+
+  if (phase === 'fertile') {
+    return {
+      title: 'Your body may feel more responsive right now',
+      message:
+        'This window can bring shifts in energy, mood, body awareness, and cervical changes worth noticing.',
+    }
+  }
+
+  if (phase === 'ovulation') {
+    return {
+      title: 'Your body may be at a peak moment in the cycle',
+      message:
+        'You may notice stronger body signals right now. This is a good time to pay attention to how you feel physically and emotionally.',
+    }
+  }
+
+  if (phase === 'luteal') {
+    return {
+      title: 'Your body may be asking for more care',
+      message:
+        nextPeriodDisplay !== '—'
+          ? `As your next period approaches around ${nextPeriodDisplay}, you may notice changes in mood, appetite, energy, or tenderness.`
+          : 'As your next period approaches, you may notice changes in mood, appetite, energy, or tenderness.',
+    }
+  }
+
+  return {
+    title: 'Your body is showing a pattern',
+    message: 'Keep logging to better understand what is shifting across your cycle.',
   }
 }
