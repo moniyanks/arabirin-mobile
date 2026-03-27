@@ -12,6 +12,7 @@ import { useAppData } from '../../context/AppDataContext'
 import { daysBetween } from '../../utils/cycleHelper'
 import { buildBodyMetrics, generateInsights } from '../../utils/bodyIntelligence'
 import type { Insight } from '../../utils/bodyIntelligence'
+import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
 const SYMPTOM_LABELS: Record<string, string> = {
   cramps: 'Cramps', bloating: 'Bloating', headache: 'Headache',
@@ -210,7 +211,7 @@ export default function InsightsScreen() {
             </View>
 
             {/* Body Intelligence */}
-            <Text style={s.sectionLabel}>BODY INTELLIGENCE</Text>
+            <Text style={s.sectionLabel}>Your body insights</Text>
             <View style={s.intelligenceCard}>
               <View style={s.cardHeader}>
                 <Brain color={colors.accentRose} size={18} strokeWidth={1.5} />
@@ -220,45 +221,55 @@ export default function InsightsScreen() {
                 </View>
               </View>
 
-              {insights.map((insight) => (
-                <View key={insight.id} style={s.insightItem}>
-                  <View style={[s.insightIconWrap, { backgroundColor: getInsightColor(insight) + '18' }]}>
-                    {insight.severity === 'attention'
-                      ? <AlertCircle color={colors.accentRose} size={15} strokeWidth={1.5} />
-                      : insight.type === 'cycle'
-                        ? <TrendingUp color={colors.accentSage} size={15} strokeWidth={1.5} />
-                        : <Brain color={colors.accentGold} size={15} strokeWidth={1.5} />
-                    }
-                  </View>
-                  <View style={s.insightBody}>
-                    <View style={s.insightTopRow}>
-                      <Text style={s.insightTitle}>{insight.title}</Text>
-                      <View style={[
-                        s.confidenceChip,
-                        insight.confidence === 'high'   && s.confidenceChipHigh,
-                        insight.confidence === 'medium' && s.confidenceChipMedium,
-                        insight.confidence === 'low'    && s.confidenceChipLow,
-                      ]}>
-                        <Text style={[
-                          s.confidenceChipText,
-                          insight.confidence === 'high'   && s.confidenceChipTextHigh,
-                          insight.confidence === 'medium' && s.confidenceChipTextMedium,
-                          insight.confidence === 'low'    && s.confidenceChipTextLow,
-                        ]}>
-                          {insight.confidence}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text style={s.insightText}>{insight.message}</Text>
-                  </View>
+              {insights.length === 0 ? (
+                <View style={s.emptyInsightsState}>
+                  <Text style={s.emptyInsightsTitle}>Your patterns are still taking shape</Text>
+                  <Text style={s.emptyInsightsText}>
+                    Keep logging symptoms, flow, and cycle changes to unlock more personalised insights over time.
+                  </Text>
                 </View>
-              ))}
+              ) : (
+                insights.map((insight) => (
+                  <View key={insight.id} style={s.insightItem}>
+                    <View style={[s.insightIconWrap, { backgroundColor: getInsightColor(insight) + '18' }]}>
+                      {insight.severity === 'attention'
+                        ? <AlertCircle color={colors.accentRose} size={15} strokeWidth={1.5} />
+                        : insight.type === 'cycle'
+                          ? <TrendingUp color={colors.accentSage} size={15} strokeWidth={1.5} />
+                          : <Brain color={colors.accentGold} size={15} strokeWidth={1.5} />
+                      }
+                    </View>
+                    <View style={s.insightBody}>
+                      <View style={s.insightTopRow}>
+                        <Text style={s.insightTitle}>{insight.title}</Text>
+                        <View style={[
+                          s.confidenceChip,
+                          insight.confidence === 'high'   && s.confidenceChipHigh,
+                          insight.confidence === 'medium' && s.confidenceChipMedium,
+                          insight.confidence === 'low'    && s.confidenceChipLow,
+                        ]}>
+                          <Text style={[
+                            s.confidenceChipText,
+                            insight.confidence === 'high'   && s.confidenceChipTextHigh,
+                            insight.confidence === 'medium' && s.confidenceChipTextMedium,
+                            insight.confidence === 'low'    && s.confidenceChipTextLow,
+                          ]}>
+                            {insight.confidence}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={s.insightText}>{insight.message}</Text>
+                    </View>
+                  </View>
+                ))
+              )}
+              <MedicalDisclaimer />
             </View>
 
             {/* Cycle trend chart */}
             {cycleLengthData.length >= 2 && (
               <>
-                <Text style={s.sectionLabel}>CYCLE TREND</Text>
+                <Text style={s.sectionLabel}>Cycle trends</Text>
                 <View style={s.chartCard}>
                   <Text style={s.chartTitle}>Cycle length over time</Text>
                   <Text style={s.chartSubtitle}>Days between each period</Text>
@@ -276,7 +287,7 @@ export default function InsightsScreen() {
             {/* Symptom frequency */}
             {symptomFrequencyData.length > 0 && (
               <>
-                <Text style={s.sectionLabel}>SYMPTOM PATTERNS</Text>
+                <Text style={s.sectionLabel}>Symptom patterns</Text>
                 <View style={s.chartCard}>
                   <Text style={s.chartTitle}>Most logged symptoms</Text>
                   <Text style={s.chartSubtitle}>Across all your entries</Text>
@@ -297,14 +308,12 @@ export default function InsightsScreen() {
             )}
 
             {/* Stats grid */}
-            <Text style={s.sectionLabel}>YOUR STATS</Text>
+            <Text style={s.sectionLabel}>Your cycle stats</Text>
             <View style={s.statsGrid}>
               {[
                 { value: cycleLength,       label: 'Avg Cycle',     unit: 'days', interp: cycleInterp  },
                 { value: avgPeriodLength,   label: 'Avg Period',    unit: 'days', interp: periodInterp },
                 { value: periods.length,    label: 'Periods Logged', unit: 'total', interp: null       },
-                { value: longestCycle,      label: 'Longest Cycle', unit: 'days', interp: null         },
-                { value: shortestCycle,     label: 'Shortest Cycle', unit: 'days', interp: null        },
                 {
                   value: periods.length < 3 ? '—' : stability?.stable ? '✓' : '~',
                   label: 'Cycle Pattern',

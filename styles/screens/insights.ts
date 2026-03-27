@@ -384,5 +384,23 @@ export function makeInsightsStyles(c: ThemeColors) {
       color: c.textMuted,
       lineHeight: 18,
     },
+
+    emptyInsightsState: {
+      marginTop: 8,
+      paddingTop: 8,
+    },
+
+    emptyInsightsTitle: {
+      fontSize: 15,
+      lineHeight: 22,
+      color: c.accentGold,
+      marginBottom: 6,
+    },
+
+    emptyInsightsText: {
+      fontSize: 14,
+      lineHeight: 21,
+      color: c.textMuted,
+    },
   })
 }

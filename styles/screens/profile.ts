@@ -248,10 +248,38 @@ export function makeProfileStyles(c: ThemeColors) {
 
     cardHint: {
       fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      fontSize: 13,
       color: c.textMuted,
       lineHeight: 18,
       marginTop: -4,
+    },
+
+    cardTitle: {
+      fontSize: 16,
+      color: c.accentGold,
+      marginBottom: 4,
+    },
+    sectionHeading: {
+      fontSize: 18,
+      color: c.accentGold,
+      marginTop: 8,
+      marginBottom: 10,
+    },
+    deleteSupportText: {
+      fontSize: 12,
+      lineHeight: 18,
+      color: c.textMuted,
+      marginTop: 8,
+    },
+    rowBetween: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+
+    appearanceTextWrap: {
+      flex: 1,
+      paddingRight: 12,
     },
   })
 }

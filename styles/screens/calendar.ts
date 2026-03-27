@@ -248,5 +248,8 @@ export function makeCalendarStyles(c: any) {
       fontSize: 14,
       color: c.textMuted,
     },
+    primaryBtnDisabled: {
+      opacity: 0.5,
+    },
   })
 }

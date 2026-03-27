@@ -10,7 +10,8 @@ import { useAppData } from '../../context/AppDataContext'
 import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabase'
 import { theme, type ThemeColors } from '../../constants/theme'
-import { useColorScheme } from 'react-native'
+import { useThemeMode} from '../../context/ThemeModeContext'
+import LegalNoticeCard from '../../components/common/LegalNoticeCard'
 
 const CYCLE_OPTIONS = [21, 24, 28, 30, 35]
 const PERIOD_OPTIONS = [3, 4, 5, 6, 7]
@@ -70,6 +71,8 @@ function buildFormState(profile: any) {
 export default function ProfileScreen() {
   const colors    = useColors()
   const s         = useMemo(() => makeProfileStyles(colors), [colors])
+  const { themeMode, setThemeMode } = useThemeMode()
+  const isDark = themeMode === 'dark'
   const { profile, refetchProfile, clearAppData } = useAppData()
   const { signOut } = useAuth()
 
@@ -246,13 +249,14 @@ export default function ProfileScreen() {
         <View style={s.card}>
           <Text style={s.cardLabel}>Conditions</Text>
           <Text style={s.cardHint}>
-            Select any conditions you have or suspect. This personalises your health insights.
+            Select any conditions that are relevant to your journey. This helps Àràbìrìn tailor insights and support more thoughtfully.
           </Text>
           <View style={s.modeGrid}>
             {[
               { key: 'fibroids', label: 'Fibroids'      },
               { key: 'endo',     label: 'Endometriosis' },
               { key: 'pcos',     label: 'PCOS'          },
+              { key: 'sickle_cell',     label: 'Sickle cell'          },
               { key: 'thalassemia', label: 'Thalassemia' },
             ].map((c) => {
               const active = (form.conditions ?? []).includes(c.key)
@@ -407,10 +411,38 @@ export default function ProfileScreen() {
           }
         </Pressable>
 
+        <Text style={s.sectionHeading}>Appearance</Text>
+        
+        <View style={s.card}>
+          <View style={s.rowBetween}>
+            <View style={s.appearanceTextWrap}>
+              <Text style={s.cardTitle}>Dark mode</Text>
+              <Text style={s.cardHint}>
+                Switch between light and dark appearance
+              </Text>
+            </View>
+
+            <Switch
+              value={isDark}
+              onValueChange={(value) => setThemeMode(value ? 'dark' : 'light')}
+              trackColor={{
+                false: colors.borderRose,
+                true: 'rgba(217,155,155,0.4)',
+              }}
+              thumbColor={isDark ? colors.accentRose : colors.bgPrimary}
+            />
+          </View>
+        </View>
+        <Text style={s.sectionHeading}>Account & data</Text>
+
         {/* App info */}
         <View style={s.card}>
           <Text style={s.version}>Version 1.0.0</Text>
+        </View>
 
+        <LegalNoticeCard />
+
+        <View style={s.card}>
           <Pressable style={s.logoutBtn} onPress={handleLogout}>
             <Text style={s.logoutBtnText}>Log out</Text>
           </Pressable>
@@ -420,7 +452,10 @@ export default function ProfileScreen() {
               {showDeleteConfirm ? 'Tap again to confirm' : 'Delete my data'}
             </Text>
             <Text style={s.deleteWarning}>
-              This permanently deletes your health profile, logs, periods, settings, and consent records, then signs you out.
+              This permanently deletes your profile, cycle history, symptom logs, settings, and consent records, then signs you out.
+            </Text>
+            <Text style={s.deleteSupportText}>
+              Need help with your account or data? Contact support at titayanks@gmail.com
             </Text>
           </Pressable>
         </View>

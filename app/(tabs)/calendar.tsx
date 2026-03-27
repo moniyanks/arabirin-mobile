@@ -22,6 +22,7 @@ import {
 } from '../../utils/calendarHelper'
 import { CalendarDayCell } from '../../components/calendar/CalendarDayCell'
 import { CalendarSheet } from '../../components/calendar/CalendarSheet'
+import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
 type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation' | 'extend'
 
@@ -63,6 +64,8 @@ export default function CalendarScreen() {
   )
 
   const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
+  const todayStr = format(new Date(), 'yyyy-MM-dd')
+    const isFutureDate = selectedDateStr > todayStr
 
   const selectedPeriod = periods.find((p) => {
     const end = p.endDate ?? p.startDate
@@ -122,7 +125,6 @@ export default function CalendarScreen() {
       return
     }
 
-    const todayStr = format(new Date(), 'yyyy-MM-dd')
     if (day.dateStr <= todayStr) {
       // Check if this day is the day after a period ended
       const yesterday = format(addDays(day.date, -1), 'yyyy-MM-dd')
@@ -164,7 +166,6 @@ export default function CalendarScreen() {
       return
     }
 
-    const todayStr = format(new Date(), 'yyyy-MM-dd')
     if (selectedDateStr <= todayStr) {
       setSheetMode('log')
       setSheetVisible(true)
@@ -307,12 +308,22 @@ export default function CalendarScreen() {
             {selectedDateInfo.message}
           </Text>
 
-          <Pressable style={styles.primaryBtn} onPress={openLogForSelectedDate}>
+          <Pressable
+            style={[styles.primaryBtn, isFutureDate && styles.primaryBtnDisabled]}
+            onPress={openLogForSelectedDate}
+            disabled={isFutureDate}
+          >
             <Text style={styles.primaryBtnText}>
-              {selectedLog ? 'Edit symptoms' : 'Log symptoms for this day'}
+              {isFutureDate
+                ? 'Logging opens on this date'
+                : selectedLog
+                  ? 'Edit symptoms'
+                  : 'Log symptoms for this day'}
             </Text>
           </Pressable>
         </View>
+        
+        <MedicalDisclaimer />
 
         {/* Period history link */}
         <Pressable
@@ -320,7 +331,7 @@ export default function CalendarScreen() {
           onPress={() => router.push('/(modals)/periods')}
         >
           <History color={colors.textMuted} size={16} strokeWidth={1.5} />
-          <Text style={styles.historyBtnText}>View & manage period history</Text>
+          <Text style={styles.historyBtnText}>View and manage period history</Text>
           <ChevronRight color={colors.textMuted} size={16} strokeWidth={1.5} />
         </Pressable>
 

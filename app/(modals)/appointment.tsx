@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
-  View, Text, Pressable, ScrollView,
-  Share, ActivityIndicator,
+  View, Text, Pressable, ScrollView, ActivityIndicator,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
@@ -11,88 +10,14 @@ import { useColors } from '../../styles'
 import { makeAppointmentStyles } from '../../styles/screens/appointment'
 import { useAppData } from '../../context/AppDataContext'
 import { buildBodyMetrics } from '../../utils/bodyIntelligence'
-import { daysBetween } from '../../utils/cycleHelper'
+import { generateAndShareAppointmentPDF } from '../../utils/appointmentReport'
+import {
+  DOCTOR_QUESTIONS,
+  SYMPTOM_LABELS,
+  MODE_LABELS,
+} from '../../utils/appointmentReport/config'
+import type { QuestionSourceKey , SupportedMode} from '../../utils/appointmentReport/types'
 
-// ── Condition-specific doctor questions ──
-const DOCTOR_QUESTIONS: Record<string, string[]> = {
-  fibroids: [
-    'Could my symptoms be consistent with uterine fibroids?',
-    'Can we do an ultrasound to check for fibroids?',
-    'Should we check my iron levels given my heavy bleeding?',
-    'What are my treatment options if fibroids are found?',
-    'How often should I be monitored if I have fibroids?',
-    'Could my fibroids be affecting my fertility?',
-  ],
-  endo: [
-    'Could my pain be consistent with endometriosis?',
-    'What diagnostic steps can we take to investigate endometriosis?',
-    'Can you refer me to a specialist in endometriosis?',
-    'What pain management options are available to me?',
-    'How might endometriosis affect my fertility?',
-    'What should I track to help with diagnosis?',
-  ],
-  pcos: [
-    'Can we test my hormone levels to check for PCOS?',
-    'Would an ultrasound help diagnose my irregular cycles?',
-    'Should we check my insulin resistance?',
-    'What lifestyle changes would help manage PCOS symptoms?',
-    'How might PCOS affect my fertility?',
-    'What are the long-term health implications I should know about?',
-  ],
-  ttc: [
-    'Based on my cycle data, when is my most fertile window?',
-    'Are there any tests you recommend before we start trying?',
-    'How long should we try before seeking further help?',
-    'Should I be tracking my basal body temperature?',
-    'Are there any supplements you recommend?',
-    'What would prompt you to refer us to a fertility specialist?',
-  ],
-  pregnant: [
-    'What symptoms should prompt me to contact you immediately?',
-    'Am I at higher risk for any complications I should watch for?',
-    'What does my blood pressure look like and is it normal?',
-    'Can we discuss my birth plan and preferences?',
-    'What should I know about Group B Strep testing?',
-    'Who should I contact if I have concerns between appointments?',
-  ],
-  postpartum: [
-    'What is a normal recovery timeline for my type of delivery?',
-    'What signs of postpartum depression should I watch for?',
-    'When should I expect my period to return?',
-    'Are my current symptoms normal for this stage of recovery?',
-    'What are my contraception options while breastfeeding?',
-    'Can we discuss pelvic floor recovery?',
-  ],
-  cycle: [
-    'Are my cycle patterns within a normal range?',
-    'Could my symptoms indicate an underlying condition?',
-    'Should I be tracking anything specific?',
-    'Are there any tests you recommend based on my history?',
-    'What changes in my cycle should prompt me to seek care?',
-    'Are there lifestyle factors that could improve my cycle health?',
-  ],
-  thalassemia: [
-    'Have I been tested for thalassemia trait or thalassemia major?',
-    'Can we arrange a haemoglobin electrophoresis test?',
-    'Could my heavy periods and fatigue be related to thalassemia?',
-    'Should I be taking iron supplements given my period heaviness?',
-    'How might thalassemia affect my fertility and pregnancy planning?',
-    'Should my partner be tested for thalassemia trait given family planning?',
-  ],
-}
-
-const SYMPTOM_LABELS: Record<string, string> = {
-  cramps: 'Cramps', bloating: 'Bloating', headache: 'Headache',
-  backPain: 'Back pain', breastTenderness: 'Breast tenderness',
-  nausea: 'Nausea', insomnia: 'Insomnia',
-}
-
-const MODE_LABELS: Record<string, string> = {
-  fibroids: 'Fibroids', endo: 'Endometriosis', pcos: 'PCOS',
-  ttc: 'Trying to Conceive', pregnant: 'Pregnancy', postpartum: 'Postpartum',
-  cycle: 'Cycle Tracking', healing: 'Loss or Recovery',
-  perimenopause: 'Perimenopause',
-}
 
 export default function AppointmentScreen() {
   const colors  = useColors()
@@ -105,7 +30,7 @@ export default function AppointmentScreen() {
 
   const mode = profile?.mode ?? 'cycle'
   const name = profile?.name ?? 'Sister'
-  const questions = DOCTOR_QUESTIONS[mode] ?? DOCTOR_QUESTIONS.cycle
+  const questions = DOCTOR_QUESTIONS[mode as QuestionSourceKey] ?? DOCTOR_QUESTIONS.cycle
 
   const metrics = useMemo(() =>
     buildBodyMetrics(periods, symptomLogs, profile),
@@ -147,56 +72,17 @@ export default function AppointmentScreen() {
   }, [symptomLogs])
 
   // ── Average cycle ──
-  const avgCycle = useMemo(() => {
-    if (periods.length < 2) return null
-    const lengths: number[] = []
-    for (let i = 1; i < periods.length; i++) {
-      lengths.push(daysBetween(periods[i - 1].startDate, periods[i].startDate))
-    }
-    return Math.round(lengths.reduce((a, b) => a + b, 0) / lengths.length)
-  }, [periods])
+  const avgCycle = metrics.avgCycleLength ?? null
 
   const reportDate = format(new Date(), 'd MMMM yyyy')
 
-  // ── Share report as text ──
+  // ── Share report  ──
   const handleShare = async () => {
     setSharing(true)
     try {
-      const lines = [
-        `ÀRÀBÌRÍN — APPOINTMENT PREP REPORT`,
-        `Prepared for: ${name}`,
-        `Date: ${reportDate}`,
-        `Journey: ${MODE_LABELS[mode] || mode}`,
-        ``,
-        `── CYCLE SUMMARY ──`,
-        `Periods logged: ${periods.length}`,
-        avgCycle ? `Average cycle length: ${avgCycle} days` : `Not enough data for average cycle`,
-        `Period length: ${periodLength} days`,
-        ``,
-        `── SYMPTOM PATTERNS (last ${symptomLogs.length} logs) ──`,
-        ...symptomSummary.map((s) => `• ${s.label}: logged ${s.count} times`),
-        ``,
-        flowSummary.total > 0 ? `── FLOW SEVERITY ──` : '',
-        flowSummary.heavy  > 0 ? `• Heavy flow: ${flowSummary.heavy} days logged` : '',
-        flowSummary.medium > 0 ? `• Medium flow: ${flowSummary.medium} days logged` : '',
-        flowSummary.light  > 0 ? `• Light flow: ${flowSummary.light} days logged` : '',
-        ``,
-        `── QUESTIONS FOR MY DOCTOR ──`,
-        ...questions.map((q, i) => `${i + 1}. ${q}`),
-        ``,
-        `── DISCLAIMER ──`,
-        `This report contains personal health tracking data recorded in the Àràbìrín app.`,
-        `It is not a medical diagnosis and should not be used as a substitute for 
-        professional medical advice, diagnosis, or treatment  Please share with your healthcare provider`,
-        `as a supporting context for your consultation.`,
-        ``,
-        `Generated by Àràbìrín · All health statistics are sourced from peer-reviewed research . arabirin.com`,
-      ].filter(Boolean)
-
-      await Share.share({
-        title: 'My Appointment Prep — Àràbìrín',
-        message: lines.join('\n'),
-      })
+      await generateAndShareAppointmentPDF(profile, periods, symptomLogs)
+    } catch (err) {
+      console.error('PDF generation failed:', err)
     } finally {
       setSharing(false)
     }
@@ -226,7 +112,7 @@ export default function AppointmentScreen() {
         <View style={s.reportHeader}>
           <Text style={s.reportName}>{name}</Text>
           <Text style={s.reportMeta}>
-            {MODE_LABELS[mode] || mode} · {reportDate}
+            {MODE_LABELS[mode as SupportedMode] || mode} · {reportDate}
           </Text>
           <Text style={s.reportMeta}>
             {periods.length} periods logged · {symptomLogs.length} symptom entries
@@ -379,7 +265,7 @@ export default function AppointmentScreen() {
         {expandedSection === 'questions' && (
           <View style={s.sectionBody}>
             <Text style={s.questionsIntro}>
-              Based on your {MODE_LABELS[mode] || mode} journey, here are questions worth raising:
+              Based on your {MODE_LABELS[mode as SupportedMode] || mode} journey, here are questions worth raising:
             </Text>
             {questions.map((q, i) => (
               <View key={i} style={s.questionItem}>
@@ -409,7 +295,7 @@ export default function AppointmentScreen() {
             : (
               <>
                 <Share2 color={colors.bgPrimary} size={18} strokeWidth={1.5} />
-                <Text style={s.shareBtnText}>Share with my doctor</Text>
+                <Text style={s.shareBtnText}>Download PDF report</Text>
               </>
             )
           }

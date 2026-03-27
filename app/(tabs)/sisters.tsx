@@ -13,7 +13,7 @@ const FORMSPREE_URL = 'https://formspree.io/f/mvzwkpaz'
 
 const CIRCLES = [
   { key: 'all',      label: 'All'             },
-  { key: 'general',  label: 'General'         },
+  { key: 'general',  label: 'Cycle Support'         },
   { key: 'fibroids', label: 'Fibroids'        },
   { key: 'endo',     label: 'Endometriosis'   },
   { key: 'pcos',     label: 'PCOS'            },
@@ -71,6 +71,17 @@ export default function SistersScreen() {
           </Text>
         </View>
 
+        <View style={s.introCard}>
+          <Text style={s.introTitle}>What Sister’s Circle is for</Text>
+          <Text style={s.introText}>
+            A guided community for sharing lived experiences, asking thoughtful questions,
+            and feeling less alone through cycles, symptoms, fertility journeys, and women’s health conditions.
+          </Text>
+          <Text style={s.introFootnote}>
+            Sister’s Circle is for support and shared experience. It is not a substitute for professional medical care.
+          </Text>
+        </View>
+
         {/* Waitlist card */}
         {submitState !== 'success' ? (
           <View style={s.waitlistCard}>
@@ -80,7 +91,7 @@ export default function SistersScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.waitlistTitle}>Be a founding sister</Text>
-                <Text style={s.waitlistCount}>Join sisters already waiting</Text>
+                <Text style={s.waitlistCount}>Join the early acess list</Text>
               </View>
             </View>
 
@@ -125,7 +136,7 @@ export default function SistersScreen() {
         )}
 
         {/* Circles filter */}
-        <Text style={s.sectionLabel}>CIRCLES</Text>
+        <Text style={s.sectionLabel}>Explore circles</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -149,24 +160,27 @@ export default function SistersScreen() {
           <View style={s.composerAvatar}>
             <Text style={s.composerAvatarText}>◉</Text>
           </View>
-          <Text style={s.composerPlaceholder}>Share your experience...</Text>
+          <Text style={s.composerPlaceholder}>Share your experience with other sisters...</Text>
           <View style={s.composerSoonPill}>
             <Text style={s.composerSoonText}>Coming soon</Text>
           </View>
         </View>
 
         {/* Empty state */}
-        <View style={s.emptyState}>
-          <Text style={s.emptyIcon}>◌</Text>
-          <Text style={s.emptyTitle}>
-            {activeCircle === 'all'
-              ? 'Sisters Circle is opening soon'
-              : `No posts in ${CIRCLES.find((c) => c.key === activeCircle)?.label} yet`}
-          </Text>
-          <Text style={s.emptyText}>
-            Be among the first to share your experience when we launch. Your story could help another sister feel less alone.
-          </Text>
-        </View>
+      <View style={s.emptyState}>
+        <Text style={s.emptyIcon}>◌</Text>
+        <Text style={s.emptyTitle}>
+          {activeCircle === 'all'
+            ? 'Sister’s Circle is opening soon'
+            : `No posts in ${CIRCLES.find((c) => c.key === activeCircle)?.label} yet`}
+        </Text>
+        <Text style={s.emptyText}>
+          Be among the first to share your experience when we launch. Your story could help another sister feel less alone.
+        </Text>
+        <Text style={s.emptyFootnote}>
+          Posts will be community-guided and moderated to help keep the space thoughtful, supportive, and safe.
+        </Text>
+      </View>
 
       </ScrollView>
     </SafeAreaView>

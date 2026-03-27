@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import {
   CalendarDays, Heart, Activity,
-  Moon, ChevronRight, Brain,
+  Moon, ChevronRight,
 } from 'lucide-react-native'
 import Svg, { Circle } from 'react-native-svg'
 import { useColors } from '../../styles'
@@ -14,10 +14,16 @@ import { formatDate, getCurrentCycleDay, getNextPeriodDate, getPhaseInfo } from 
 import { getGreetingText } from '../../utils/greetingHelper'
 import {
   getPredictionConfidence, getBodyIntelligenceMessage,
-  getModeContext, getPhaseLabel, getRingInnerLabel, getPhaseSupportMessage,
+  getModeContext, getPhaseLabel, getRingInnerLabel, getPhaseSupportMessage, getEnhancedBodyInsight,
 } from '../../utils/homeHelper'
 import { calculateFertilityInsight, FERTILE_STATUS_MESSAGES } from '../../utils/fertilityIntelligence'
 import { format, parseISO } from 'date-fns'
+import HomeHeader from '../../components/home/HomeHeader'
+import BodyInsightCard from '../../components/home/BodyInsightCard'
+import CycleContextCard from '../../components/home/CycleContextCard'
+import QuickActionGrid from '../../components/home/QuickActionGrid'
+import SistersPreviewCard from '../../components/home/SistersPreviewCard'
+import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
 
 
@@ -37,14 +43,33 @@ const TTC_SHORTCUTS = [
   { key: 'energy',         label: 'Energy',    icon: '✦'  },
 ]
 
-const RING_SIZE    = 220
-const STROKE_WIDTH = 14
+const RING_SIZE    = 210
+const STROKE_WIDTH = 16
 const RADIUS       = (RING_SIZE - STROKE_WIDTH) / 2
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 function getCycleRingProgress(currentCycleDay: number | null, cycleLength: number) {
   if (!currentCycleDay || !cycleLength || cycleLength <= 0) return 0
   return Math.min(currentCycleDay / cycleLength, 1)
+}
+
+function getRingStatusText({
+  phase,
+  currentCycleDay,
+  cycleLength,
+  nextPeriodDisplay,
+}: {
+  phase: string
+  currentCycleDay: number | null
+  cycleLength: number
+  nextPeriodDisplay: string
+}) {
+  if (phase === 'fertile') return ' Fertile window active'
+  if (phase === 'ovulation') return 'Peak fertile timing'
+  if (phase === 'period') return currentCycleDay ? `Day ${currentCycleDay} of your period` : 'Period phase'
+  if (phase === 'luteal') return `Period expected ${nextPeriodDisplay}`
+  if (phase === 'follicular') return currentCycleDay ? `Cycle day ${currentCycleDay} of ${cycleLength || 28}` : 'Follicular phase'
+  return currentCycleDay ? `Cycle day ${currentCycleDay} of ${cycleLength || 28}` : 'Keep logging to build your rhythm'
 }
 
 function TtcHeroCard({
@@ -145,6 +170,20 @@ export default function HomeScreen() {
   const nextPeriodDisplay  = nextPeriodDate ? formatDate(nextPeriodDate) : '—'
   const ringProgress       = getCycleRingProgress(currentCycleDay, cycleLength)
   const strokeDashoffset   = CIRCUMFERENCE * (1 - ringProgress)
+  const enhancedBodyInsight = getEnhancedBodyInsight({
+    mode,
+    phase: phaseInfo.phase,
+    cycleDay: currentCycleDay,
+    nextPeriodDisplay,
+    conditions: profile?.conditions || [],
+  })
+
+  const ringStatusText = getRingStatusText({
+    phase: phaseInfo.phase,
+    currentCycleDay,
+    cycleLength,
+    nextPeriodDisplay,
+  })
 
   const hasNoPeriods = periods.length === 0
 
@@ -156,15 +195,10 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Top bar */}
-        <View style={styles.topBar}>
-          <View>
-            <Text style={styles.logo}>Àràbìrín</Text>
-            <Text style={styles.tagline}>BODY INTELLIGENCE FOR EVERY STAGE</Text>
-          </View>
-          <Pressable style={styles.avatar} onPress={() => router.push('/(tabs)/profile')}>
-            <Text style={styles.avatarText}>{firstLetter}</Text>
-          </Pressable>
-        </View>
+        <HomeHeader
+          colors={colors}
+          firstLetter={firstLetter}
+        />
 
         {/* Greeting */}
         <View style={styles.greetingBlock}>
@@ -215,50 +249,66 @@ export default function HomeScreen() {
           </View>
         ) : (
           <>
+            <BodyInsightCard
+              colors={colors}
+              title={enhancedBodyInsight.title}
+              message={enhancedBodyInsight.message}
+            />
+            <MedicalDisclaimer />
+
             {/* ── Cycle ring or journey card ── */}
             {mode === 'cycle' ? (
-              <View style={styles.ringHeroCard}>
-                <View style={styles.phaseBadge}>
-                  <Text style={styles.phaseBadgeText}>{getPhaseLabel(phaseInfo.phase)}</Text>
-                </View>
-                <View style={styles.ringWrap}>
-                  <Svg width={RING_SIZE} height={RING_SIZE}>
-                    <Circle
-                      stroke={colors.borderRose}
-                      fill="none"
-                      cx={RING_SIZE / 2}
-                      cy={RING_SIZE / 2}
-                      r={RADIUS}
-                      strokeWidth={STROKE_WIDTH}
-                    />
-                    <Circle
-                      stroke={colors.accentRose}
-                      fill="none"
-                      cx={RING_SIZE / 2}
-                      cy={RING_SIZE / 2}
-                      r={RADIUS}
-                      strokeWidth={STROKE_WIDTH}
-                      strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-                      strokeDashoffset={strokeDashoffset}
-                      strokeLinecap="round"
-                      transform={`rotate(-90, ${RING_SIZE / 2}, ${RING_SIZE / 2})`}
-                    />
-                  </Svg>
-                  <View style={styles.ringCenter}>
-                    {phaseInfo.phase === 'period' ? (
-                      <>
-                        <Text style={styles.ringCenterValue}>
-                          {currentCycleDay ? `Day ${currentCycleDay}` : '—'}
-                        </Text>
-                        <Text style={styles.ringCenterSubLabel}>{ringInnerLabel}</Text>
-                      </>
-                    ) : (
-                      <Text style={styles.ringCenterValueAlt}>{ringInnerLabel}</Text>
-                    )}
+              <>
+                <CycleContextCard
+                  colors={colors}
+                  cycleDay={currentCycleDay}
+                  phaseLabel={getPhaseLabel(phaseInfo.phase)}
+                  phaseSupportText={phaseSupportMessage}
+                  nextPeriodText={nextPeriodDisplay}
+                />
+                <View style={styles.ringHeroCard}>
+                  <View style={styles.phaseBadge}>
+                    <Text style={styles.phaseBadgeText}>{getPhaseLabel(phaseInfo.phase)}</Text>
                   </View>
+                  <View style={styles.ringWrap}>
+                    <Svg width={RING_SIZE} height={RING_SIZE}>
+                      <Circle
+                        stroke={colors.borderRose}
+                        fill="none"
+                        cx={RING_SIZE / 2}
+                        cy={RING_SIZE / 2}
+                        r={RADIUS}
+                        strokeWidth={STROKE_WIDTH}
+                      />
+                      <Circle
+                        stroke={colors.accentRose}
+                        fill="none"
+                        cx={RING_SIZE / 2}
+                        cy={RING_SIZE / 2}
+                        r={RADIUS}
+                        strokeWidth={STROKE_WIDTH}
+                        strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        transform={`rotate(-90, ${RING_SIZE / 2}, ${RING_SIZE / 2})`}
+                      />
+                    </Svg>
+                    <View style={styles.ringCenter}>
+                      {phaseInfo.phase === 'period' ? (
+                        <>
+                          <Text style={styles.ringCenterValue}>
+                            {currentCycleDay ? `Day ${currentCycleDay}` : '—'}
+                          </Text>
+                          <Text style={styles.ringCenterSubLabel}>{ringInnerLabel}</Text>
+                        </>
+                      ) : (
+                        <Text style={styles.ringCenterValueAlt}>{ringInnerLabel}</Text>
+                      )}
+                    </View>
+                  </View>
+                  <Text style={styles.heroMessage}>{ringStatusText}</Text>
                 </View>
-                <Text style={styles.heroMessage}>{phaseSupportMessage}</Text>
-              </View>
+                </>
             
             ) : mode === 'ttc' ? (
               <TtcHeroCard
@@ -330,6 +380,7 @@ export default function HomeScreen() {
             </ScrollView>
 
             {/* Stats row */}
+            {/*
             <View style={styles.statsRow}>
               <View style={styles.statCard}>
                 <Text style={styles.statLabel}>Cycle</Text>
@@ -350,38 +401,16 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </View>
-
-            {/* Body intelligence */}
-            <Pressable style={styles.intelligenceCard} onPress={() => router.push('/(tabs)/insights')}>
-              <View style={styles.intelligenceIconWrap}>
-                <Brain color={colors.accentRose} size={20} strokeWidth={1.8} />
-              </View>
-              <View style={styles.intelligenceBody}>
-                <Text style={styles.intelligenceTitle}>{bodyIntelligence.title}</Text>
-                <Text style={styles.intelligenceDesc}>{bodyIntelligence.message}</Text>
-              </View>
-              <ChevronRight color={colors.textMuted} size={20} strokeWidth={1.8} />
-            </Pressable>
+            */}
 
             {/* Quick action grid */}
-            <View style={styles.quickActionGrid}>
-              {[
-                { icon: <CalendarDays color={colors.accentRose} size={18} strokeWidth={1.8} />, title: 'Calendar',      desc: 'Review your dates, logs, and patterns.',       route: '/(tabs)/calendar' },
-                { icon: <Heart        color={colors.accentRose} size={18} strokeWidth={1.8} />, title: 'Health',         desc: 'Learn what may be happening in your body.',    route: '/(tabs)/health'   },
-                { icon: <Activity     color={colors.accentRose} size={18} strokeWidth={1.8} />, title: 'Insights',       desc: 'See trends from your recent logs.',            route: '/(tabs)/insights' },
-                { icon: <Moon         color={colors.accentRose} size={18} strokeWidth={1.8} />, title: 'Sisters Circle', desc: 'Find support and join the founding sisters.',  route: '/(tabs)/sisters'  },
-              ].map((card) => (
-                <Pressable
-                  key={card.title}
-                  style={styles.quickActionCard}
-                  onPress={() => router.push(card.route as any)}
-                >
-                  {card.icon}
-                  <Text style={styles.quickActionTitle}>{card.title}</Text>
-                  <Text style={styles.quickActionDesc}>{card.desc}</Text>
-                </Pressable>
-              ))}
-            </View>
+            <QuickActionGrid colors={colors}/>
+            <SistersPreviewCard
+              colors={colors}
+              conditions={profile?.conditions || []}
+              mode={mode}
+            />
+                      
           </>
         )}
       </ScrollView>
