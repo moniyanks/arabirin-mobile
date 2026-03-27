@@ -12,6 +12,13 @@ import { supabase } from '../../lib/supabase'
 import { theme, type ThemeColors } from '../../constants/theme'
 import { useThemeMode} from '../../context/ThemeModeContext'
 import LegalNoticeCard from '../../components/common/LegalNoticeCard'
+import {
+  APP_MODES,
+  type AppMode,
+  normalizeAppMode,
+} from '../../constants/appMode'
+import { getNextPeriodDate, getFertileWindow } from '../../utils/cycleHelper'
+import { enableNotificationsForUser, disableAllReminders } from '../../utils/notifications'
 
 const CYCLE_OPTIONS = [21, 24, 28, 30, 35]
 const PERIOD_OPTIONS = [3, 4, 5, 6, 7]
@@ -24,7 +31,7 @@ const LIMITS = {
   weight: { min: 30,  max: 200 },
 }
 
-const MODES = [
+const MODES: Array<{ key: AppMode; label: string }> = [
   { key: 'cycle',        label: 'Tracking my cycle' },
   { key: 'ttc',          label: 'Trying to conceive' },
   { key: 'pregnant',     label: 'Pregnant' },
@@ -57,14 +64,14 @@ function getBMICategory(bmi: string | null) {
 
 function buildFormState(profile: any) {
   return {
-    name:         profile?.name         || '',
-    age:          profile?.age?.toString()          || '',
-    weight:       profile?.weight?.toString()       || '',
-    height:       profile?.height?.toString()       || '',
-    mode:         profile?.mode         || 'cycle',
-    conditions:   profile?.conditions   || [] as string[],
-    cycleLength:  profile?.cycle_length?.toString() || '28',
-    periodLength: profile?.period_length?.toString()|| '5',
+    name: profile?.name || '',
+    age: profile?.age?.toString() || '',
+    weight: profile?.weight?.toString() || '',
+    height: profile?.height?.toString() || '',
+    mode: normalizeAppMode(profile?.mode),
+    conditions: profile?.conditions || ([] as string[]),
+    cycleLength: profile?.cycle_length?.toString() || '28',
+    periodLength: profile?.period_length?.toString() || '5',
   }
 }
 
@@ -73,7 +80,7 @@ export default function ProfileScreen() {
   const s         = useMemo(() => makeProfileStyles(colors), [colors])
   const { themeMode, setThemeMode } = useThemeMode()
   const isDark = themeMode === 'dark'
-  const { profile, refetchProfile, clearAppData } = useAppData()
+  const { profile, settings, periods, refetchProfile, refetchAll, clearAppData } = useAppData()
   const { signOut } = useAuth()
 
   const [editingName, setEditingName] = useState(false)
@@ -84,6 +91,8 @@ export default function ProfileScreen() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showCustomCycle, setShowCustomCycle]     = useState(false)
   const [showCustomPeriod, setShowCustomPeriod]   = useState(false)
+  const [remindersEnabled, setRemindersEnabled] = useState(settings?.reminders_enabled ?? false)
+  const [savingReminders, setSavingReminders] = useState(false)
 
   useEffect(() => {
     const next = buildFormState(profile)
@@ -91,6 +100,10 @@ export default function ProfileScreen() {
     setShowCustomCycle(!CYCLE_OPTIONS.includes(Number(next.cycleLength)) && next.cycleLength !== '')
     setShowCustomPeriod(!PERIOD_OPTIONS.includes(Number(next.periodLength)) && next.periodLength !== '')
   }, [profile?.id])
+
+  useEffect(() => {
+    setRemindersEnabled(settings?.reminders_enabled ?? false)
+  }, [settings?.reminders_enabled])
 
   const updateField = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -140,6 +153,55 @@ export default function ProfileScreen() {
       setErrors({ save: err.message || 'Failed to save profile' })
     } finally {
       setSaving(false)
+    }
+  }
+   const handleToggleReminders = async (value: boolean) => {
+    setSavingReminders(true)
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const mode = normalizeAppMode(form.mode)
+      const cycleLength = Number(form.cycleLength) || 28
+      const nextPeriod = getNextPeriodDate(periods, cycleLength)
+      const fertile = getFertileWindow(periods, cycleLength)
+
+      if (value) {
+        const enabled = await enableNotificationsForUser({
+          nextPeriodDate: nextPeriod,
+          fertileStart: fertile?.fertileStart ?? null,
+          mode,
+        })
+
+        if (!enabled) {
+          setErrors({
+            save: 'Notifications were not enabled. Please allow permission on your device and try again.',
+          })
+          return
+        }
+      } else {
+        await disableAllReminders()
+      }
+
+      const { error } = await supabase
+        .from('user_settings')
+        .upsert(
+          {
+            user_id: user.id,
+            reminders_enabled: value,
+          },
+          { onConflict: 'user_id' }
+        )
+
+      if (error) throw error
+
+      setRemindersEnabled(value)
+      await refetchAll()
+    } catch (err: any) {
+      setErrors({ save: err.message || 'Failed to update reminders' })
+    } finally {
+      setSavingReminders(false)
     }
   }
 
@@ -410,6 +472,29 @@ export default function ProfileScreen() {
             : <Text style={s.saveBtnText}>{saved ? 'Saved ✓' : 'Save changes'}</Text>
           }
         </Pressable>
+              <Text style={s.sectionHeading}>Reminders</Text>
+
+        <View style={s.card}>
+          <View style={s.rowBetween}>
+            <View style={s.appearanceTextWrap}>
+              <Text style={s.cardTitle}>Gentle reminders</Text>
+              <Text style={s.cardHint}>
+                Receive thoughtful reminders to check in, prepare for your period, and track your fertile window when relevant.
+              </Text>
+            </View>
+
+            <Switch
+              value={remindersEnabled}
+              onValueChange={handleToggleReminders}
+              disabled={savingReminders}
+              trackColor={{
+                false: colors.borderRose,
+                true: 'rgba(217,155,155,0.4)',
+              }}
+              thumbColor={remindersEnabled ? colors.accentRose : colors.bgPrimary}
+            />
+          </View>
+        </View>  
 
         <Text style={s.sectionHeading}>Appearance</Text>
         

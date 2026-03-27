@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import * as Notifications from 'expo-notifications'
 import { StatusBar } from 'expo-status-bar'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -40,6 +41,41 @@ export default function RootLayout() {
 function RootLayoutContent() {
   const { resolvedScheme } = useThemeMode()
   const colors = useColors()
+  const router = useRouter()
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data as {
+        screen?: string
+        date?: string
+        openSheet?: boolean
+      }
+
+      if (data?.screen === 'calendar') {
+        const query: Record<string, string> = {}
+
+        if (data.date) query.date = data.date
+        if (data.openSheet) query.openSheet = '1'
+
+        router.push({
+          pathname: '/(tabs)/calendar',
+          params: query,
+        })
+        return
+      }
+
+      if (data?.screen === 'home') {
+        router.push('/(tabs)')
+        return
+      }
+
+      router.push('/(tabs)/calendar')
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [router])
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

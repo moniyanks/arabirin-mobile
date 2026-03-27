@@ -9,8 +9,9 @@ import {
 } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
-import { registerAndSaveToken, rescheduleAllReminders } from '../utils/notifications'
+import { rescheduleAllReminders } from '../utils/notifications'
 import { getNextPeriodDate, getFertileWindow } from '../utils/cycleHelper'
+import { AppMode, normalizeAppMode } from '../constants/appMode'
 
 type BootstrapStatus = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -34,7 +35,7 @@ export type SymptomLog = {
 export type Profile = {
   id: string
   name: string
-  mode: string
+  mode: AppMode
   cycle_length: number
   period_length: number
   conditions: string[]
@@ -163,16 +164,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       setSymptomLogs(logsData)
       setBootstrapStatus('ready')
 
-      const mode       = profileData?.mode ?? 'cycle'
+      const mode       = normalizeAppMode(profileData?.mode)
       const nextPeriod = getNextPeriodDate(periodsData, profileData?.cycle_length ?? 28)
       const fertile    = getFertileWindow(periodsData, profileData?.cycle_length ?? 28)
 
-      registerAndSaveToken().catch(() => {})
-      rescheduleAllReminders(
-        nextPeriod,
-        fertile?.fertileStart ?? null,
-        mode
-      ).catch(() => {})
+      if (settingsData?.reminders_enabled) {
+        rescheduleAllReminders(
+          nextPeriod,
+          fertile?.fertileStart ?? null,
+          mode
+        ).catch(() => {})
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load app data')
       setBootstrapStatus('error')

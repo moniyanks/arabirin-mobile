@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { View, Text, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
+import {  useLocalSearchParams, useRouter } from 'expo-router'
 import { ChevronLeft, ChevronRight, History } from 'lucide-react-native'
 import { format, addDays } from 'date-fns'
 
@@ -30,6 +30,11 @@ export default function CalendarScreen() {
   const colors = useColors()
   const styles = useMemo(() => makeCalendarStyles(colors), [colors])
   const router = useRouter()
+
+  const params = useLocalSearchParams<{
+    date?: string
+    openSheet?: string
+  }>()  
 
   const {
     profile,
@@ -87,6 +92,20 @@ export default function CalendarScreen() {
   const selectedLog = symptomLogs.find(
     (log) => log.log_date === selectedDateStr
   )
+  const todayLog = symptomLogs.find((log) => log.log_date === todayStr)
+
+  const todayLogSummary = useMemo(() => {
+    if (!todayLog) return []
+
+    const items: string[] = []
+
+    if (todayLog.mood) items.push(`Mood: ${todayLog.mood}`)
+    if (todayLog.flow) items.push(`Flow: ${todayLog.flow}`)
+    if (todayLog.cramps) items.push(`Cramps: ${todayLog.cramps}`)
+    if (todayLog.energy) items.push(`Energy: ${todayLog.energy}`)
+
+    return items
+  }, [todayLog])  
 
   const selectedDateInfo = getSelectedDateInfo({
     mode,
@@ -97,6 +116,24 @@ export default function CalendarScreen() {
   })
 
   const weekdayLabels = getWeekdayLabels()
+
+  useEffect(() => {
+    if (!params.date) return
+
+    const incoming = new Date(params.date)
+    if (Number.isNaN(incoming.getTime())) return
+
+    setSelectedDate(incoming)
+    setMonthDate(incoming)
+  }, [params.date])  
+
+  useEffect(() => {
+    if (params.openSheet !== '1') return
+    if (selectedDateStr > todayStr) return
+
+    setSheetMode('log')
+    setSheetVisible(true)
+  }, [params.openSheet, selectedDateStr, todayStr])
 
   const handleDayPress = (day: (typeof days)[number]) => {
     setSelectedDate(day.date)
@@ -179,6 +216,44 @@ export default function CalendarScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.todayCard}>
+          <Text style={styles.todayCardEyebrow}>Today’s check-in</Text>
+
+          <Text style={styles.todayCardTitle}>
+            {todayLog ? 'You’ve checked in today' : 'Take a moment to notice how your body feels'}
+          </Text>
+
+          <Text style={styles.todayCardText}>
+            {todayLog
+              ? 'You can review or update today’s entry anytime.'
+              : 'Even one mood, symptom, or energy entry helps build your body insight.'}
+          </Text>
+
+          {todayLogSummary.length > 0 && (
+            <View style={styles.todayChipRow}>
+              {todayLogSummary.slice(0, 3).map((item) => (
+                <View key={item} style={styles.todayChip}>
+                  <Text style={styles.todayChipText}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          <Pressable
+            style={styles.todayCardButton}
+            onPress={() => {
+              setSelectedDate(new Date())
+              setMonthDate(new Date())
+              setSheetMode('log')
+              setSheetVisible(true)
+            }}
+          >
+            <Text style={styles.todayCardButtonText}>
+              {todayLog ? 'View or edit today’s check-in' : 'Log today'}
+            </Text>
+          </Pressable>
+        </View>
+
         <View style={styles.monthNav}>
           <Pressable
             style={styles.monthBtn}

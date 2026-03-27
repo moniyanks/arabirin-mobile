@@ -21,16 +21,13 @@ export function makeInsightsStyles(c: ThemeColors) {
       gap: 12,
     },
     emptyTitle: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 22,
+      ...theme.typography.displayMd,
       color: c.accentGold,
     },
     emptyText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 14,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
       textAlign: 'center',
-      lineHeight: 22,
       paddingHorizontal: 24,
     },
     emptyBtn: {
@@ -41,17 +38,13 @@ export function makeInsightsStyles(c: ThemeColors) {
       marginTop: 8,
     },
     emptyBtnText: {
-      fontFamily: theme.fonts.sansSemiBold,
-      fontSize: 15,
+      ...theme.typography.button,
       color: c.bgPrimary,
     },
 
     // Section label
     sectionLabel: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
-      letterSpacing: 1.4,
-      textTransform: 'uppercase',
+      ...theme.typography.label,
       color: c.textMuted,
       marginTop: 4,
     },
@@ -73,8 +66,8 @@ export function makeInsightsStyles(c: ThemeColors) {
     },
     cardHeaderLabel: {
       flex: 1,
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 13,
+      ...theme.typography.bodyMd,
+      fontWeight: '600',
       color: c.textPrimary,
     },
     badge: {
@@ -85,8 +78,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       borderColor: c.borderRose,
     },
     badgeText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 10,
+      ...theme.typography.bodySm,
       color: c.textMuted,
     },
 
@@ -119,13 +111,12 @@ export function makeInsightsStyles(c: ThemeColors) {
       backgroundColor: c.accentRose,
     },
     stabilityTitle: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 13,
+      ...theme.typography.bodyMd,
+      fontWeight: '600',
       color: c.textPrimary,
     },
     stabilityRange: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       marginTop: 2,
     },
@@ -137,8 +128,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       justifyContent: 'space-between',
     },
     confidenceLabel: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textMuted,
     },
     confidencePill: {
@@ -150,8 +140,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       borderColor: c.borderRose,
     },
     confidencePillText: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 11,
+      ...theme.typography.label,
       color: c.accentRose,
     },
 
@@ -188,16 +177,14 @@ export function makeInsightsStyles(c: ThemeColors) {
     },
     insightTitle: {
       flex: 1,
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 13,
+      ...theme.typography.titleMd,
       color: c.textPrimary,
     },
     insightText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 13,
-      lineHeight: 20,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
     },
+
     confidenceChip: {
       paddingHorizontal: 7,
       paddingVertical: 2,
@@ -207,8 +194,7 @@ export function makeInsightsStyles(c: ThemeColors) {
     confidenceChipMedium: { backgroundColor: 'rgba(243,229,216,0.15)' },
     confidenceChipLow:    { backgroundColor: 'rgba(217,155,155,0.12)' },
     confidenceChipText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 10,
+      ...theme.typography.bodySm,
       textTransform: 'capitalize',
     },
     confidenceChipTextHigh:   { color: c.accentSage },
@@ -225,23 +211,21 @@ export function makeInsightsStyles(c: ThemeColors) {
       gap: 8,
     },
     chartTitle: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 14,
+      ...theme.typography.titleMd,
       color: c.textPrimary,
     },
     chartSubtitle: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       marginTop: -4,
     },
     chartNote: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       textAlign: 'center',
       marginTop: 4,
     },
+
     barChart: {
       gap: 8,
       marginTop: 8,
@@ -252,8 +236,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       gap: 8,
     },
     barLabel: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       width: 28,
     },
@@ -270,15 +253,12 @@ export function makeInsightsStyles(c: ThemeColors) {
       borderRadius: 999,
     },
     barValue: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       width: 28,
       textAlign: 'right',
     },
-    barReferenceLine: {
-      display: 'none',
-    },
+
     symptomRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -286,8 +266,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       marginTop: 4,
     },
     symptomName: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       width: 110,
     },
@@ -304,8 +283,7 @@ export function makeInsightsStyles(c: ThemeColors) {
       borderRadius: 999,
     },
     symptomCount: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
       width: 28,
       textAlign: 'right',
@@ -327,26 +305,19 @@ export function makeInsightsStyles(c: ThemeColors) {
       gap: 3,
     },
     statValue: {
-      fontFamily: theme.fonts.serif,
-      fontSize: 28,
+      ...theme.typography.displayMd,
       color: c.accentGold,
     },
     statLabel: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: 0.8,
+      ...theme.typography.label,
       color: c.textMuted,
     },
     statUnit: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
+      ...theme.typography.bodySm,
       color: c.textMuted,
     },
     statInterp: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 10,
-      lineHeight: 14,
+      ...theme.typography.bodySm,
       marginTop: 4,
     },
     statInterpSage: { color: c.accentSage },
@@ -364,25 +335,18 @@ export function makeInsightsStyles(c: ThemeColors) {
       gap: 12,
     },
     sistersEyebrow: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
+      ...theme.typography.label,
       color: c.accentRose,
       marginBottom: 4,
     },
     sistersTitle: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 20,
+      ...theme.typography.displayMd,
       color: c.accentGold,
-      lineHeight: 24,
       marginBottom: 4,
     },
     sistersDesc: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textMuted,
-      lineHeight: 18,
     },
 
     emptyInsightsState: {
@@ -391,15 +355,13 @@ export function makeInsightsStyles(c: ThemeColors) {
     },
 
     emptyInsightsTitle: {
-      fontSize: 15,
-      lineHeight: 22,
+      ...theme.typography.titleMd,
       color: c.accentGold,
       marginBottom: 6,
     },
 
     emptyInsightsText: {
-      fontSize: 14,
-      lineHeight: 21,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
     },
   })

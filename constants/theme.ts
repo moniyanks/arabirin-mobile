@@ -1,23 +1,25 @@
+import { typography } from '../styles/typography'
+
 export const theme = {
-  dark: {
-    bgPrimary: '#1A0F17',
-    bgSecondary: '#2D1D26',
-    accentRose: '#D99B9B',
-    accentGold: '#F3E5D8',
-    accentSage: '#9BA88D',
-    borderRose: 'rgba(217, 155, 155, 0.2)',
-    textMuted: 'rgba(243, 229, 216, 0.5)',
-    textPrimary: '#F3E5D8',
-    shadow: 'rgba(0, 0, 0, 0.3)',
+ dark: {
+    bgPrimary: '#140B12',
+    bgSecondary: '#2A1821',
+    accentRose: '#D89A9F',
+    accentGold: '#F7EDE4',
+    accentSage: '#A1B095',
+    borderRose: 'rgba(216, 154, 159, 0.22)',
+    textMuted: 'rgba(247, 237, 228, 0.62)',
+    textPrimary: '#F7EDE4',
+    shadow: 'rgba(0, 0, 0, 0.34)',
   },
   light: {
-    bgPrimary: '#FFFFFF',
-    bgSecondary: '#F7F0EC',
+    bgPrimary: '#FBF5F2',
+    bgSecondary: '#FFFDFC',
     accentRose: '#B56B6B',
     accentGold: '#2D1D26',
-    accentSage: '#5C6E52',
-    borderRose: 'rgba(181, 107, 107, 0.25)',
-    textMuted: 'rgba(45, 29, 38, 0.5)',
+    accentSage: '#66785E',
+    borderRose: 'rgba(181, 107, 107, 0.18)',
+    textMuted: 'rgba(45, 29, 38, 0.55)',
     textPrimary: '#2D1D26',
     shadow: 'rgba(45, 29, 38, 0.08)',
   },
@@ -41,6 +43,7 @@ export const theme = {
     sansMedium: 'DMSans-Medium',
     sansSemiBold: 'DMSans-SemiBold',
   },
+  typography,
 }
 
 export type ThemeColors = typeof theme.dark
