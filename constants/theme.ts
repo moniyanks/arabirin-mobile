@@ -2,12 +2,14 @@ import { typography } from '../styles/typography'
 
 export const theme = {
  dark: {
-    bgPrimary: '#140B12',
-    bgSecondary: '#2A1821',
+    bgPrimary: '#160C12',
+    bgSecondary: '#24141C',
+    cardSoft: '#2E1821',
     accentRose: '#D89A9F',
     accentGold: '#F7EDE4',
     accentSage: '#A1B095',
     borderRose: 'rgba(216, 154, 159, 0.22)',
+    borderSoft: 'rgba(247, 237, 228, 0.04)',
     textMuted: 'rgba(247, 237, 228, 0.62)',
     textPrimary: '#F7EDE4',
     shadow: 'rgba(0, 0, 0, 0.34)',
@@ -15,6 +17,7 @@ export const theme = {
   light: {
     bgPrimary: '#FBF5F2',
     bgSecondary: '#FFFDFC',
+    cardSoft: '#FFF8F6',
     accentRose: '#B56B6B',
     accentGold: '#2D1D26',
     accentSage: '#66785E',

@@ -37,7 +37,7 @@ export function makeHomeStyles(c: any) {
       height: 40,
       borderRadius: 20,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       backgroundColor: c.bgSecondary,
       alignItems: 'center',
       justifyContent: 'center',
@@ -61,14 +61,14 @@ export function makeHomeStyles(c: any) {
       textAlign: 'center',
     },
     heroCard: {
-      backgroundColor: c.bgSecondary,
-      borderWidth: 1,
-      borderColor: c.borderRose,
+      backgroundColor: c.cardSoft,
+      borderWidth: 0.5,
+      borderColor: c.borderSoft,
       borderRadius: 20,
       paddingHorizontal: 20,
       paddingVertical: 22,
       alignItems: 'center',
-      marginBottom: 14,
+      marginBottom: 18,
       shadowColor: c.shadow,
       shadowOpacity: 0.25,
       shadowRadius: 14,
@@ -103,7 +103,7 @@ export function makeHomeStyles(c: any) {
     predictionRow: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 14,
       paddingHorizontal: 16,
       paddingVertical: 14,
@@ -152,7 +152,7 @@ export function makeHomeStyles(c: any) {
       borderRadius: 14,
       paddingHorizontal: 18,
       paddingVertical: 18,
-      marginBottom: 14,
+      marginBottom: 18,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -162,40 +162,50 @@ export function makeHomeStyles(c: any) {
       color: c.bgPrimary,
     },
     shortcutRow: {
-      gap: 8,
+      gap: 10,
       paddingBottom: 2,
-      marginBottom: 16,
     },
     shortcutBtn: {
       backgroundColor: c.bgSecondary,
-      borderWidth: 1,
-      borderColor: c.borderRose,
-      borderRadius: 12,
+      borderWidth: 0.5,
+      borderColor: c.borderSoft,
+      borderRadius: 14,
       paddingVertical: 10,
       paddingHorizontal: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      minWidth: 64,
-      gap: 4,
+      minWidth: 72,
+      gap: 5,
     },
     shortcutIcon: {
-      fontSize: 15,
+      fontSize: 14,
       color: c.accentRose,
+      opacity: 0.9,
     },
     shortcutLabel: {
       ...theme.typography.bodySm,
       color: c.textMuted,
     },
+    shortcutsSection: {
+      marginBottom: 18,
+    },
+
+    shortcutsHeading: {
+      ...theme.typography.label,
+      color: c.textMuted,
+      marginBottom: 10,
+      paddingLeft: 2,
+    },
     statsRow: {
       flexDirection: 'row',
       gap: 10,
-      marginBottom: 16,
+      marginBottom: 18,
     },
     statCard: {
       flex: 1,
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 10,
@@ -213,10 +223,10 @@ export function makeHomeStyles(c: any) {
     intelligenceCard: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 16,
       padding: 18,
-      marginBottom: 16,
+      marginBottom: 18,
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
@@ -240,33 +250,33 @@ export function makeHomeStyles(c: any) {
       flex: 1,
     },
     intelligenceTitle: {
-      ...theme.typography.titleLg,
-      color: c.accentGold,
-      marginBottom: 8,
+      ...theme.typography.titleMd,
+      color: c.textPrimary,
+      marginBottom: 6,
     },
     intelligenceDesc: {
       ...theme.typography.bodyMd,
-      color: c.textPrimary,
+      color: c.textMuted,
       flexShrink: 1,
     },
     quickActionGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 10,
-      marginBottom: 16,
+      marginBottom: 18,
     },
     quickActionCard: {
       width: '48.5%',
       backgroundColor: c.bgSecondary,
-      borderWidth: 1,
-      borderColor: c.borderRose,
+      borderWidth: 0.5,
+      borderColor: c.borderSoft,
       borderRadius: 16,
       padding: 14,
       gap: 8,
     },
     quickActionTitle: {
-      ...theme.typography.titleLg,
-      color: c.accentGold,
+      ...theme.typography.titleMd,
+      color: c.textPrimary,
     },
     quickActionDesc: {
       ...theme.typography.bodySm,
@@ -276,13 +286,13 @@ export function makeHomeStyles(c: any) {
     ringHeroCard: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 24,
       paddingHorizontal: 20,
       paddingTop: 20,
       paddingBottom: 18,
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 18,
       shadowColor: c.shadow,
       shadowOpacity: 0.18,
       shadowRadius: 12,
@@ -294,7 +304,7 @@ export function makeHomeStyles(c: any) {
       alignItems: 'center',
       justifyContent: 'center',
       marginTop: 12,
-      marginBottom: 16,
+      marginBottom: 18,
     },
 
     ringCenter: {
@@ -334,7 +344,7 @@ export function makeHomeStyles(c: any) {
     emptyStateCard: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 20,
       padding: 24,
       alignItems: 'center',
@@ -378,7 +388,7 @@ export function makeHomeStyles(c: any) {
       flex: 1,
       backgroundColor: c.bgPrimary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 14,
       padding: 14,
       gap: 6,
@@ -395,10 +405,10 @@ export function makeHomeStyles(c: any) {
     awarenessCard: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
       borderRadius: 14,
       padding: 16,
-      marginBottom: 16,
+      marginBottom: 18,
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
@@ -411,7 +421,7 @@ export function makeHomeStyles(c: any) {
       justifyContent: 'center',
       backgroundColor: 'rgba(217,155,155,0.08)',
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderSoft,
     },
     awarenessCardInactive: {
       borderColor: c.accentRose,
@@ -437,5 +447,95 @@ export function makeHomeStyles(c: any) {
       ...theme.typography.bodySm,
       color: c.textMuted,
     },
+    pregnancyFocusCard: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 18,
+      gap: 10,
+    },
+
+    pregnancyFocusLabel: {
+      ...theme.typography.label,
+      color: c.accentRose,
+    },
+
+    pregnancyFocusRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+
+    pregnancyFocusChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+      backgroundColor: c.bgPrimary,
+    },
+
+    pregnancyFocusChipText: {
+      ...theme.typography.bodySm,
+      color: c.textPrimary,
+    }, 
+    
+    checkInCard: {
+      backgroundColor: c.cardSoft,
+      borderRadius: 20,
+      padding: 18,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderWidth: 0.5,
+      borderColor: c.borderSoft,
+    },
+
+    checkInTitle: {
+      color: c.textPrimary,
+      fontSize: 18,
+      fontWeight: '700',
+      marginBottom: 10,
+    },
+
+    checkInTags: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+
+    checkInTag: {
+      backgroundColor: c.bgPrimary,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+    },
+
+    checkInTagText: {
+      color: c.textPrimary,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    checkInRhythm: {
+      color: c.accentRose,
+      fontSize: 13,
+      fontWeight: '600',
+      marginBottom: 8,
+    },  
+
+    checkInCTA: {
+      color: c.accentRose,
+      fontWeight: '700',
+      fontSize: 14,
+    },
+    checkInContent: {
+      flex: 1,
+      paddingRight: 12,
+    },
+    
   })
 }

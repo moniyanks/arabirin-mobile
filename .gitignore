@@ -22,4 +22,4 @@ yarn-error.*
 *.tsbuildinfo
 /ios
 /android
-package-lock.json
+

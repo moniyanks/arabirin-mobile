@@ -3,34 +3,34 @@ import { Pressable, View, Text } from 'react-native'
 import { Sparkles, ChevronRight } from 'lucide-react-native'
 import { useRouter } from 'expo-router'
 import { makeHomeStyles } from '../../styles/screens/home'
-import type { StreakInsight } from '../../utils/streakHelper'
+import type { CheckInRhythmInsight } from '../../utils/streakHelper'
 
 type BodyAwarenessCardProps = {
   colors: any
-  streak: StreakInsight
+  rhythm: CheckInRhythmInsight
 }
 
-function getStreakDisplayText(streak: StreakInsight): string | null {
-  if (streak.status === 'inactive' || streak.count === 0) {
+function getRhythmDisplayText(rhythm: CheckInRhythmInsight): string | null {
+  if (rhythm.status === 'inactive' || rhythm.count === 0) {
     return null
   }
 
-  if (streak.count === 1) {
-    return '1 day of body awareness'
+  if (rhythm.count === 1) {
+    return '1 day in rhythm'
   }
 
-  return `${streak.count} days of body awareness`
+  return `${rhythm.count} days in rhythm`
 }
 
 export default function BodyAwarenessCard({
   colors,
-  streak,
+  rhythm,
 }: BodyAwarenessCardProps) {
   const styles = useMemo(() => makeHomeStyles(colors), [colors])
   const router = useRouter()
 
-  const isInactive = streak.status === 'inactive'
-  const streakDisplayText = getStreakDisplayText(streak)
+  const isInactive = rhythm.status === 'inactive'
+  const rhythmDisplayText = getRhythmDisplayText(rhythm)
 
   return (
     <Pressable
@@ -49,13 +49,13 @@ export default function BodyAwarenessCard({
       </View>
 
       <View style={styles.awarenessBody}>
-        <Text style={styles.awarenessTitle}>{streak.title}</Text>
+        <Text style={styles.awarenessTitle}>{rhythm.title}</Text>
 
-        {streakDisplayText ? (
-          <Text style={styles.awarenessStreak}>{streakDisplayText}</Text>
+        {rhythmDisplayText ? (
+          <Text style={styles.awarenessStreak}>{rhythmDisplayText}</Text>
         ) : null}
 
-        <Text style={styles.awarenessSubtitle}>{streak.subtitle}</Text>
+        <Text style={styles.awarenessSubtitle}>{rhythm.subtitle}</Text>
       </View>
 
       <ChevronRight color={colors.textMuted} size={18} strokeWidth={1.8} />

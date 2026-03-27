@@ -42,6 +42,9 @@ export type Profile = {
   age?: number | null
   height?: number | null
   weight?: number | null
+  pregnancy_lmp_date?: string | null
+  pregnancy_due_date?: string | null
+  pregnancy_dating_method?: 'lmp' | 'edd' | null  
   updated_at?: string
 } | null
 

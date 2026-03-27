@@ -34,7 +34,8 @@ export default function CalendarScreen() {
   const params = useLocalSearchParams<{
     date?: string
     openSheet?: string
-  }>()  
+    focus?: string
+  }>()   
 
   const {
     profile,
@@ -93,6 +94,8 @@ export default function CalendarScreen() {
     (log) => log.log_date === selectedDateStr
   )
   const todayLog = symptomLogs.find((log) => log.log_date === todayStr)
+
+  const incomingFocus = typeof params.focus === 'string' ? params.focus : null
 
   const todayLogSummary = useMemo(() => {
     if (!todayLog) return []
@@ -253,7 +256,17 @@ export default function CalendarScreen() {
             </Text>
           </Pressable>
         </View>
-
+        {incomingFocus ? (
+          <View style={styles.focusBanner}>
+            <Text style={styles.focusBannerLabel}>Suggested check-in focus</Text>
+            <Text style={styles.focusBannerValue}>
+              {incomingFocus.charAt(0).toUpperCase() + incomingFocus.slice(1)}
+            </Text>
+            <Text style={styles.focusBannerText}>
+              We brought this forward based on what may deserve noticing today.
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.monthNav}>
           <Pressable
             style={styles.monthBtn}

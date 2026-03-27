@@ -1,13 +1,14 @@
-import { differenceInCalendarDays, parseISO } from 'date-fns'
+import { differenceInCalendarDays, format, parseISO } from 'date-fns'
 
-export type StreakStatus = 'active' | 'grace' | 'inactive'
+export type CheckInRhythmStatus = 'active' | 'grace' | 'inactive'
 
-export type StreakInsight = {
+export type CheckInRhythmInsight = {
   count: number
-  status: StreakStatus
+  status: CheckInRhythmStatus
   title: string
   subtitle: string
   lastLoggedDate: string | null
+  hasCheckedInToday: boolean
 }
 
 const MAX_FRONT_GRACE_DAYS = 1
@@ -17,7 +18,7 @@ function toDateOnly(value: string): string {
 }
 
 function getTodayDateOnly(): string {
-  return new Date().toISOString().slice(0, 10)
+  return format(new Date(), 'yyyy-MM-dd')
 }
 
 function getUniqueSortedLogDates(logDates: string[]): string[] {
@@ -30,13 +31,16 @@ function getUniqueSortedLogDates(logDates: string[]): string[] {
   ).sort((a, b) => b.localeCompare(a))
 }
 
-type StreakComputation = {
+type CheckInRhythmComputation = {
   count: number
-  status: StreakStatus
+  status: CheckInRhythmStatus
   lastLoggedDate: string | null
 }
 
-function computeStreak(logDates: string[], todayDateOnly: string = getTodayDateOnly()): StreakComputation {
+function computeCheckInRhythm(
+  logDates: string[],
+  todayDateOnly: string = getTodayDateOnly()
+): CheckInRhythmComputation {
   const uniqueDates = getUniqueSortedLogDates(logDates)
 
   if (uniqueDates.length === 0) {
@@ -82,29 +86,35 @@ function computeStreak(logDates: string[], todayDateOnly: string = getTodayDateO
   }
 }
 
-function buildCopy(result: StreakComputation): Pick<StreakInsight, 'title' | 'subtitle'> {
+function buildCopy(
+  result: CheckInRhythmComputation
+): Pick<CheckInRhythmInsight, 'title' | 'subtitle'> {
   if (result.status === 'inactive' || result.count === 0) {
     return {
-      title: 'Today’s body check-in',
-      subtitle: 'Log even one symptom, mood, or energy shift to begin.',
+      title: 'Check in today',
+      subtitle: 'Begin building your rhythm with one gentle check-in.',
     }
   }
 
   if (result.status === 'grace') {
     return {
-      title: 'Today’s body check-in',
+      title: 'Check in today',
       subtitle: 'You’re still in rhythm. A check-in today keeps it going.',
     }
   }
 
   return {
-    title: 'Today’s body check-in',
-    subtitle: 'You checked in today.',
+    title: 'You checked in today',
+    subtitle: 'Your rhythm is building, one check-in at a time.',
   }
 }
 
-export function getStreakInsight(logDates: string[], todayDateOnly?: string): StreakInsight {
-  const computed = computeStreak(logDates, todayDateOnly)
+export function getCheckInRhythmInsight(
+  logDates: string[],
+  todayDateOnly?: string
+): CheckInRhythmInsight {
+  const effectiveToday = todayDateOnly ?? getTodayDateOnly()
+  const computed = computeCheckInRhythm(logDates, effectiveToday)
   const copy = buildCopy(computed)
 
   return {
@@ -113,5 +123,6 @@ export function getStreakInsight(logDates: string[], todayDateOnly?: string): St
     title: copy.title,
     subtitle: copy.subtitle,
     lastLoggedDate: computed.lastLoggedDate,
+    hasCheckedInToday: computed.lastLoggedDate === effectiveToday,
   }
 }

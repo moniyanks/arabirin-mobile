@@ -288,6 +288,27 @@ export function makeCalendarStyles(c: any) {
     todayCardButtonText: {
       ...theme.typography.button,
       color: c.bgPrimary,
-    },  
+    },
+    focusBanner: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 16,
+      gap: 6,
+    },
+    focusBannerLabel: {
+      ...theme.typography.label,
+      color: c.accentRose,
+    },
+    focusBannerValue: {
+      ...theme.typography.titleLg,
+      color: c.accentGold,
+    },
+    focusBannerText: {
+      ...theme.typography.bodySm,
+      color: c.textMuted,
+    },    
   })
 }
