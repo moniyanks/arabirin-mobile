@@ -11,6 +11,53 @@ type SistersPreviewCardProps = {
   mode?: string
 }
 
+function getContextCopy(conditions: string[], mode: string) {
+  const lower = conditions.map((c) => c.toLowerCase())
+
+  if (lower.includes('fibroids')) {
+    return {
+      title: 'Others are navigating this too.',
+      message:
+        'Women with fibroids often share patterns of heavy flow, pressure, and fatigue. Explore how others are making sense of it.',
+      footer: 'Find conversations that feel relevant to your experience.',
+    }
+  }
+
+  if (lower.includes('pcos')) {
+    return {
+      title: 'Others are navigating this too.',
+      message:
+        'Many women with PCOS talk about irregular timing, body changes, and uncertainty. Explore stories that may feel familiar.',
+      footer: 'Find conversations that meet you where you are.',
+    }
+  }
+
+  if (lower.includes('endometriosis')) {
+    return {
+      title: 'Others are navigating this too.',
+      message:
+        'Pain, fatigue, and cycle disruption can feel isolating. Explore how others with endometriosis are navigating it.',
+      footer: 'Find conversations that feel relevant to your experience.',
+    }
+  }
+
+  if (mode === 'ttc') {
+    return {
+      title: 'You’re not navigating this alone.',
+      message:
+        'Explore stories, support, and conversations from women trying to understand their fertile rhythm.',
+      footer: 'Find a circle that meets you where you are.',
+    }
+  }
+
+  return {
+    title: 'You’re not alone.',
+    message:
+      'Explore stories, support, and conversations that feel relevant to this season.',
+    footer: 'Find a circle that meets you where you are.',
+  }
+}
+
 export default function SistersPreviewCard({
   colors,
   conditions = [],
@@ -20,6 +67,7 @@ export default function SistersPreviewCard({
   const router = useRouter()
 
   const conditionDefinitions = getConditionDefinitions(conditions)
+  const copy = getContextCopy(conditions, mode)
 
   const fallbackTopicKeys =
     mode === 'ttc'
@@ -42,11 +90,14 @@ export default function SistersPreviewCard({
     >
       <Text style={styles.eyebrow}>Sister’s Circle</Text>
 
-      <Text style={styles.title}>You are not navigating this alone.</Text>
+      <Text style={styles.title}>{copy.title}</Text>
 
-      <Text style={styles.message}>
-        Explore shared experiences, supportive conversations, and real stories from women navigating patterns that may feel familiar.
-      </Text>
+      <Text style={styles.message}>{copy.message}</Text>
+      {conditionDefinitions.length > 0 ? (
+        <Text style={styles.contextLine}>
+          Circles related to your experience
+        </Text>
+      ) : null}
 
       <View style={styles.topicRow}>
         {topics.map((topic) => (
@@ -57,10 +108,8 @@ export default function SistersPreviewCard({
       </View>
 
       <View style={styles.footerRow}>
-        <Text style={styles.footerText}>
-          Enter the circle that feels most relevant today.
-        </Text>
-        <Text style={styles.cta}>Open</Text>
+        <Text style={styles.footerText}>{copy.footer}</Text>
+        <Text style={styles.cta}>Explore</Text>
       </View>
     </Pressable>
   )

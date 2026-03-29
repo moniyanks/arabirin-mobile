@@ -18,6 +18,9 @@ export default function BodyInsightCard({
   const styles = makeHomeStyles(colors)
   const router = useRouter()
 
+  const resolvedTitle =
+    title === 'Body insight' ? 'A little more to notice' : title
+
   return (
     <Pressable
       style={styles.intelligenceCard}
@@ -28,7 +31,7 @@ export default function BodyInsightCard({
       </View>
 
       <View style={styles.intelligenceBody}>
-        <Text style={styles.intelligenceTitle}>{title}</Text>
+        <Text style={styles.intelligenceTitle}>{resolvedTitle}</Text>
         <Text style={styles.intelligenceDesc}>{message}</Text>
       </View>
 

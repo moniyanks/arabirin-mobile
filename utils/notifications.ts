@@ -2,10 +2,13 @@ import * as Notifications from 'expo-notifications'
 import * as Device from 'expo-device'
 import { Platform } from 'react-native'
 import { supabase } from '../lib/supabase'
+import {
+  type AppMode,
+  shouldScheduleFertilityReminder,
+  shouldSchedulePeriodReminder,
+} from '../constants/appMode'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-export type UserMode = 'cycle' | 'ttc' | 'pregnancy' | 'general'
+// ── Notifications ─────────────────────────────────────────────────────────────────────
 
 export type NotificationIds = {
   periodIds: string[]
@@ -68,6 +71,13 @@ function parseLocalDate(dateStr: string): Date {
 
   return date
 }
+function toLocalDateString(date: Date = new Date()): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
 
 function daysBefore(date: Date, days: number): Date {
   const result = new Date(date)
@@ -109,8 +119,9 @@ async function scheduleOneTimeNotification(params: {
   title: string
   body: string
   date: Date
+  screen?: 'calendar' | 'home'
 }): Promise<string | null> {
-  const { title, body, date } = params
+  const { title, body, date, screen = 'calendar' } = params
 
   if (!isFutureDate(date)) return null
 
@@ -120,11 +131,12 @@ async function scheduleOneTimeNotification(params: {
         title,
         body,
         sound: true,
+        data: { screen },
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DATE,
-        date: params.date,
-      }
+        date,
+      },
     })
   } catch (error) {
     console.error('Failed to schedule one-time notification:', error)
@@ -299,6 +311,7 @@ export async function schedulePeriodReminder(nextPeriodDate: string): Promise<st
       title: 'Your period is coming 🌸',
       body: 'Based on your cycle, your period may start in 3 days.',
       date: threeDaysBefore,
+      screen: 'calendar',
     })
     if (id1) ids.push(id1)
 
@@ -306,6 +319,7 @@ export async function schedulePeriodReminder(nextPeriodDate: string): Promise<st
       title: 'Your period may start tomorrow 🌙',
       body: 'How are you feeling? Log your symptoms to track your rhythm.',
       date: oneDayBefore,
+      screen: 'calendar',
     })
     if (id2) ids.push(id2)
 
@@ -327,6 +341,7 @@ export async function scheduleFertileWindowReminder(
       title: 'Your fertile window starts tomorrow 🌿',
       body: 'Your most fertile days are approaching. Tap to view your calendar.',
       date: dayBefore,
+      screen: 'calendar',
     })
   } catch (error) {
     console.error('Failed to schedule fertile window reminder:', error)
@@ -341,6 +356,11 @@ export async function scheduleDailyLogReminder(): Promise<string | null> {
         title: 'How are you feeling today? 🌸',
         body: 'Take a moment to log your symptoms.',
         sound: true,
+        data: {
+          screen: 'calendar',
+          date: toLocalDateString(),
+          openSheet: true,
+        },
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -359,29 +379,28 @@ export async function scheduleDailyLogReminder(): Promise<string | null> {
 export async function rescheduleAllReminders(
   nextPeriodDate: string | null,
   fertileStart: string | null,
-  mode: UserMode
+  mode: AppMode
 ): Promise<void> {
   try {
     const existing = await loadNotificationIds()
 
-    if (existing?.periodIds.length) {
-      await cancelScheduledNotificationsById(existing.periodIds)
+    const idsToCancel = [
+      ...(existing?.periodIds ?? []),
+      ...(existing?.fertileId ? [existing.fertileId] : []),
+      ...(existing?.dailyId ? [existing.dailyId] : []),
+    ]
+
+    if (idsToCancel.length > 0) {
+      await cancelScheduledNotificationsById(idsToCancel)
     }
 
-    if (existing?.fertileId) {
-      await cancelScheduledNotificationsById([existing.fertileId])
-    }
-
-    if (existing?.dailyId) {
-      await cancelScheduledNotificationsById([existing.dailyId])
-    }
-
-    const periodIds = nextPeriodDate
-      ? await schedulePeriodReminder(nextPeriodDate)
-      : []
+    const periodIds =
+      shouldSchedulePeriodReminder(mode) && nextPeriodDate
+        ? await schedulePeriodReminder(nextPeriodDate)
+        : []
 
     const fertileId =
-      mode === 'ttc' && fertileStart
+      shouldScheduleFertilityReminder(mode) && fertileStart
         ? await scheduleFertileWindowReminder(fertileStart)
         : null
 
@@ -394,5 +413,45 @@ export async function rescheduleAllReminders(
     })
   } catch (error) {
     console.error('Failed to reschedule reminders:', error)
+  }
+}
+export async function enableNotificationsForUser(params: {
+  nextPeriodDate: string | null
+  fertileStart: string | null
+  mode: AppMode
+}): Promise<boolean> {
+  const registered = await registerAndSaveToken()
+  if (!registered) return false
+
+  await rescheduleAllReminders(
+    params.nextPeriodDate,
+    params.fertileStart,
+    params.mode
+  )
+
+  return true
+}
+
+export async function disableAllReminders(): Promise<void> {
+  try {
+    const existing = await loadNotificationIds()
+
+    const idsToCancel = [
+      ...(existing?.periodIds ?? []),
+      ...(existing?.fertileId ? [existing.fertileId] : []),
+      ...(existing?.dailyId ? [existing.dailyId] : []),
+    ]
+
+    if (idsToCancel.length > 0) {
+      await cancelScheduledNotificationsById(idsToCancel)
+    }
+
+    await saveNotificationIds({
+      periodIds: [],
+      fertileId: null,
+      dailyId: null,
+    })
+  } catch (error) {
+    console.error('Failed to disable reminders:', error)
   }
 }

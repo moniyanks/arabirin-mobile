@@ -1,152 +1,15 @@
 import { useMemo } from 'react'
-import { View, Text, Pressable, ScrollView } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import {
-  CalendarDays, Heart, Activity,
-  Moon, ChevronRight,
-} from 'lucide-react-native'
-import Svg, { Circle } from 'react-native-svg'
+
 import { useColors } from '../../styles'
 import { useAppData } from '../../context/AppDataContext'
 import { makeHomeStyles } from '../../styles/screens/home'
-import { formatDate, getCurrentCycleDay, getNextPeriodDate, getPhaseInfo } from '../../utils/cycleHelper'
-import { getGreetingText } from '../../utils/greetingHelper'
-import {
-  getPredictionConfidence, getBodyIntelligenceMessage,
-  getModeContext, getPhaseLabel, getRingInnerLabel, getPhaseSupportMessage, getEnhancedBodyInsight,
-} from '../../utils/homeHelper'
-import { calculateFertilityInsight, FERTILE_STATUS_MESSAGES } from '../../utils/fertilityIntelligence'
-import { format, parseISO } from 'date-fns'
 import HomeHeader from '../../components/home/HomeHeader'
-import BodyInsightCard from '../../components/home/BodyInsightCard'
-import CycleContextCard from '../../components/home/CycleContextCard'
-import QuickActionGrid from '../../components/home/QuickActionGrid'
-import SistersPreviewCard from '../../components/home/SistersPreviewCard'
-import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
-
-
-
-const SYMPTOM_SHORTCUTS = [
-  { key: 'cramps', label: 'Cramps', icon: '⚡' },
-  { key: 'mood',   label: 'Mood',   icon: '💭' },
-  { key: 'energy', label: 'Energy', icon: '✦'  },
-  { key: 'flow',   label: 'Flow',   icon: '◉'  },
-  { key: 'sleep',  label: 'Sleep',  icon: '◌'  },
-]
-
-const TTC_SHORTCUTS = [
-  { key: 'cervicalMucus',  label: 'CM',        icon: '💧' },
-  { key: 'ovulationPain',  label: 'O-Pain',    icon: '⚡' },
-  { key: 'spotting',       label: 'Spotting',  icon: '◉'  },
-  { key: 'mood',           label: 'Mood',      icon: '💭' },
-  { key: 'energy',         label: 'Energy',    icon: '✦'  },
-]
-
-const RING_SIZE    = 210
-const STROKE_WIDTH = 16
-const RADIUS       = (RING_SIZE - STROKE_WIDTH) / 2
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
-
-function getCycleRingProgress(currentCycleDay: number | null, cycleLength: number) {
-  if (!currentCycleDay || !cycleLength || cycleLength <= 0) return 0
-  return Math.min(currentCycleDay / cycleLength, 1)
-}
-
-function getRingStatusText({
-  phase,
-  currentCycleDay,
-  cycleLength,
-  nextPeriodDisplay,
-}: {
-  phase: string
-  currentCycleDay: number | null
-  cycleLength: number
-  nextPeriodDisplay: string
-}) {
-  if (phase === 'fertile') return ' Fertile window active'
-  if (phase === 'ovulation') return 'Peak fertile timing'
-  if (phase === 'period') return currentCycleDay ? `Day ${currentCycleDay} of your period` : 'Period phase'
-  if (phase === 'luteal') return `Period expected ${nextPeriodDisplay}`
-  if (phase === 'follicular') return currentCycleDay ? `Cycle day ${currentCycleDay} of ${cycleLength || 28}` : 'Follicular phase'
-  return currentCycleDay ? `Cycle day ${currentCycleDay} of ${cycleLength || 28}` : 'Keep logging to build your rhythm'
-}
-
-function TtcHeroCard({
-  colors, styles, periods, symptomLogs, profile,
-}: {
-  colors:      any
-  styles:      any
-  periods:     any[]
-  symptomLogs: any[]
-  profile:     any
-}) {
-  const insight = useMemo(
-    () => calculateFertilityInsight(periods, symptomLogs, profile),
-    [periods, symptomLogs, profile]
-  )
-
-  const formatShort = (d: string | null) =>
-    d ? format(parseISO(d), 'd MMM') : '—'
-
-  const statusMessage = FERTILE_STATUS_MESSAGES[insight.fertileWindowStatus]
-
-  const heroText =
-    insight.fertileWindowStatus === 'no_data'
-      ? 'Log your first period to unlock your fertile window predictions.'
-      : insight.fertileWindowStatus === 'in_fertile'
-        ? 'You are in your fertile window.'
-        : insight.fertileWindowStatus === 'ovulation_day'
-          ? 'Today is your estimated ovulation day.'
-          : insight.fertileWindowStatus === 'after_ovulation'
-            ? 'Your fertile window has passed this cycle.'
-            : `${insight.daysUntilFertile} day${insight.daysUntilFertile !== 1 ? 's' : ''} until your fertile window`
-
-  return (
-    <View style={styles.heroCard}>
-      <View style={styles.phaseBadge}>
-        <Text style={styles.phaseBadgeText}>
-          {insight.fertileWindowStatus === 'in_fertile' || insight.fertileWindowStatus === 'ovulation_day'
-            ? 'FERTILE WINDOW'
-            : 'TRYING TO CONCEIVE'
-          }
-        </Text>
-      </View>
-
-      <Text style={styles.heroTitle}>{heroText}</Text>
-
-      {insight.fertileStart && (
-        <View style={{ gap: 6, alignItems: 'center' }}>
-          <Text style={styles.heroMessage}>
-            Fertile window: {formatShort(insight.fertileStart)} — {formatShort(insight.fertileEnd)}
-          </Text>
-          <Text style={styles.heroMessage}>
-            Ovulation day: {formatShort(insight.ovulationDay)}
-          </Text>
-        </View>
-      )}
-
-      {insight.fertileWindowStatus === 'no_data' && (
-        <Text style={styles.heroMessage}>
-          {statusMessage}
-        </Text>
-      )}
-
-      <View style={[styles.confidencePill,
-        insight.confidence === 'high'   ? styles.confidenceHigh   :
-        insight.confidence === 'medium' ? styles.confidenceMedium : styles.confidenceLow
-      ]}>
-        <Text style={[styles.confidenceText,
-          insight.confidence === 'high'   ? styles.confidenceHighText   :
-          insight.confidence === 'medium' ? styles.confidenceMediumText : styles.confidenceLowText
-        ]}>
-          {insight.confidence === 'high'   ? 'High confidence' :
-           insight.confidence === 'medium' ? 'Good confidence' : 'Building accuracy'}
-        </Text>
-      </View>
-    </View>
-  )
-}
+import EmptyStateCard from '../../components/home/EmptyStateCard'
+import HomeSectionRenderer from '../../components/home/renderHomeSection'
+import { buildHomeViewModel } from '../../features/home/buildHomeViewModel'
 
 export default function HomeScreen() {
   const colors = useColors()
@@ -155,37 +18,20 @@ export default function HomeScreen() {
 
   const { profile, periods, symptomLogs, cycleLength, periodLength } = useAppData()
 
-  const name        = profile?.name?.trim() || 'Sister'
-  const mode        = profile?.mode || 'cycle'
+  const home = useMemo(
+    () =>
+      buildHomeViewModel({
+        profile,
+        periods,
+        symptomLogs,
+        cycleLength,
+        periodLength,
+      }),
+    [profile, periods, symptomLogs, cycleLength, periodLength]
+  )
+
+  const name = profile?.name?.trim() || 'Sister'
   const firstLetter = name.charAt(0).toUpperCase() || 'A'
-
-  const greeting           = getGreetingText()
-  const currentCycleDay    = getCurrentCycleDay(periods, cycleLength)
-  const nextPeriodDate     = getNextPeriodDate(periods, cycleLength)
-  const phaseInfo          = getPhaseInfo(currentCycleDay, cycleLength, periodLength)
-  const predictionConfidence = getPredictionConfidence(periods.length)
-  const bodyIntelligence   = getBodyIntelligenceMessage({ mode, phase: phaseInfo.phase, symptomLogs, periodsCount: periods.length })
-  const ringInnerLabel     = getRingInnerLabel(phaseInfo.phase)
-  const phaseSupportMessage = getPhaseSupportMessage(phaseInfo.phase)
-  const nextPeriodDisplay  = nextPeriodDate ? formatDate(nextPeriodDate) : '—'
-  const ringProgress       = getCycleRingProgress(currentCycleDay, cycleLength)
-  const strokeDashoffset   = CIRCUMFERENCE * (1 - ringProgress)
-  const enhancedBodyInsight = getEnhancedBodyInsight({
-    mode,
-    phase: phaseInfo.phase,
-    cycleDay: currentCycleDay,
-    nextPeriodDisplay,
-    conditions: profile?.conditions || [],
-  })
-
-  const ringStatusText = getRingStatusText({
-    phase: phaseInfo.phase,
-    currentCycleDay,
-    cycleLength,
-    nextPeriodDisplay,
-  })
-
-  const hasNoPeriods = periods.length === 0
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -194,224 +40,34 @@ export default function HomeScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top bar */}
-        <HomeHeader
-          colors={colors}
-          firstLetter={firstLetter}
-        />
+        <HomeHeader colors={colors} firstLetter={firstLetter} />
 
-        {/* Greeting */}
         <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>{greeting}, {name} 🌸</Text>
-          <Text style={styles.context}>{getModeContext(mode)}</Text>
+          <Text style={styles.greeting}>
+            {home.greeting}, {name} 🌸
+          </Text>
+          <Text style={styles.context}>{home.contextLabel}</Text>
         </View>
 
-        {/* ── Empty state — no periods logged yet ── */}
-        {hasNoPeriods ? (
-          <View style={styles.emptyStateCard}>
-            <Text style={styles.emptyStateIcon}>◉</Text>
-            <Text style={styles.emptyStateTitle}>
-              Your cycle story starts here
-            </Text>
-            <Text style={styles.emptyStateDesc}>
-              Log your first period to unlock your cycle ring, predictions, and body insights.
-            </Text>
-            <Pressable
-              style={styles.emptyStateBtn}
-              onPress={() => router.push('/(tabs)/calendar')}
-            >
-              <Text style={styles.emptyStateBtnText}>Log my first period →</Text>
-            </Pressable>
-
-            {/* Still show quick actions so app feels useful */}
-            <View style={styles.emptyStateGrid}>
-              <Pressable
-                style={styles.emptyStateGridCard}
-                onPress={() => router.push('/(tabs)/health')}
-              >
-                <Heart color={colors.accentRose} size={18} strokeWidth={1.8} />
-                <Text style={styles.emptyStateGridTitle}>Health Hub</Text>
-                <Text style={styles.emptyStateGridDesc}>
-                  Learn about conditions that affect us
-                </Text>
-              </Pressable>
-              <Pressable
-                style={styles.emptyStateGridCard}
-                onPress={() => router.push('/(tabs)/sisters')}
-              >
-                <Moon color={colors.accentRose} size={18} strokeWidth={1.8} />
-                <Text style={styles.emptyStateGridTitle}>Sisters Circle</Text>
-                <Text style={styles.emptyStateGridDesc}>
-                  Join the founding sisters waitlist
-                </Text>
-              </Pressable>
-            </View>
-          </View>
+        {home.emptyState ? (
+          <EmptyStateCard
+            styles={styles}
+            title={home.emptyState.title}
+            description={home.emptyState.description}
+            ctaLabel={home.emptyState.ctaLabel}
+            onPress={() => router.push('/(tabs)/calendar')}
+          />
         ) : (
-          <>
-            <BodyInsightCard
-              colors={colors}
-              title={enhancedBodyInsight.title}
-              message={enhancedBodyInsight.message}
-            />
-            <MedicalDisclaimer />
-
-            {/* ── Cycle ring or journey card ── */}
-            {mode === 'cycle' ? (
-              <>
-                <CycleContextCard
-                  colors={colors}
-                  cycleDay={currentCycleDay}
-                  phaseLabel={getPhaseLabel(phaseInfo.phase)}
-                  phaseSupportText={phaseSupportMessage}
-                  nextPeriodText={nextPeriodDisplay}
-                />
-                <View style={styles.ringHeroCard}>
-                  <View style={styles.phaseBadge}>
-                    <Text style={styles.phaseBadgeText}>{getPhaseLabel(phaseInfo.phase)}</Text>
-                  </View>
-                  <View style={styles.ringWrap}>
-                    <Svg width={RING_SIZE} height={RING_SIZE}>
-                      <Circle
-                        stroke={colors.borderRose}
-                        fill="none"
-                        cx={RING_SIZE / 2}
-                        cy={RING_SIZE / 2}
-                        r={RADIUS}
-                        strokeWidth={STROKE_WIDTH}
-                      />
-                      <Circle
-                        stroke={colors.accentRose}
-                        fill="none"
-                        cx={RING_SIZE / 2}
-                        cy={RING_SIZE / 2}
-                        r={RADIUS}
-                        strokeWidth={STROKE_WIDTH}
-                        strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-                        strokeDashoffset={strokeDashoffset}
-                        strokeLinecap="round"
-                        transform={`rotate(-90, ${RING_SIZE / 2}, ${RING_SIZE / 2})`}
-                      />
-                    </Svg>
-                    <View style={styles.ringCenter}>
-                      {phaseInfo.phase === 'period' ? (
-                        <>
-                          <Text style={styles.ringCenterValue}>
-                            {currentCycleDay ? `Day ${currentCycleDay}` : '—'}
-                          </Text>
-                          <Text style={styles.ringCenterSubLabel}>{ringInnerLabel}</Text>
-                        </>
-                      ) : (
-                        <Text style={styles.ringCenterValueAlt}>{ringInnerLabel}</Text>
-                      )}
-                    </View>
-                  </View>
-                  <Text style={styles.heroMessage}>{ringStatusText}</Text>
-                </View>
-                </>
-            
-            ) : mode === 'ttc' ? (
-              <TtcHeroCard
-                colors={colors}
-                styles={styles}
-                periods={periods}
-                symptomLogs={symptomLogs}
-                profile={profile}
-              />
-
-
-            ) : (
-              <View style={styles.heroCard}>
-                <View style={styles.phaseBadge}>
-                  <Text style={styles.phaseBadgeText}>{getModeContext(mode)}</Text>
-                </View>
-                <Text style={styles.heroTitle}>Your journey today</Text>
-                <Text style={styles.heroMessage}>{bodyIntelligence.message}</Text>
-              </View>
-            )}
-
-            {/* Next period prediction */}
-            {mode === 'cycle' && nextPeriodDate && predictionConfidence && (
-              <View style={styles.predictionRow}>
-                <View>
-                  <Text style={styles.predictionLabel}>Next period</Text>
-                  <Text style={styles.predictionDate}>{nextPeriodDisplay}</Text>
-                </View>
-                <View style={[
-                  styles.confidencePill,
-                  predictionConfidence.tone === 'high'   && styles.confidenceHigh,
-                  predictionConfidence.tone === 'medium' && styles.confidenceMedium,
-                  predictionConfidence.tone === 'low'    && styles.confidenceLow,
-                ]}>
-                  <Text style={[
-                    styles.confidenceText,
-                    predictionConfidence.tone === 'high'   && styles.confidenceHighText,
-                    predictionConfidence.tone === 'medium' && styles.confidenceMediumText,
-                    predictionConfidence.tone === 'low'    && styles.confidenceLowText,
-                  ]}>
-                    {predictionConfidence.label}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {/* Log banner */}
-            <Pressable style={styles.logBanner} onPress={() => router.push('/(tabs)/calendar')}>
-              <Text style={styles.logBannerText}>{mode === 'ttc' ? 'Log today\'s signs' : 'Log today\'s symptoms'}</Text>
-              <ChevronRight color={colors.bgPrimary} size={20} strokeWidth={1.8} />
-            </Pressable>
-
-            {/* Symptom shortcuts */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.shortcutRow}
-            >
-              {(mode === 'ttc' ? TTC_SHORTCUTS : SYMPTOM_SHORTCUTS).map((item) => (
-                <Pressable
-                  key={item.key}
-                  style={styles.shortcutBtn}
-                  onPress={() => router.push('/(tabs)/calendar')}
-                >
-                  <Text style={styles.shortcutIcon}>{item.icon}</Text>
-                  <Text style={styles.shortcutLabel}>{item.label}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-
-            {/* Stats row */}
-            {/*
-            <View style={styles.statsRow}>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Cycle</Text>
-                <Text style={styles.statValue}>
-                  {mode === 'cycle' && cycleLength ? `${cycleLength}d` : '—'}
-                </Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Day</Text>
-                <Text style={styles.statValue}>
-                  {mode === 'cycle' && currentCycleDay ? currentCycleDay : '—'}
-                </Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Next</Text>
-                <Text style={styles.statValue}>
-                  {mode === 'cycle' ? nextPeriodDisplay : '—'}
-                </Text>
-              </View>
-            </View>
-            */}
-
-            {/* Quick action grid */}
-            <QuickActionGrid colors={colors}/>
-            <SistersPreviewCard
+          home.sections.map((section, index) => (
+            <HomeSectionRenderer
+              key={`${section.type}-${index}`}
+              section={section}
+              home={home}
+              styles={styles}
               colors={colors}
               conditions={profile?.conditions || []}
-              mode={mode}
             />
-                      
-          </>
+          ))
         )}
       </ScrollView>
     </SafeAreaView>

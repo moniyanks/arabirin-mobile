@@ -31,25 +31,20 @@ export function makeCycleContextCardStyles(c: any) {
     },
 
     eyebrow: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
+      ...theme.typography.label,
       color: c.textMuted,
       marginBottom: 6,
     },
 
     cycleDay: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 30,
-      lineHeight: 34,
+      ...theme.typography.displayLg,
       color: c.accentGold,
       marginBottom: 4,
     },
 
     phaseLabel: {
-      fontFamily: theme.fonts.sansSemiBold,
-      fontSize: 14,
+      ...theme.typography.bodyMd,
+      fontWeight: '600',
       color: c.accentRose,
     },
 
@@ -58,17 +53,13 @@ export function makeCycleContextCardStyles(c: any) {
     },
 
     metaLabel: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
+      ...theme.typography.label,
       color: c.textMuted,
       marginBottom: 4,
     },
 
     metaValue: {
-      fontFamily: theme.fonts.sansSemiBold,
-      fontSize: 15,
+      ...theme.typography.button,
       color: c.accentGold,
     },
 
@@ -80,9 +71,7 @@ export function makeCycleContextCardStyles(c: any) {
     },
 
     supportText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 14,
-      lineHeight: 21,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
     },
   })

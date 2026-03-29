@@ -33,8 +33,7 @@ export function makeCalendarStyles(c: any) {
       justifyContent: 'center',
     },
     monthLabel: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 24,
+      ...theme.typography.displayMd,
       color: c.accentGold,
     },
     calendarCard: {
@@ -55,10 +54,8 @@ export function makeCalendarStyles(c: any) {
       alignItems: 'center',
     },
     weekdayText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.label,
       color: c.textMuted,
-      textTransform: 'uppercase',
     },
     grid: {
       flexDirection: 'row',
@@ -81,8 +78,7 @@ export function makeCalendarStyles(c: any) {
       position: 'relative',
     },
     dayText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 14,
+      ...theme.typography.bodyMd,
       color: c.textPrimary,
     },
     dayOutsideMonth: {
@@ -151,8 +147,7 @@ export function makeCalendarStyles(c: any) {
     },
 
     legendText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textMuted,
     },
     detailCard: {
@@ -164,16 +159,13 @@ export function makeCalendarStyles(c: any) {
       marginBottom: 16,
     },
     detailDate: {
-      fontFamily: theme.fonts.serifSemiBold,
-      fontSize: 22,
+      ...theme.typography.displayMd,
       color: c.accentGold,
       marginBottom: 8,
     },
     detailText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 14,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
-      lineHeight: 21,
       marginBottom: 14,
     },
     badgeRow: {
@@ -191,11 +183,8 @@ export function makeCalendarStyles(c: any) {
       backgroundColor: c.bgPrimary,
     },
     badgeText: {
-      fontFamily: theme.fonts.sansMedium,
-      fontSize: 11,
+      ...theme.typography.label,
       color: c.accentRose,
-      textTransform: 'uppercase',
-      letterSpacing: 0.8,
     },
     primaryBtn: {
       minHeight: 50,
@@ -205,8 +194,7 @@ export function makeCalendarStyles(c: any) {
       justifyContent: 'center',
     },
     primaryBtnText: {
-      fontFamily: theme.fonts.sansSemiBold,
-      fontSize: 15,
+      ...theme.typography.button,
       color: c.bgPrimary,
     },
     logSummary: {
@@ -225,8 +213,7 @@ export function makeCalendarStyles(c: any) {
       backgroundColor: c.bgSecondary,
     },
     logChipText: {
-      fontFamily: theme.fonts.sans,
-      fontSize: 12,
+      ...theme.typography.bodySm,
       color: c.textPrimary,
       textTransform: 'capitalize',
     },
@@ -244,12 +231,84 @@ export function makeCalendarStyles(c: any) {
     },
     historyBtnText: {
       flex: 1,
-      fontFamily: theme.fonts.sans,
-      fontSize: 14,
+      ...theme.typography.bodyMd,
       color: c.textMuted,
     },
     primaryBtnDisabled: {
       opacity: 0.5,
     },
+    todayCard: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 16,
+      gap: 8,
+    },
+    todayCardEyebrow: {
+      ...theme.typography.label,
+      color: c.accentRose,
+    },
+    todayCardTitle: {
+      ...theme.typography.displayMd,
+      color: c.accentGold,
+    },
+    todayCardText: {
+      ...theme.typography.bodyMd,
+      color: c.textMuted,
+    },
+    todayChipRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginTop: 4,
+    },
+    todayChip: {
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: c.bgPrimary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+    },
+    todayChipText: {
+      ...theme.typography.bodySm,
+      color: c.textPrimary,
+    },
+    todayCardButton: {
+      marginTop: 6,
+      backgroundColor: c.accentRose,
+      borderRadius: 12,
+      paddingVertical: 13,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    todayCardButtonText: {
+      ...theme.typography.button,
+      color: c.bgPrimary,
+    },
+    focusBanner: {
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 16,
+      gap: 6,
+    },
+    focusBannerLabel: {
+      ...theme.typography.label,
+      color: c.accentRose,
+    },
+    focusBannerValue: {
+      ...theme.typography.titleLg,
+      color: c.accentGold,
+    },
+    focusBannerText: {
+      ...theme.typography.bodySm,
+      color: c.textMuted,
+    },    
   })
 }
