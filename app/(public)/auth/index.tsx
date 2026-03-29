@@ -1,16 +1,44 @@
 import { useState } from 'react'
 import {
-  View, Text, TextInput, Pressable,
-  KeyboardAvoidingView, Platform,
-  ScrollView, ActivityIndicator,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native'
+import Svg, { Circle } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { supabase } from '../../../lib/supabase'
 import { useColors } from '../../../styles'
 import { makeAuthStyles } from '../../../styles/screens/auth'
+import ArabirinIcon from '../../../assets/icons/arabirin.svg'
 
 type Step = 'welcome' | 'email' | 'otp'
+
+function ArcDecoration({ color }: { color: string }) {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        height: 280,
+      }}
+    >
+      <Svg width="390" height="280" viewBox="0 0 390 280" fill="none">
+        <Circle cx="195" cy="-20" r="160" stroke={color} strokeWidth={0.5} opacity={0.12} />
+        <Circle cx="195" cy="-20" r="210" stroke={color} strokeWidth={0.4} opacity={0.07} />
+        <Circle cx="195" cy="-20" r="260" stroke={color} strokeWidth={0.35} opacity={0.04} />
+      </Svg>
+    </View>
+  )
+}
 
 export default function AuthScreen() {
   const colors = useColors()
@@ -50,8 +78,10 @@ export default function AuthScreen() {
       })
       if (err) throw new Error('Invalid or expired code. Please request a new one.')
 
-      // Check what user needs next and navigate directly
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
       if (!user) throw new Error('Authentication failed')
 
       const { data: consent } = await supabase
@@ -66,13 +96,9 @@ export default function AuthScreen() {
         .eq('id', user.id)
         .maybeSingle()
 
-      if (!consent) {
-        router.replace('/(setup)/consent')
-      } else if (!profile) {
-        router.replace('/(setup)/onboarding')
-      } else {
-        router.replace('/(tabs)')
-      }
+      if (!consent) router.replace('/(setup)/consent')
+      else if (!profile) router.replace('/(setup)/onboarding')
+      else router.replace('/(tabs)')
     } catch (err: any) {
       setError(err.message || 'Failed to verify code')
     } finally {
@@ -87,34 +113,45 @@ export default function AuthScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={s.scroll}
+          contentContainerStyle={{ flexGrow: 1}}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={s.inner}>
-
-            {/* ── Welcome ── */}
             {step === 'welcome' && (
               <View style={s.welcomeContainer}>
-                <Text style={s.logoMark}>◉</Text>
-                <Text style={s.appName}>Welcome to Àràbìrín</Text>
+                <ArcDecoration color={colors.accentRose} />
+
+                <View style={s.logoMark}>
+                  <ArabirinIcon width={80} height={80} color={colors.accentRose} />
+                </View>
+
+                <Text style={s.appName}>Welcome to{'\n'}Àràbìrín</Text>
+
                 <Text style={s.subtitle}>
-                  Your body holds wisdom.{'\n'}Let's help you understand it.
+                  Your body holds wisdom.{'\n'}Let&apos;s help you understand it.
                 </Text>
+
                 <Pressable style={s.btn} onPress={() => setStep('email')}>
-                  <Text style={s.btnText}>Let's Begin →</Text>
+                  <Text style={s.btnText}>Let&apos;s Begin →</Text>
+                </Pressable>
+
+                <Pressable style={s.ghostBtn} onPress={() => setStep('email')}>
+                  <Text style={s.ghostBtnText}>
+                    Already have an account? <Text style={{ textDecorationLine: 'underline' }}>Sign in</Text>
+                  </Text>
                 </Pressable>
               </View>
             )}
 
-            {/* ── Email ── */}
             {step === 'email' && (
               <View style={s.stepContainer}>
                 <Text style={s.stepLabel}>Sign in or create an account</Text>
-                <Text style={s.heading}>What’s your email?</Text>
+                <Text style={s.heading}>What&apos;s your email?</Text>
                 <Text style={s.hint}>
-                  We’ll send you a one-time code.{'\n'}No password needed.
+                  We&apos;ll send you a one-time code.{'\n'}No password needed.
                 </Text>
+
                 <TextInput
                   style={s.input}
                   placeholder="your@email.com"
@@ -126,27 +163,23 @@ export default function AuthScreen() {
                   autoComplete="email"
                   autoFocus
                 />
+
                 {!!error && <Text style={s.error}>{error}</Text>}
+
                 <Pressable
                   style={[s.btn, (!email.includes('@') || loading) && s.btnDisabled]}
                   onPress={handleSendOtp}
                   disabled={!email.includes('@') || loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={s.btnText}>Send code →</Text>
-                  }
+                  {loading ? <ActivityIndicator color={colors.accentRose} /> : <Text style={s.btnText}>Send code →</Text>}
                 </Pressable>
-                <Pressable
-                  style={s.ghostBtn}
-                  onPress={() => setStep('welcome')}
-                >
+
+                <Pressable style={s.ghostBtn} onPress={() => setStep('welcome')}>
                   <Text style={s.ghostBtnText}>← Back</Text>
                 </Pressable>
               </View>
             )}
 
-            {/* ── OTP ── */}
             {step === 'otp' && (
               <View style={s.stepContainer}>
                 <Text style={s.stepLabel}>Verify</Text>
@@ -155,6 +188,7 @@ export default function AuthScreen() {
                   We sent a 6-digit code to{'\n'}
                   <Text style={s.emailHighlight}>{email}</Text>
                 </Text>
+
                 <TextInput
                   style={s.otpInput}
                   placeholder="000000"
@@ -165,26 +199,29 @@ export default function AuthScreen() {
                   autoComplete="one-time-code"
                   autoFocus
                 />
+
                 {!!error && <Text style={s.error}>{error}</Text>}
+
                 <Pressable
                   style={[s.btn, (otp.length < 6 || loading) && s.btnDisabled]}
                   onPress={handleVerifyOtp}
                   disabled={otp.length < 6 || loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={s.btnText}>Verify →</Text>
-                  }
+                  {loading ? <ActivityIndicator color={colors.accentRose} /> : <Text style={s.btnText}>Verify →</Text>}
                 </Pressable>
+
                 <Pressable
                   style={s.ghostBtn}
-                  onPress={() => { setStep('email'); setOtp(''); setError('') }}
+                  onPress={() => {
+                    setStep('email')
+                    setOtp('')
+                    setError('')
+                  }}
                 >
                   <Text style={s.ghostBtnText}>← Use a different email</Text>
                 </Pressable>
               </View>
             )}
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

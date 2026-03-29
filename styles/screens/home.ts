@@ -536,6 +536,41 @@ export function makeHomeStyles(c: any) {
       flex: 1,
       paddingRight: 12,
     },
+    journeyCard: {
+      backgroundColor: c.cardSoft,
+      borderRadius: 29,
+      padding: 18,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+      marginBottom: 18,
+    },
+
+    journeyCardTitle: {
+      ...theme.typography.titleMd,
+      color: c.textPrimary
+    },
+
+    journeyCardText: {
+      ...theme.typography.bodyMd,
+      color: c.textMuted,
+    },
+
+    journeyCardButton: {
+      marginTop: 8,
+      alignSelf: 'flex-start',
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 999,
+      backgroundColor: c.bgPrimary,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+    },
+
+    journeyCardButtonText: {
+      ...theme.typography.label,
+      color: c.accentRose,
+    },
     
   })
 }

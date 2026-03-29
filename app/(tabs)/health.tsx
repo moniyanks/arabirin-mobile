@@ -9,12 +9,16 @@ import { useColors } from '../../styles'
 import { makeHealthStyles } from '../../styles/screens/health'
 import { useAppData } from '../../context/AppDataContext'
 import { getPhaseInfo } from '../../utils/cycleHelper'
-import type { PhaseKey } from '../../utils/cycleHelper'
 import { ConditionIntelligence } from '../../components/health/ConditionIntelligence'
 import { FertilityIntelligence } from '../../components/health/FertilityIntelligence'
 import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
+import {
+  showsCycleEducation,
+  showsFertilityIntelligence,
+  showsCycleEmptyState,
+  showsConditionIntelligence,
+} from '../../utils/healthModeHelper'
 
-// ── Phase education content ──
 const PHASE_EDUCATION: Record<string, {
   title: string
   body: string
@@ -59,7 +63,6 @@ const PHASE_EDUCATION: Record<string, {
   },
 }
 
-// ── Health conditions ──
 const HEALTH_CONDITIONS = [
   {
     key: 'fibroids',
@@ -163,24 +166,39 @@ type Condition = typeof HEALTH_CONDITIONS[number] | null
 
 export default function HealthScreen() {
   const colors = useColors()
-  const s      = useMemo(() => makeHealthStyles(colors), [colors])
+  const s = useMemo(() => makeHealthStyles(colors), [colors])
   const router = useRouter()
-  const { periods, cycleLength, periodLength } = useAppData()
+  const { profile, periods, cycleLength, periodLength } = useAppData()
 
   const [activeCondition, setActiveCondition] = useState<Condition>(null)
 
+  const mode = profile?.mode ?? 'cycle'
+  const supportsCyclePhases = showsCycleEducation(mode)
+  const showFertility = showsFertilityIntelligence(mode)
+  const showConditions = showsConditionIntelligence(mode)
+  const showEmptyState = showsCycleEmptyState(mode, periods.length)
+
+
   const currentDay = periods.length > 0
-    ? Math.max(1, Math.ceil((Date.now() - new Date(periods[periods.length - 1].startDate).getTime()) / 86400000))
+    ? Math.max(
+        1,
+        Math.ceil(
+          (Date.now() - new Date(periods[periods.length - 1].startDate).getTime()) / 86400000
+        )
+      )
     : 1
 
   const phaseInfo = getPhaseInfo(currentDay, cycleLength || 28, periodLength || 5)
-  const phase     = phaseInfo.phase || 'unknown'
-  const edu       = PHASE_EDUCATION[phase] ?? PHASE_EDUCATION.unknown
+  const phase = phaseInfo.phase || 'unknown'
+  const edu = PHASE_EDUCATION[phase] ?? PHASE_EDUCATION.unknown
 
   const phaseLabel: Record<string, string> = {
-    period: 'Menstrual', follicular: 'Follicular',
-    fertile: 'Fertile', ovulation: 'Ovulation',
-    luteal: 'Luteal', unknown: 'Cycle',
+    period: 'Menstrual',
+    follicular: 'Follicular',
+    fertile: 'Fertile',
+    ovulation: 'Ovulation',
+    luteal: 'Luteal',
+    unknown: 'Cycle',
   }
 
   return (
@@ -190,33 +208,36 @@ export default function HealthScreen() {
         contentContainerStyle={s.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Phase education card */}
-        <View style={s.phaseCard}>
-          <View style={s.phaseCardHeader}>
-            <View style={s.phasePill}>
-              <Text style={s.phasePillText}>{phaseLabel[phase] ?? phase}</Text>
+        {supportsCyclePhases && (
+          <View style={s.phaseCard}>
+            <View style={s.phaseCardHeader}>
+              <View style={s.phasePill}>
+                <Text style={s.phasePillText}>{phaseLabel[phase] ?? phase}</Text>
+              </View>
+              <Text style={s.phaseCardTitle}>{edu.title}</Text>
             </View>
-            <Text style={s.phaseCardTitle}>{edu.title}</Text>
+
+            <Text style={s.phaseCardBody}>{edu.body}</Text>
+
+            <View style={s.tipBox}>
+              <Text style={s.tipLabel}>{edu.tipLabel}</Text>
+              <Text style={s.tipText}>{edu.tip}</Text>
+            </View>
+
+            {phase === 'unknown' && (
+              <Pressable
+                style={s.logNowBtn}
+                onPress={() => router.push('/(tabs)/calendar')}
+              >
+                <Text style={s.logNowBtnText}>Log my period →</Text>
+              </Pressable>
+            )}
           </View>
+        )}
 
-          <Text style={s.phaseCardBody}>{edu.body}</Text>
-
-          <View style={s.tipBox}>
-            <Text style={s.tipLabel}>{edu.tipLabel}</Text>
-            <Text style={s.tipText}>{edu.tip}</Text>
-          </View>
-
-          {phase === 'unknown' && (
-            <Pressable
-              style={s.logNowBtn}
-              onPress={() => router.push('/(tabs)/calendar')}
-            >
-              <Text style={s.logNowBtnText}>Log my period →</Text>
-            </Pressable>
-          )}
-        </View>
         <MedicalDisclaimer />
-        {periods.length === 0 && (
+
+        {showEmptyState && (
           <View style={s.emptyStateCard}>
             <Text style={s.emptyStateTitle}>Start building your health picture</Text>
             <Text style={s.emptyStateText}>
@@ -231,27 +252,30 @@ export default function HealthScreen() {
             </Pressable>
           </View>
         )}
-         <Pressable
-            style={s.appointmentBtn}
-            onPress={() => router.push('/(modals)/appointment')}
-          >
-            <View style={s.appointmentBtnLeft}>
-              <Text style={s.appointmentBtnTitle}>Appointment Prep</Text>
-              <Text style={s.appointmentBtnDesc}>
-                Your symptom report, cycle data and doctor questions — ready to share
-              </Text>
-            </View>
-            <ChevronRight color={colors.accentRose} size={20} strokeWidth={1.5} />
-          </Pressable>
 
-          {/* Condition Intelligence Score */}
-         <ConditionIntelligence colors={colors} /> 
-         <FertilityIntelligence colors={colors} />
+        <Pressable
+          style={s.appointmentBtn}
+          onPress={() => router.push('/(modals)/appointment')}
+        >
+          <View style={s.appointmentBtnLeft}>
+            <Text style={s.appointmentBtnTitle}>Appointment Prep</Text>
+            <Text style={s.appointmentBtnDesc}>
+              Your symptom report, cycle data and doctor questions — ready to share
+            </Text>
+          </View>
+          <ChevronRight color={colors.accentRose} size={20} strokeWidth={1.5} />
+        </Pressable>
 
+        {showConditions && (
+          <ConditionIntelligence colors={colors} />
+        )}
 
-        {/* Health Hub */}
+        {showFertility && (
+          <FertilityIntelligence colors={colors} />
+        )}
+
         <View style={s.hubSection}>
-          <Text style={s.hubTitle}>Black Women's Health Hub</Text>
+          <Text style={s.hubTitle}>Black Women&apos;s Health Hub</Text>
           <Text style={s.hubSubtitle}>
             Conditions that disproportionately affect Black women, based on current research
           </Text>
@@ -275,7 +299,6 @@ export default function HealthScreen() {
         </View>
       </ScrollView>
 
-      {/* Health condition modal */}
       <Modal
         visible={!!activeCondition}
         animationType="slide"
@@ -326,6 +349,7 @@ export default function HealthScreen() {
                   <View style={s.actionBox}>
                     <Text style={s.actionText}>💛 {activeCondition.action}</Text>
                   </View>
+
                   <MedicalDisclaimer />
 
                   <Text style={s.modalFootnote}>

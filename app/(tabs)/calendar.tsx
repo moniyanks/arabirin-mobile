@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { View, Text, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import {  useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { ChevronLeft, ChevronRight, History } from 'lucide-react-native'
 import { format, addDays } from 'date-fns'
 
 import { useColors } from '../../styles'
 import { makeCalendarStyles } from '../../styles/screens/calendar'
 import { useAppData } from '../../context/AppDataContext'
+import { supportsCyclePredictions } from '../../constants/appMode'
 import {
   getPredictedPeriods,
   getAllFertileWindows,
@@ -24,7 +25,13 @@ import { CalendarDayCell } from '../../components/calendar/CalendarDayCell'
 import { CalendarSheet } from '../../components/calendar/CalendarSheet'
 import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
-type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation' | 'extend'
+type SheetMode =
+  | 'log'
+  | 'symptoms'
+  | 'predicted'
+  | 'fertile'
+  | 'ovulation'
+  | 'extend'
 
 export default function CalendarScreen() {
   const colors = useColors()
@@ -35,7 +42,7 @@ export default function CalendarScreen() {
     date?: string
     openSheet?: string
     focus?: string
-  }>()   
+  }>()
 
   const {
     profile,
@@ -47,19 +54,20 @@ export default function CalendarScreen() {
   } = useAppData()
 
   const mode = profile?.mode || 'cycle'
+  const supportsPredictions = supportsCyclePredictions(mode as any)
 
-  const [monthDate, setMonthDate]     = useState(new Date())
+  const [monthDate, setMonthDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [sheetVisible, setSheetVisible] = useState(false)
-  const [sheetMode, setSheetMode]     = useState<SheetMode | null>(null)
+  const [sheetMode, setSheetMode] = useState<SheetMode | null>(null)
 
-  const predictedPeriods =
-    mode === 'cycle'
-      ? getPredictedPeriods(periods, cycleLength, periodLength, 6)
-      : []
+  const predictedPeriods = supportsPredictions
+    ? getPredictedPeriods(periods, cycleLength, periodLength, 6)
+    : []
 
-  const fertileWindows =
-    mode === 'cycle' ? getAllFertileWindows(periods, cycleLength) : []
+  const fertileWindows = supportsPredictions
+    ? getAllFertileWindows(periods, cycleLength)
+    : []
 
   const days = buildMonthGrid(
     monthDate,
@@ -71,7 +79,7 @@ export default function CalendarScreen() {
 
   const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
   const todayStr = format(new Date(), 'yyyy-MM-dd')
-    const isFutureDate = selectedDateStr > todayStr
+  const isFutureDate = selectedDateStr > todayStr
 
   const selectedPeriod = periods.find((p) => {
     const end = p.endDate ?? p.startDate
@@ -108,7 +116,7 @@ export default function CalendarScreen() {
     if (todayLog.energy) items.push(`Energy: ${todayLog.energy}`)
 
     return items
-  }, [todayLog])  
+  }, [todayLog])
 
   const selectedDateInfo = getSelectedDateInfo({
     mode,
@@ -128,7 +136,7 @@ export default function CalendarScreen() {
 
     setSelectedDate(incoming)
     setMonthDate(incoming)
-  }, [params.date])  
+  }, [params.date])
 
   useEffect(() => {
     if (params.openSheet !== '1') return
@@ -141,36 +149,35 @@ export default function CalendarScreen() {
   const handleDayPress = (day: (typeof days)[number]) => {
     setSelectedDate(day.date)
 
-    if (day.isPeriod) {
+    if (supportsPredictions && day.isPeriod) {
       setSheetMode('symptoms')
       setSheetVisible(true)
       return
     }
 
-    if (day.isPredictedPeriod) {
+    if (supportsPredictions && day.isPredictedPeriod) {
       setSheetMode('predicted')
       setSheetVisible(true)
       return
     }
 
-    if (day.isOvulation) {
+    if (supportsPredictions && day.isOvulation) {
       setSheetMode('ovulation')
       setSheetVisible(true)
       return
     }
 
-    if (day.isFertile) {
+    if (supportsPredictions && day.isFertile) {
       setSheetMode('fertile')
       setSheetVisible(true)
       return
     }
 
     if (day.dateStr <= todayStr) {
-      // Check if this day is the day after a period ended
       const yesterday = format(addDays(day.date, -1), 'yyyy-MM-dd')
       const periodEndedYesterday = periods.find((p) => p.endDate === yesterday)
 
-      if (periodEndedYesterday) {
+      if (supportsPredictions && periodEndedYesterday) {
         setSheetMode('extend')
         setSheetVisible(true)
         return
@@ -182,25 +189,25 @@ export default function CalendarScreen() {
   }
 
   const openLogForSelectedDate = () => {
-    if (mode === 'cycle' && selectedPeriod) {
+    if (supportsPredictions && selectedPeriod) {
       setSheetMode('symptoms')
       setSheetVisible(true)
       return
     }
 
-    if (mode === 'cycle' && selectedPredicted) {
+    if (supportsPredictions && selectedPredicted) {
       setSheetMode('predicted')
       setSheetVisible(true)
       return
     }
 
-    if (mode === 'cycle' && selectedOvulation) {
+    if (supportsPredictions && selectedOvulation) {
       setSheetMode('ovulation')
       setSheetVisible(true)
       return
     }
 
-    if (mode === 'cycle' && selectedFertile) {
+    if (supportsPredictions && selectedFertile) {
       setSheetMode('fertile')
       setSheetVisible(true)
       return
@@ -223,7 +230,9 @@ export default function CalendarScreen() {
           <Text style={styles.todayCardEyebrow}>Today’s check-in</Text>
 
           <Text style={styles.todayCardTitle}>
-            {todayLog ? 'You’ve checked in today' : 'Take a moment to notice how your body feels'}
+            {todayLog
+              ? 'You’ve checked in today'
+              : 'Take a moment to notice how your body feels'}
           </Text>
 
           <Text style={styles.todayCardText}>
@@ -256,6 +265,7 @@ export default function CalendarScreen() {
             </Text>
           </Pressable>
         </View>
+
         {incomingFocus ? (
           <View style={styles.focusBanner}>
             <Text style={styles.focusBannerLabel}>Suggested check-in focus</Text>
@@ -267,6 +277,7 @@ export default function CalendarScreen() {
             </Text>
           </View>
         ) : null}
+
         <View style={styles.monthNav}>
           <Pressable
             style={styles.monthBtn}
@@ -312,7 +323,7 @@ export default function CalendarScreen() {
             ))}
           </View>
 
-          {mode === 'cycle' && (
+          {supportsPredictions && (
             <View style={styles.legend}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotPeriod]} />
@@ -320,15 +331,15 @@ export default function CalendarScreen() {
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotPredicted]} />
-                <Text style={styles.legendText}>Predicted</Text>
+                <Text style={styles.legendText}>Predicted period</Text>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotFertile]} />
-                <Text style={styles.legendText}>Fertile</Text>
+                <Text style={styles.legendText}>Fertile window (est.)</Text>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.legendDotOvulation]} />
-                <Text style={styles.legendText}>Ovulation</Text>
+                <Text style={styles.legendText}>Ovulation (est.)</Text>
               </View>
             </View>
           )}
@@ -340,7 +351,7 @@ export default function CalendarScreen() {
           <View style={styles.badgeRow}>
             {selectedPeriod && (
               <View style={styles.badge}>
-                <Text style={styles.badgeText}>Period day</Text>
+                <Text style={styles.badgeText}>Period</Text>
               </View>
             )}
             {!selectedPeriod && selectedPredicted && (
@@ -350,12 +361,12 @@ export default function CalendarScreen() {
             )}
             {!selectedPeriod && selectedFertile && (
               <View style={styles.badge}>
-                <Text style={styles.badgeText}>Fertile window</Text>
+                <Text style={styles.badgeText}>Fertile window (est.)</Text>
               </View>
             )}
             {selectedOvulation && (
               <View style={styles.badge}>
-                <Text style={styles.badgeText}>Ovulation</Text>
+                <Text style={styles.badgeText}>Ovulation (est.)</Text>
               </View>
             )}
           </View>
@@ -392,9 +403,25 @@ export default function CalendarScreen() {
             </View>
           )}
 
-          <Text style={styles.detailText}>
-            {selectedDateInfo.message}
-          </Text>
+          <View style={{ gap: 8 }}>
+            {selectedOvulation ? (
+              <Text style={styles.detailText}>Estimated ovulation day</Text>
+            ) : (
+              <Text style={styles.detailText}>{selectedDateInfo.message}</Text>
+            )}
+
+            {!selectedOvulation && selectedFertile && (
+              <Text style={styles.detailText}>
+                Higher chance of conception during this window
+              </Text>
+            )}
+
+            {(selectedFertile || selectedOvulation) && (
+              <Text style={styles.detailSubtext}>
+                Estimates based on your cycle length and logged periods.
+              </Text>
+            )}
+          </View>
 
           <Pressable
             style={[styles.primaryBtn, isFutureDate && styles.primaryBtnDisabled]}
@@ -410,10 +437,9 @@ export default function CalendarScreen() {
             </Text>
           </Pressable>
         </View>
-        
+
         <MedicalDisclaimer />
 
-        {/* Period history link */}
         <Pressable
           style={styles.historyBtn}
           onPress={() => router.push('/(modals)/periods')}
@@ -422,7 +448,6 @@ export default function CalendarScreen() {
           <Text style={styles.historyBtnText}>View and manage period history</Text>
           <ChevronRight color={colors.textMuted} size={16} strokeWidth={1.5} />
         </Pressable>
-
       </ScrollView>
 
       {sheetVisible && (

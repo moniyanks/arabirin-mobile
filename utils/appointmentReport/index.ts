@@ -1,6 +1,6 @@
 import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
-import type { Period, SymptomLog, Profile } from '../../context/AppDataContext'
+import type { Period, SymptomLog, Profile } from '../../types/appData'
 import type { GenerateAppointmentPdfResult } from './types'
 import { buildAppointmentReportViewModel } from './viewmodel'
 import { renderAppointmentReportHtml } from './template'

@@ -1,4 +1,4 @@
-import type { Period, SymptomLog } from '../context/AppDataContext'
+import type { Period, SymptomLog } from '../types/appData'
 import { buildBodyMetrics, type BodyMetrics } from './bodyIntelligence'
 
 // ── Constants ──

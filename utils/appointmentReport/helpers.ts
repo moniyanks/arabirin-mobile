@@ -1,5 +1,5 @@
 import { compareAsc, format, parseISO } from 'date-fns'
-import type { Period } from '../../context/AppDataContext'
+import type { Period } from '../../types/appData'
 import type { ReportMetricValue, SupportedMode } from './types'
 import { MODE_LABELS, SYMPTOM_LABELS } from './config'
 

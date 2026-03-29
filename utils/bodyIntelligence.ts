@@ -1,5 +1,5 @@
 import { parseLocalDate } from './cycleHelper'
-import type { Period, SymptomLog } from '../context/AppDataContext'
+import type { Period, SymptomLog } from '../types/appData'
 
 const RULES = {
   MIN_CYCLES_FOR_STABILITY: 3,

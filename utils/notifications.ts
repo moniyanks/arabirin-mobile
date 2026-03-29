@@ -193,13 +193,42 @@ export async function savePushToken(token: string): Promise<boolean> {
       return false
     }
 
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ push_token: token })
-      .eq('id', user.id)
+    const { data: existingSettings, error: loadError } = await supabase
+      .from('user_settings')
+      .select('notification_ids')
+      .eq('user_id', user.id)
+      .maybeSingle()
 
-    if (updateError) {
-      console.error('Failed to save push token:', updateError)
+    if (loadError) {
+      console.error('Failed to load existing notification IDs:', loadError)
+      return false
+    }
+
+    const existingIds = normalizeNotificationIds(existingSettings?.notification_ids)
+
+    const nextIds: NotificationIds = {
+      periodIds: existingIds?.periodIds ?? [],
+      fertileId: existingIds?.fertileId ?? null,
+      dailyId: existingIds?.dailyId ?? null,
+    }
+
+    const mergedNotificationIds = {
+      ...nextIds,
+      pushToken: token,
+    }
+
+    const { error: upsertError } = await supabase
+      .from('user_settings')
+      .upsert(
+        {
+          user_id: user.id,
+          notification_ids: mergedNotificationIds,
+        },
+        { onConflict: 'user_id' }
+      )
+
+    if (upsertError) {
+      console.error('Failed to save push token:', upsertError)
       return false
     }
 

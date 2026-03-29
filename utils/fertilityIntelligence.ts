@@ -1,5 +1,5 @@
 import { differenceInDays, parseISO } from 'date-fns'
-import type { Period, SymptomLog } from '../context/AppDataContext'
+import type { Period, SymptomLog } from '../types/appData'
 import { buildBodyMetrics } from './bodyIntelligence'
 import { getFertileWindow, toLocalDateStr } from './cycleHelper'
 

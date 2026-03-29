@@ -277,17 +277,7 @@ export default function AppointmentScreen() {
             ))}
           </View>
         )}
-        <View style={s.sourcesCard}>
-            <Text style={s.sourcesTitle}>Sources</Text>
-            <Text style={s.sourcesText}>
-                Baird et al. (2003). Am J Obstet Gynecol, 188(1), 100-107.{'\n'}
-                Bougie et al. (2019). BJOG, 126(9), 1104-1115.{'\n'}
-                Bozdag et al. (2016). Human Reproduction, 31(12), 2841-2855.{'\n'}
-                CDC MMWR (2019). Pregnancy-Related Deaths, United States 2007-2016.{'\n'}
-                Hoffman et al. (2016). PNAS, 113(16), 4296-4301.
-            </Text>
-        </View>
-
+        
         {/* Share button */}
         <Pressable style={s.shareBtn} onPress={handleShare} disabled={sharing}>
           {sharing

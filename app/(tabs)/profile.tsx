@@ -24,6 +24,7 @@ import {
   calculateLmpFromDueDate,
 } from '../../utils/pregnancyHelper'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import type { Profile } from '../../types/appData'
 
 const CYCLE_OPTIONS = [21, 24, 28, 30, 35]
 const PERIOD_OPTIONS = [3, 4, 5, 6, 7]
@@ -84,7 +85,7 @@ function getBMICategory(bmi: string | null) {
 }
 
 // Keep profile -> form mapping centralized.
-function buildFormState(profile: any): ProfileFormState {
+function buildFormState(profile: Profile): ProfileFormState {
   return {
     name: profile?.name || '',
     age: profile?.age?.toString() || '',
@@ -97,6 +98,23 @@ function buildFormState(profile: any): ProfileFormState {
     pregnancyDatingMethod: profile?.pregnancy_dating_method === 'edd' ? 'edd' : 'lmp',
     pregnancyLmpDate: profile?.pregnancy_lmp_date || '',
     pregnancyDueDate: profile?.pregnancy_due_date || '',
+  }
+}
+
+function buildProfilePayload(userId: string, form: ProfileFormState) {
+  return {
+    id: userId,
+    name: form.name.trim(),
+    mode: form.mode,
+    conditions: form.conditions ?? [],
+    age: form.age ? parseInt(form.age, 10) : null,
+    weight: form.weight ? parseFloat(form.weight) : null,
+    height: form.height ? parseFloat(form.height) : null,
+    cycle_length: parseInt(form.cycleLength, 10),
+    period_length: parseInt(form.periodLength, 10),
+    pregnancy_lmp_date: form.mode === 'pregnant' ? form.pregnancyLmpDate || null : null,
+    pregnancy_due_date: form.mode === 'pregnant' ? form.pregnancyDueDate || null : null,
+    pregnancy_dating_method: form.mode === 'pregnant' ? form.pregnancyDatingMethod : null,
   }
 }
 
@@ -153,7 +171,7 @@ export default function ProfileScreen() {
     setShowCustomPeriod(
       !PERIOD_OPTIONS.includes(Number(next.periodLength)) && next.periodLength !== ''
     )
-  }, [profile?.id])
+  }, [profile])
 
   useEffect(() => {
     setRemindersEnabled(settings?.reminders_enabled ?? false)
@@ -279,31 +297,17 @@ export default function ProfileScreen() {
     try {
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser()
 
+      if (userError) throw userError
       if (!user) throw new Error('Not authenticated')
+
+      const payload = buildProfilePayload(user.id, form)
 
       const { error } = await supabase
         .from('profiles')
-        .update({
-          name: form.name.trim(),
-          mode: form.mode,
-          conditions: form.conditions,
-          age: form.age ? parseInt(form.age, 10) : null,
-          weight: form.weight ? parseFloat(form.weight) : null,
-          height: form.height ? parseFloat(form.height) : null,
-          cycle_length: parseInt(form.cycleLength, 10),
-          period_length: parseInt(form.periodLength, 10),
-
-          // Persist pregnancy data only when the user is in pregnancy mode.
-          pregnancy_lmp_date:
-            form.mode === 'pregnant' ? form.pregnancyLmpDate || null : null,
-          pregnancy_due_date:
-            form.mode === 'pregnant' ? form.pregnancyDueDate || null : null,
-          pregnancy_dating_method:
-            form.mode === 'pregnant' ? form.pregnancyDatingMethod : null,
-        })
-        .eq('id', user.id)
+        .upsert(payload, { onConflict: 'id' })
 
       if (error) throw error
 
@@ -323,8 +327,10 @@ export default function ProfileScreen() {
     try {
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser()
 
+      if (userError) throw userError
       if (!user) throw new Error('Not authenticated')
 
       const mode = normalizeAppMode(form.mode)
@@ -349,12 +355,23 @@ export default function ProfileScreen() {
         await disableAllReminders()
       }
 
+      const { data: existingSettings, error: settingsLoadError } = await supabase
+        .from('user_settings')
+        .select('analytics_opt_in, app_language, notification_ids')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (settingsLoadError) throw settingsLoadError
+
       const { error } = await supabase
         .from('user_settings')
         .upsert(
           {
             user_id: user.id,
             reminders_enabled: value,
+            analytics_opt_in: existingSettings?.analytics_opt_in ?? false,
+            app_language: existingSettings?.app_language ?? 'en',
+            notification_ids: existingSettings?.notification_ids ?? null,
           },
           { onConflict: 'user_id' }
         )

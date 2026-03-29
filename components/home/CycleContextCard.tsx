@@ -23,7 +23,7 @@ export default function CycleContextCard({
     <View style={styles.card}>
       <View style={styles.topRow}>
         <View style={styles.leftBlock}>
-          <Text style={styles.eyebrow}>Your cycle today</Text>
+          <Text style={styles.eyebrow}>Your body today</Text>
           <Text style={styles.cycleDay}>
             {cycleDay ? `Day ${cycleDay}` : 'No cycle data'}
           </Text>
@@ -39,7 +39,7 @@ export default function CycleContextCard({
       <View style={styles.divider} />
 
       <Text style={styles.supportText}>
-        A snapshot of where you are in your cycle today.
+        A gentle view of where you are and what this phase may feel like.
       </Text>
     </View>
   )

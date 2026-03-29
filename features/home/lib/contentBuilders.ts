@@ -52,14 +52,14 @@ export function buildTtcInsightMessage(fertilityInsight: any): string {
   const fertileStatus = fertilityInsight.fertileWindowStatus as FertileStatus
 
   if (fertileStatus === 'in_fertile' || fertileStatus === 'ovulation_day') {
-    return 'You may be in a stronger window for conception. Logging body signs consistently can help you better understand your fertile pattern.'
+    return 'Your body may be giving clearer fertility cues right now. Notice what feels present without forcing certainty.'
   }
 
   if (fertileStatus === 'after_ovulation') {
-    return 'Your fertile window has likely passed for this cycle. Continued tracking can improve clarity for the next one.'
+    return 'This window may be closing for now. Staying aware of your body’s rhythm can make future patterns easier to recognise.'
   }
 
-  return 'Fertility patterns become clearer when cycle dates and body signs are logged consistently over time.'
+  return 'Fertility patterns often become clearer with gentle, consistent awareness over time.'
 }
 
 export function buildPregnancyInsightMessage(pregnancyOverlay: any): {
@@ -67,10 +67,10 @@ export function buildPregnancyInsightMessage(pregnancyOverlay: any): {
   message: string
 } {
   return {
-    title: pregnancyOverlay?.title || 'Body insight',
+    title: pregnancyOverlay?.title || 'Body Intelligence',
     message:
       pregnancyOverlay?.message ||
-      'Pregnancy can bring subtle shifts in energy, sleep, and physical comfort. Gentle tracking helps you notice what is changing over time.',
+      'Your body is moving through steady change. Gentle awareness can help you notice shifts in energy, rest, and physical comfort over time.',
   }
 }
 
@@ -79,7 +79,7 @@ export function buildCycleInsightMessage(phase: SupportedPhase): {
   message: string
 } {
   return {
-    title: 'Body insight',
+    title: 'Body Intelligence',
     message: getCycleInsightMessage(phase),
   }
 }

@@ -11,7 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { useColors } from '../../styles'
 import { makePeriodsStyles } from '../../styles/screens/periods'
 import { useAppData } from '../../context/AppDataContext'
-import type { Period } from '../../context/AppDataContext'
+import type { Period } from '../../types/appData'
 
 type EditingPeriod = {
   id: string

@@ -309,6 +309,12 @@ export function makeCalendarStyles(c: any) {
     focusBannerText: {
       ...theme.typography.bodySm,
       color: c.textMuted,
-    },    
+    },
+    detailSubtext: {
+      fontSize: 13,
+      lineHeight: 20,
+      color: c.textMuted,
+      opacity: 0.9,
+    },   
   })
 }

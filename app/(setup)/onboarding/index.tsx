@@ -11,6 +11,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { format } from 'date-fns'
+import { supportsCyclePredictions } from '../../../constants/appMode'
 import { supabase } from '../../../lib/supabase'
 import { useColors } from '../../../styles'
 import { makeOnboardingStyles } from '../../../styles/screens/onboarding'
@@ -53,10 +54,10 @@ const MODES = [
 ]
 
 const CONDITIONS = [
-  { key: 'fibroids', label: 'Fibroids',      desc: 'Uterine fibroids or suspected fibroids' },
-  { key: 'endo',     label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis'   },
-  { key: 'pcos',     label: 'PCOS',          desc: 'Polycystic ovary syndrome'              },
-  { key: 'thalassemia', label: 'Thalassemia',   desc: 'Thalassemia trait or thalassemia major' },
+  { key: 'fibroids', label: 'Fibroids', desc: 'Uterine fibroids or suspected fibroids' },
+  { key: 'endo', label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis' },
+  { key: 'pcos', label: 'PCOS', desc: 'Polycystic ovary syndrome' },
+  { key: 'thalassemia', label: 'Thalassemia', desc: 'Thalassemia trait or thalassemia major' },
 ]
 
 export default function OnboardingScreen() {
@@ -88,6 +89,7 @@ export default function OnboardingScreen() {
 
   const selectedDateStr = format(lastPeriodDate, 'yyyy-MM-dd')
   const selectedDateDisplay = format(lastPeriodDate, 'd MMMM yyyy')
+  const supportsPredictions = supportsCyclePredictions(mode as any)
 
   const resolvedCycleLength =
     isCycleLengthUnknown
@@ -112,7 +114,7 @@ export default function OnboardingScreen() {
   }
 
   const canFinishFinalStep = () => {
-    if (mode !== 'cycle') return true
+    if (!supportsPredictions) return true
 
     return (
       !!lastPeriodDate &&
@@ -133,10 +135,10 @@ export default function OnboardingScreen() {
 
       if (!user) throw new Error('No authenticated user')
 
-      const finalCycleLength = mode === 'cycle' ? resolvedCycleLength : null
+      const finalCycleLength = supportsPredictions ? resolvedCycleLength : null
 
       if (
-        mode === 'cycle' &&
+        supportsPredictions &&
         finalCycleLength !== null &&
         (!Number.isFinite(finalCycleLength) ||
           finalCycleLength < 15 ||
@@ -154,7 +156,7 @@ export default function OnboardingScreen() {
             mode,
             conditions,
             cycle_length: finalCycleLength,
-            period_length: mode === 'cycle' ? periodLength : null,
+            period_length: supportsPredictions ? periodLength : null,
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'id' }
@@ -204,7 +206,7 @@ export default function OnboardingScreen() {
 
     if (step === 'final') {
       if (!canFinishFinalStep()) return
-      await handleFinish(mode === 'cycle')
+      await handleFinish(supportsPredictions)
     }
   }
 
@@ -212,7 +214,7 @@ export default function OnboardingScreen() {
     const prev = STEPS[stepIndex - 1]
     if (prev) setStep(prev)
   }
-  
+
   const toggleCondition = (key: string) => {
     setConditions((prev) =>
       prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
@@ -324,7 +326,7 @@ export default function OnboardingScreen() {
       {step === 'conditions' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>4 of 4</Text>
+            <Text style={s.stepCount}>3 of 4</Text>
             <Text style={s.question}>Do you have any of these conditions?</Text>
             <Text style={s.hint}>
               Select all that apply. This helps us personalise your health insights.
@@ -351,7 +353,7 @@ export default function OnboardingScreen() {
             </View>
 
             <Text style={s.hint}>
-              None of these apply or not sure? That's okay — you can update this anytime in your profile.
+              None of these apply or not sure? That's okay. You can update this anytime in your profile.
             </Text>
           </ScrollView>
 
@@ -378,9 +380,9 @@ export default function OnboardingScreen() {
       {step === 'final' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>3 of 3</Text>
+            <Text style={s.stepCount}>4 of 4</Text>
 
-            {mode === 'cycle' ? (
+            {supportsPredictions ? (
               <>
                 <Text style={s.question}>When did your last period start?</Text>
                 <Text style={s.hint}>Your best guess is fine too 🌿</Text>
@@ -443,7 +445,7 @@ export default function OnboardingScreen() {
                 </View>
 
                 <Text style={s.questionSmall}>
-                  How long is your usual Cycle?
+                  How long is your usual cycle?
                 </Text>
                 <Text style={s.hint}>
                   From the first day of one period to the next 🌙
@@ -499,10 +501,7 @@ export default function OnboardingScreen() {
                   </Pressable>
 
                   <Pressable
-                    style={[
-                      s.optionBtn,
-                      isCycleLengthUnknown && s.optionSelected,
-                    ]}
+                    style={[s.optionBtn, isCycleLengthUnknown && s.optionSelected]}
                     onPress={() => {
                       setUseCustomCycleLength(false)
                       setIsCycleLengthUnknown(true)
@@ -546,8 +545,7 @@ export default function OnboardingScreen() {
               <>
                 <Text style={s.question}>Almost there, {name}</Text>
                 <Text style={s.hint}>
-                  Your Àràbìrín is ready. We’ll personalise everything based on
-                  your journey.
+                  Your Àràbìrín is ready. We’ll personalise everything based on your journey.
                 </Text>
               </>
             )}

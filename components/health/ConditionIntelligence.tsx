@@ -15,7 +15,7 @@ import {
   MIN_LOGS_FOR_SCORE,
   type ConditionKey,
 } from '../../utils/conditionIntelligence'
-import type { Period, SymptomLog, Profile } from '../../context/AppDataContext'
+import type { Period, SymptomLog, Profile } from '../../types/appData'
 
 // ── Single condition card — extracted to avoid hooks-in-loop violation ──
 function ConditionCard({
