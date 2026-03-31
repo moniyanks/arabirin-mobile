@@ -1,24 +1,35 @@
-import { useState, useRef, useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import {
-  View, Text, ScrollView, Pressable,
-  useColorScheme, ActivityIndicator, Alert,
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  Alert,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Constants from 'expo-constants'
 import * as Device from 'expo-device'
-import { supabase } from '../../../lib/supabase'
+
 import { useColors } from '../../../styles'
 import { makeConsentStyles } from '../../../styles/screens/consent'
 import { useAppData } from '../../../context/AppDataContext'
 import { PrivacyPolicyContent, TermsOfServiceContent } from '../../../components/legal/LegalDocuments'
+import { setupFlowService } from '../../../services/setupFlowService'
+import { toAppError } from '../../../lib/errors/appError'
 
 type Step = 'age' | 'privacy' | 'terms' | 'confirm'
 
 const STEPS: Step[] = ['age', 'privacy', 'terms', 'confirm']
-
 const EFFECTIVE_DATE = '5 April 2026'
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0'
+
+function isScrolledToBottom(event: NativeSyntheticEvent<NativeScrollEvent>): boolean {
+  const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent
+  return layoutMeasurement.height + contentOffset.y >= contentSize.height - 40
+}
 
 export default function ConsentScreen() {
   const colors = useColors()
@@ -39,25 +50,29 @@ export default function ConsentScreen() {
 
   const stepIndex = STEPS.indexOf(step)
 
-  const handlePrivacyScroll = useCallback(({ nativeEvent }: any) => {
-    if (privacyScrolled) return
-    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
-    const isAtBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 40
-    if (isAtBottom) {
-      setPrivacyScrolled(true)
-      setPrivacyViewedAt(new Date().toISOString())
-    }
-  }, [privacyScrolled])
+  const handlePrivacyScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (privacyScrolled) return
 
-  const handleTermsScroll = useCallback(({ nativeEvent }: any) => {
-    if (termsScrolled) return
-    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
-    const isAtBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 40
-    if (isAtBottom) {
-      setTermsScrolled(true)
-      setTermsViewedAt(new Date().toISOString())
-    }
-  }, [termsScrolled])
+      if (isScrolledToBottom(event)) {
+        setPrivacyScrolled(true)
+        setPrivacyViewedAt(new Date().toISOString())
+      }
+    },
+    [privacyScrolled]
+  )
+
+  const handleTermsScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (termsScrolled) return
+
+      if (isScrolledToBottom(event)) {
+        setTermsScrolled(true)
+        setTermsViewedAt(new Date().toISOString())
+      }
+    },
+    [termsScrolled]
+  )
 
   const handleUnderAge = () => {
     Alert.alert(
@@ -68,59 +83,35 @@ export default function ConsentScreen() {
   }
 
   const handleSubmit = async () => {
-    // 1. Remove the 'if (!agreedPrivacy...)' return. 
-    // The button [disabled] prop already handles this UI safety.
-    
+    if (!agreedHealth || loading) return
+
     setLoading(true)
     setError('')
 
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
-      if (authError || !user) {
-        throw new Error('Authentication session expired. Please log in again.')
-      }
+      await setupFlowService.submitConsent({
+        privacyViewedAt: privacyViewedAt ?? new Date().toISOString(),
+        termsViewedAt: termsViewedAt ?? new Date().toISOString(),
+        appPlatform: Device.osName?.toLowerCase() ?? 'unknown',
+        appVersion: APP_VERSION,
+      })
 
-      const { error: upsertError } = await supabase
-        .from('user_consents')
-        .upsert(
-          {
-            user_id: user.id,
-            privacy_policy_version: 'v1',
-            terms_version: 'v1',
-            health_data_consent: true,
-            age_confirmed: true,
-            accepted_at: new Date().toISOString(),
-            privacy_viewed: true,
-            terms_viewed: true,
-            privacy_viewed_at: privacyViewedAt || new Date().toISOString(), // Fallback
-            terms_viewed_at: termsViewedAt || new Date().toISOString(),     // Fallback
-            app_platform: Device.osName?.toLowerCase() ?? 'unknown',
-            app_version: APP_VERSION,
-          },
-          { onConflict: 'user_id' }
-        )
-
-      if (upsertError) throw upsertError
-
-      // 2. Trigger the context refresh
       await refetchAll()
       router.replace('/(setup)/onboarding')
-      
-      // 3. LOGIC CHECK: Is there a listener in your App.tsx that 
-      // redirects the user once 'user_consents' exists?
-
-    } catch (err: any) {
-      setError(err.message || 'Connection error. Please try again.')
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not save your consent right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
     } finally {
       setLoading(false)
     }
   }
-  
 
   return (
     <SafeAreaView style={s.safe}>
-      {/* Header with progress dots */}
       <View style={s.header}>
         <Text style={s.stepLabel}>
           {step === 'age' && 'Step 1 of 4 — Age Verification'}
@@ -148,7 +139,6 @@ export default function ConsentScreen() {
         </View>
       </View>
 
-      {/* ── Step 1: Age gate ── */}
       {step === 'age' && (
         <View style={s.ageContainer}>
           <Text style={s.ageIcon}>🔒</Text>
@@ -169,7 +159,6 @@ export default function ConsentScreen() {
         </View>
       )}
 
-      {/* ── Step 2: Privacy Policy ── */}
       {step === 'privacy' && (
         <>
           <ScrollView
@@ -181,27 +170,37 @@ export default function ConsentScreen() {
           >
             <PrivacyPolicyContent s={s} effectiveDate={EFFECTIVE_DATE} />
           </ScrollView>
+
           {!privacyScrolled && (
             <View style={s.scrollIndicator}>
               <Text style={s.scrollIndicatorText}>↓ Scroll to read the full policy</Text>
             </View>
           )}
+
           <View style={s.footer}>
             <View style={s.checkRow}>
               <Pressable
                 style={[s.checkbox, agreedPrivacy && s.checkboxChecked]}
-                onPress={() => privacyScrolled && setAgreedPrivacy(v => !v)}
+                onPress={() => {
+                  if (!privacyScrolled) return
+                  setAgreedPrivacy((value) => !value)
+                }}
               >
                 {agreedPrivacy && <Text style={s.checkboxTick}>✓</Text>}
               </Pressable>
+
               <Text style={s.checkLabel}>
                 I have read and agree to the{' '}
                 <Text style={s.checkLabelBold}>Privacy Policy</Text>
               </Text>
             </View>
+
             <Pressable
-              style={[s.btn, (!agreedPrivacy) && s.btnDisabled]}
-              onPress={() => agreedPrivacy && setStep('terms')}
+              style={[s.btn, !agreedPrivacy && s.btnDisabled]}
+              onPress={() => {
+                if (!agreedPrivacy) return
+                setStep('terms')
+              }}
               disabled={!agreedPrivacy}
             >
               <Text style={s.btnText}>Continue →</Text>
@@ -210,7 +209,6 @@ export default function ConsentScreen() {
         </>
       )}
 
-      {/* ── Step 3: Terms of Service ── */}
       {step === 'terms' && (
         <>
           <ScrollView
@@ -222,27 +220,37 @@ export default function ConsentScreen() {
           >
             <TermsOfServiceContent s={s} effectiveDate={EFFECTIVE_DATE} />
           </ScrollView>
+
           {!termsScrolled && (
             <View style={s.scrollIndicator}>
               <Text style={s.scrollIndicatorText}>↓ Scroll to read the full terms</Text>
             </View>
           )}
+
           <View style={s.footer}>
             <View style={s.checkRow}>
               <Pressable
                 style={[s.checkbox, agreedTerms && s.checkboxChecked]}
-                onPress={() => termsScrolled && setAgreedTerms(v => !v)}
+                onPress={() => {
+                  if (!termsScrolled) return
+                  setAgreedTerms((value) => !value)
+                }}
               >
                 {agreedTerms && <Text style={s.checkboxTick}>✓</Text>}
               </Pressable>
+
               <Text style={s.checkLabel}>
                 I have read and agree to the{' '}
                 <Text style={s.checkLabelBold}>Terms of Service</Text>
               </Text>
             </View>
+
             <Pressable
-              style={[s.btn, (!agreedTerms) && s.btnDisabled]}
-              onPress={() => agreedTerms && setStep('confirm')}
+              style={[s.btn, !agreedTerms && s.btnDisabled]}
+              onPress={() => {
+                if (!agreedTerms) return
+                setStep('confirm')
+              }}
               disabled={!agreedTerms}
             >
               <Text style={s.btnText}>Continue →</Text>
@@ -251,7 +259,6 @@ export default function ConsentScreen() {
         </>
       )}
 
-      {/* ── Step 4: Final confirmation ── */}
       {step === 'confirm' && (
         <>
           <ScrollView style={s.docScroll} contentContainerStyle={s.confirmContainer}>
@@ -259,12 +266,15 @@ export default function ConsentScreen() {
             <Text style={s.confirmSubtitle}>
               Please review what you are agreeing to before we set up your account.
             </Text>
+
             <View style={s.summaryCard}>
               <View style={s.summaryRow}>
                 <Text style={s.summaryIcon}>✓</Text>
                 <Text style={s.summaryText}>You have read the Privacy Policy</Text>
               </View>
+
               <View style={s.summaryDivider} />
+
               <View style={s.summaryRow}>
                 <Text style={s.summaryIcon}>✓</Text>
                 <Text style={s.summaryText}>You have read the Terms of Service</Text>
@@ -274,17 +284,15 @@ export default function ConsentScreen() {
             <View style={s.checkRow}>
               <Pressable
                 style={[s.checkbox, agreedHealth && s.checkboxChecked]}
-                onPress={() => setAgreedHealth(v => !v)}
+                onPress={() => setAgreedHealth((value) => !value)}
               >
                 {agreedHealth && <Text style={s.checkboxTick}>✓</Text>}
               </Pressable>
+
               <Text style={s.checkLabel}>
                 I consent to Àràbìrín Technologies collecting, storing and processing
-                my{' '}
-                <Text style={s.checkLabelBold}>
-                  sensitive reproductive health data
-                </Text>
-                {' '}for the purpose of providing cycle tracking and health insights,
+                my <Text style={s.checkLabelBold}>sensitive reproductive health data</Text>{' '}
+                for the purpose of providing cycle tracking and health insights,
                 in accordance with the Privacy Policy.
               </Text>
             </View>
@@ -292,19 +300,25 @@ export default function ConsentScreen() {
 
           <View style={s.footer}>
             {!!error && <Text style={s.error}>{error}</Text>}
+
             <Pressable
               style={[s.btn, (!agreedHealth || loading) && s.btnDisabled]}
               onPress={handleSubmit}
               disabled={!agreedHealth || loading}
             >
-              {loading
-                ? <ActivityIndicator color={colors.bgPrimary} />
-                : <Text style={s.btnText}>I agree — create my account →</Text>
-              }
+              {loading ? (
+                <ActivityIndicator color={colors.bgPrimary} />
+              ) : (
+                <Text style={s.btnText}>I agree — create my account →</Text>
+              )}
             </Pressable>
+
             <Pressable
               style={s.ghostBtn}
-              onPress={() => setStep('terms')}
+              onPress={() => {
+                if (loading) return
+                setStep('terms')
+              }}
             >
               <Text style={s.ghostBtnText}>← Back</Text>
             </Pressable>
@@ -314,4 +328,3 @@ export default function ConsentScreen() {
     </SafeAreaView>
   )
 }
-

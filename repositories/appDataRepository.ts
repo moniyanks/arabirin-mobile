@@ -1,5 +1,26 @@
 import { supabase } from '../lib/supabase'
+import { AppError } from '../lib/errors/appError'
 import type { Consent, Period, Profile, Settings, SymptomLog } from '../types/appData'
+
+function throwReadError(message: string, cause: unknown): never {
+  throw new AppError({
+    code: 'DB_READ_FAILED',
+    message,
+    userMessage: 'We could not load your health data right now.',
+    cause,
+    retryable: true,
+  })
+}
+
+function throwWriteError(message: string, cause: unknown): never {
+  throw new AppError({
+    code: 'DB_WRITE_FAILED',
+    message,
+    userMessage: 'We could not save your changes right now.',
+    cause,
+    retryable: true,
+  })
+}
 
 export const appDataRepository = {
   async fetchProfile(userId: string): Promise<Profile> {
@@ -9,7 +30,7 @@ export const appDataRepository = {
       .eq('id', userId)
       .maybeSingle()
 
-    if (error) throw error
+    if (error) throwReadError('Failed to fetch profile.', error)
     return data ?? null
   },
 
@@ -20,7 +41,7 @@ export const appDataRepository = {
       .eq('user_id', userId)
       .maybeSingle()
 
-    if (error) throw error
+    if (error) throwReadError('Failed to fetch user consent.', error)
     return data ?? null
   },
 
@@ -31,7 +52,7 @@ export const appDataRepository = {
       .eq('user_id', userId)
       .maybeSingle()
 
-    if (error) throw error
+    if (error) throwReadError('Failed to fetch user settings.', error)
     return data ?? null
   },
 
@@ -42,12 +63,12 @@ export const appDataRepository = {
       .eq('user_id', userId)
       .order('start_date', { ascending: true })
 
-    if (error) throw error
+    if (error) throwReadError('Failed to fetch periods.', error)
 
-    return (data || []).map((p) => ({
-      id: p.id,
-      startDate: p.start_date,
-      endDate: p.end_date,
+    return (data || []).map((row) => ({
+      id: row.id,
+      startDate: row.start_date,
+      endDate: row.end_date,
     }))
   },
 
@@ -58,7 +79,7 @@ export const appDataRepository = {
       .eq('user_id', userId)
       .order('log_date', { ascending: false })
 
-    if (error) throw error
+    if (error) throwReadError('Failed to fetch symptom logs.', error)
     return data || []
   },
 
@@ -69,7 +90,7 @@ export const appDataRepository = {
       end_date: endDate,
     })
 
-    if (error) throw error
+    if (error) throwWriteError('Failed to insert period.', error)
   },
 
   async endPeriod(userId: string, periodId: string, endDate: string) {
@@ -79,7 +100,7 @@ export const appDataRepository = {
       .eq('id', periodId)
       .eq('user_id', userId)
 
-    if (error) throw error
+    if (error) throwWriteError('Failed to end period.', error)
   },
 
   async updatePeriod(userId: string, id: string, startDate: string, endDate: string | null) {
@@ -92,7 +113,7 @@ export const appDataRepository = {
       .eq('id', id)
       .eq('user_id', userId)
 
-    if (error) throw error
+    if (error) throwWriteError('Failed to update period.', error)
   },
 
   async deletePeriod(userId: string, periodId: string) {
@@ -102,7 +123,7 @@ export const appDataRepository = {
       .eq('id', periodId)
       .eq('user_id', userId)
 
-    if (error) throw error
+    if (error) throwWriteError('Failed to delete period.', error)
   },
 
   async upsertSymptomLog(userId: string, logData: Partial<SymptomLog> & { date: string }) {
@@ -120,6 +141,6 @@ export const appDataRepository = {
       { onConflict: 'user_id,log_date' }
     )
 
-    if (error) throw error
+    if (error) throwWriteError('Failed to upsert symptom log.', error)
   },
 }

@@ -20,6 +20,8 @@ import { useAuth } from './AuthContext'
 import { rescheduleAllReminders } from '../utils/notifications'
 import { getNextPeriodDate, getFertileWindow } from '../utils/cycleHelper'
 import { normalizeAppMode } from '../constants/appMode'
+import { addDaysDateOnly, todayDateOnly } from '../lib/dates/dateOnly'
+import { toAppError } from '../lib/errors/appError'
 
 type AppDataContextValue = {
   profile: Profile
@@ -64,43 +66,68 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     setError(null)
   }, [])
 
-  const bootstrap = useCallback(async (userId: string) => {
-    setBootstrapStatus('loading')
-    setError(null)
+  const syncRemindersForPeriods = useCallback(
+    async (userId: string, nextPeriods: Period[], nextProfile?: Profile | null, nextSettings?: Settings | null) => {
+      const activeProfile = nextProfile ?? profile
+      const activeSettings = nextSettings ?? settings
 
-    try {
-      const [consentData, profileData, settingsData, periodsData, logsData] =
-        await Promise.all([
-          appDataRepository.fetchConsent(userId),
-          appDataRepository.fetchProfile(userId),
-          appDataRepository.fetchSettings(userId),
-          appDataRepository.fetchPeriods(userId),
-          appDataRepository.fetchSymptomLogs(userId),
-        ])
+      if (!activeSettings?.reminders_enabled) return
 
-      setConsent(consentData)
-      setProfile(profileData)
-      setSettings(settingsData)
-      setPeriods(periodsData)
-      setSymptomLogs(logsData)
-      setBootstrapStatus('ready')
+      const mode = normalizeAppMode(activeProfile?.mode)
+      const nextPeriod = getNextPeriodDate(nextPeriods, activeProfile?.cycle_length ?? 28)
+      const fertile = getFertileWindow(nextPeriods, activeProfile?.cycle_length ?? 28)
 
-      const mode = normalizeAppMode(profileData?.mode)
-      const nextPeriod = getNextPeriodDate(periodsData, profileData?.cycle_length ?? 28)
-      const fertile = getFertileWindow(periodsData, profileData?.cycle_length ?? 28)
+      await rescheduleAllReminders(
+        userId,
+        nextPeriod,
+        fertile?.fertileStart ?? null,
+        mode,
+        activeSettings?.daily_reminders_enabled ?? false
+      )
+    },
+    [profile, settings]
+  )
 
-      if (settingsData?.reminders_enabled) {
-        rescheduleAllReminders(
-          nextPeriod,
-          fertile?.fertileStart ?? null,
-          mode
-        ).catch(() => {})
+  const bootstrap = useCallback(
+    async (userId: string) => {
+      setBootstrapStatus('loading')
+      setError(null)
+
+      try {
+        const [consentData, profileData, settingsData, periodsData, logsData] =
+          await Promise.all([
+            appDataRepository.fetchConsent(userId),
+            appDataRepository.fetchProfile(userId),
+            appDataRepository.fetchSettings(userId),
+            appDataRepository.fetchPeriods(userId),
+            appDataRepository.fetchSymptomLogs(userId),
+          ])
+
+        setConsent(consentData)
+        setProfile(profileData)
+        setSettings(settingsData)
+        setPeriods(periodsData)
+        setSymptomLogs(logsData)
+        setBootstrapStatus('ready')
+
+        if (settingsData?.reminders_enabled) {
+          syncRemindersForPeriods(userId, periodsData, profileData, settingsData).catch((err) => {
+            console.warn('Reminder reschedule failed during bootstrap.', err)
+          })
+        }
+      } catch (err) {
+        const appError = toAppError(err, {
+          code: 'DB_READ_FAILED',
+          userMessage: 'We could not load your health data right now.',
+          retryable: true,
+        })
+
+        setError(appError.userMessage)
+        setBootstrapStatus('error')
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load app data')
-      setBootstrapStatus('error')
-    }
-  }, [])
+    },
+    [syncRemindersForPeriods]
+  )
 
   useEffect(() => {
     if (authStatus === 'loading') return
@@ -119,45 +146,103 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const addPeriod = async (startDate: string) => {
     if (!user?.id) return
 
-    const end = new Date(startDate)
-    end.setDate(end.getDate() + (periodLength - 1))
-    const endDate = end.toISOString().split('T')[0]
+    try {
+      const endDate = addDaysDateOnly(startDate, periodLength - 1)
+      await appDataRepository.insertPeriod(user.id, startDate, endDate)
 
-    await appDataRepository.insertPeriod(user.id, startDate, endDate)
-    setPeriods(await appDataRepository.fetchPeriods(user.id))
+      const updatedPeriods = await appDataRepository.fetchPeriods(user.id)
+      setPeriods(updatedPeriods)
+
+      await syncRemindersForPeriods(user.id, updatedPeriods)
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not save your period right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+      throw appError
+    }
   }
 
   const endPeriod = async (periodId: string) => {
     if (!user?.id) return
 
-    await appDataRepository.endPeriod(
-      user.id,
-      periodId,
-      new Date().toISOString().split('T')[0]
-    )
+    try {
+      await appDataRepository.endPeriod(user.id, periodId, todayDateOnly())
 
-    setPeriods(await appDataRepository.fetchPeriods(user.id))
+      const updatedPeriods = await appDataRepository.fetchPeriods(user.id)
+      setPeriods(updatedPeriods)
+
+      await syncRemindersForPeriods(user.id, updatedPeriods)
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not update your period right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+      throw appError
+    }
   }
 
   const updatePeriod = async (id: string, startDate: string, endDate: string) => {
     if (!user?.id) return
 
-    await appDataRepository.updatePeriod(user.id, id, startDate, endDate || null)
-    setPeriods(await appDataRepository.fetchPeriods(user.id))
+    try {
+      await appDataRepository.updatePeriod(user.id, id, startDate, endDate || null)
+
+      const updatedPeriods = await appDataRepository.fetchPeriods(user.id)
+      setPeriods(updatedPeriods)
+
+      await syncRemindersForPeriods(user.id, updatedPeriods)
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not save your period changes right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+      throw appError
+    }
   }
 
   const deletePeriod = async (periodId: string) => {
     if (!user?.id) return
 
-    await appDataRepository.deletePeriod(user.id, periodId)
-    setPeriods(await appDataRepository.fetchPeriods(user.id))
+    try {
+      await appDataRepository.deletePeriod(user.id, periodId)
+
+      const updatedPeriods = await appDataRepository.fetchPeriods(user.id)
+      setPeriods(updatedPeriods)
+
+      await syncRemindersForPeriods(user.id, updatedPeriods)
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not delete that period right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+      throw appError
+    }
   }
 
   const saveSymptomLog = async (logData: Partial<SymptomLog> & { date: string }) => {
     if (!user?.id) return
 
-    await appDataRepository.upsertSymptomLog(user.id, logData)
-    setSymptomLogs(await appDataRepository.fetchSymptomLogs(user.id))
+    try {
+      await appDataRepository.upsertSymptomLog(user.id, logData)
+      setSymptomLogs(await appDataRepository.fetchSymptomLogs(user.id))
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not save your symptom log right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+      throw appError
+    }
   }
 
   const refetchAll = useCallback(async () => {
@@ -167,7 +252,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const refetchProfile = useCallback(async () => {
     if (!user?.id) return
-    setProfile(await appDataRepository.fetchProfile(user.id))
+
+    try {
+      setProfile(await appDataRepository.fetchProfile(user.id))
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_READ_FAILED',
+        userMessage: 'We could not refresh your profile right now.',
+        retryable: true,
+      })
+      setError(appError.userMessage)
+    }
   }, [user?.id])
 
   const value = useMemo(
@@ -209,7 +304,6 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>
 }
 
-/** Returns app data context. Must be used inside {@link AppDataProvider}. */
 export function useAppData() {
   const ctx = useContext(AppDataContext)
   if (!ctx) throw new Error('useAppData must be used inside AppDataProvider')

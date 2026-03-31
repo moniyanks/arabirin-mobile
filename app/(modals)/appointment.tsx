@@ -79,10 +79,20 @@ export default function AppointmentScreen() {
   // ── Share report  ──
   const handleShare = async () => {
     setSharing(true)
+
     try {
-      await generateAndShareAppointmentPDF(profile, periods, symptomLogs)
+      const result = await generateAndShareAppointmentPDF(profile, periods, symptomLogs)
+
+      if (!result.success) {
+        throw new Error(result.error)
+      }
     } catch (err) {
       console.error('PDF generation failed:', err)
+      alert(
+        err instanceof Error
+          ? err.message
+          : 'We could not generate your appointment report right now.'
+      )
     } finally {
       setSharing(false)
     }

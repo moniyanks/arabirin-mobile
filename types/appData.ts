@@ -48,6 +48,8 @@ export type Consent = {
 export type Settings = {
   user_id: string
   reminders_enabled: boolean
+  daily_reminders_enabled: boolean
   analytics_opt_in: boolean
   app_language: string
+  notification_ids?: unknown
 } | null

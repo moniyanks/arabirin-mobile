@@ -101,16 +101,14 @@ export function makeHomeStyles(c: any) {
       marginTop: 4,
     },
     predictionRow: {
-      backgroundColor: c.bgSecondary,
+      backgroundColor: c.bgPrimary,
       borderWidth: 1,
-      borderColor: c.borderSoft,
-      borderRadius: 14,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      marginBottom: 12,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      borderColor: c.borderRose,
+      borderRadius: 16,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      marginBottom: 14,
+      alignSelf: 'stretch'
     },
     predictionLabel: {
       ...theme.typography.label,
@@ -118,7 +116,7 @@ export function makeHomeStyles(c: any) {
       marginBottom: 4,
     },
     predictionDate: {
-      ...theme.typography.titleLg,
+      ...theme.typography.displayMd,
       color: c.accentRose,
     },
     confidencePill: {

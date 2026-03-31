@@ -1,17 +1,18 @@
 import { useEffect } from 'react'
-import { Stack, useRouter } from 'expo-router'
+import { Stack, useRouter, useSegments } from 'expo-router'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import * as Notifications from 'expo-notifications'
 import { StatusBar } from 'expo-status-bar'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { AuthProvider } from '../context/AuthContext'
+
+import { AuthProvider, useAuth } from '../context/AuthContext'
 import { AppDataProvider } from '../context/AppDataContext'
 import { useColors } from '../styles'
 import { ThemeModeProvider, useThemeMode } from '../context/ThemeModeContext'
 
-SplashScreen.preventAutoHideAsync()
+void SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -25,11 +26,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync()
+      void SplashScreen.hideAsync()
     }
   }, [fontsLoaded, fontError])
 
-  if (!fontsLoaded && !fontError) return null
+  if (!fontsLoaded && !fontError) {
+    return null
+  }
 
   return (
     <ThemeModeProvider>
@@ -58,18 +61,18 @@ function RootLayoutContent() {
         if (data.openSheet) query.openSheet = '1'
 
         router.push({
-          pathname: '/(tabs)/calendar',
+          pathname: '/calendar',
           params: query,
         })
         return
       }
 
       if (data?.screen === 'home') {
-        router.push('/(tabs)')
+        router.push('/')
         return
       }
 
-      router.push('/(tabs)/calendar')
+      router.push('/calendar')
     })
 
     return () => {
@@ -82,6 +85,7 @@ function RootLayoutContent() {
       <SafeAreaProvider>
         <AuthProvider>
           <AppDataProvider>
+            <AuthGate />
             <StatusBar style={resolvedScheme === 'dark' ? 'light' : 'dark'} />
             <Stack
               screenOptions={{
@@ -117,4 +121,49 @@ function RootLayoutContent() {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   )
+}
+
+function AuthGate() {
+  const { status } = useAuth()
+  const router = useRouter()
+  const segments = useSegments()
+
+  useEffect(() => {
+    if (status === 'loading') {
+      return
+    }
+
+    const rootGroup = segments[0]
+
+    const inPublic = rootGroup === '(public)'
+    const inSetup = rootGroup === '(setup)'
+    const inTabs = rootGroup === '(tabs)'
+    const inModals = rootGroup === '(modals)'
+    
+
+    if (status === 'signed_out') {
+      // Signed-out users can only remain in public auth screens.
+      if (!inPublic) {
+        router.replace('/(public)/auth')
+      }
+      return
+    }
+
+    if (status === 'signed_in') {
+      // Signed-in users should never remain in public auth screens.
+      if (inPublic) {
+        router.replace('/')
+        return
+      }
+
+      // Signed-in users are allowed in tabs, setup, modals, and root index.
+      if (inTabs || inSetup || inModals ) {
+        return
+      }
+
+      router.replace('/')
+    }
+  }, [status, segments, router])
+
+  return null
 }

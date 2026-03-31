@@ -39,6 +39,11 @@ export type ConditionCard = {
   logsAnalysed: number
 }
 
+export type TrackingSummary = {
+  summary: string
+  notes: string[]
+}
+
 export type ReportViewModel = {
   generatedDate: string
   preparedFor: string
@@ -46,6 +51,7 @@ export type ReportViewModel = {
   trackedConditionsLabel: string | null
   symptomEntryCount: number
   periodsLoggedCount: number
+  trackingSummary: TrackingSummary
   cycleSummary: {
     avgCycleLength: string
     avgPeriodLength: string

@@ -20,8 +20,6 @@
       "bundleIdentifier": "com.arabirintegechnologies.arabirin",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "NSHealthShareUsageDescription": "Àràbìrín uses health data to track your menstrual cycle and provide personalised reproductive health insights.",
-        "NSHealthUpdateUsageDescription": "Àràbìrín writes cycle data to help you track your reproductive health.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -53,7 +51,14 @@
       "expo-apple-authentication",
       "@react-native-community/datetimepicker",
       "expo-sharing",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow Àràbìrín to use Face ID to securely protect your private health information."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

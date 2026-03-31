@@ -1,9 +1,30 @@
 import { FERTILE_STATUS_MESSAGES } from '../../../utils/fertilityIntelligence'
 import type { SupportedPhase } from './types'
 import { formatShortDate, mapConfidenceLabel } from './formatters'
-import { getCycleInsightMessage } from './cycleDisplay'
 
 type FertileStatus = keyof typeof FERTILE_STATUS_MESSAGES
+
+function getPhaseAwareCycleMessage(phase: SupportedPhase): string {
+  switch (phase) {
+    case 'period':
+      return 'Flow may still feel heavier today. Pay attention to your energy and avoid overextending.'
+
+    case 'follicular':
+      return 'Energy is likely starting to return. This can be a good time to ease back into focus and routine.'
+
+    case 'fertile':
+      return 'Your body may feel more open, alert, or responsive right now. Notice patterns without forcing certainty.'
+
+    case 'ovulation':
+      return 'You may be near ovulation. Energy, awareness, or body sensitivity can feel more noticeable around this time.'
+
+    case 'luteal':
+      return 'Energy and mood may feel less steady now. Give yourself a little more buffer and pay attention to what your body needs.'
+
+    default:
+      return 'Small, consistent check-ins help turn daily experiences into patterns you can actually understand.'
+  }
+}
 
 export function buildTtcHeroContent(fertilityInsight: any) {
   const fertileStatus = fertilityInsight.fertileWindowStatus as FertileStatus
@@ -67,7 +88,7 @@ export function buildPregnancyInsightMessage(pregnancyOverlay: any): {
   message: string
 } {
   return {
-    title: pregnancyOverlay?.title || 'Body Intelligence',
+    title: pregnancyOverlay?.title || 'Body insight',
     message:
       pregnancyOverlay?.message ||
       'Your body is moving through steady change. Gentle awareness can help you notice shifts in energy, rest, and physical comfort over time.',
@@ -79,7 +100,7 @@ export function buildCycleInsightMessage(phase: SupportedPhase): {
   message: string
 } {
   return {
-    title: 'Body Intelligence',
-    message: getCycleInsightMessage(phase),
+    title: 'Body insight',
+    message: getPhaseAwareCycleMessage(phase),
   }
 }

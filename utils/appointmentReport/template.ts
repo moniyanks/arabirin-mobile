@@ -76,7 +76,7 @@ function renderMoodRow(item: MoodSummaryItem): string {
 }
 
 export function renderAppointmentReportHtml(vm: ReportViewModel): string {
-  const { cycleSummary: cs, flowSummary: fs } = vm
+  const { cycleSummary: cs, flowSummary: fs, trackingSummary } = vm
   const maxSymptomCount = vm.topSymptoms[0]?.count ?? 1
 
   return `<!DOCTYPE html>
@@ -118,6 +118,31 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
   </div>
 
   <div class="body">
+
+    <!-- 🔥 NEW: TRACKING SUMMARY -->
+    ${
+      trackingSummary
+        ? `
+    <div class="section">
+      <div class="section-title">Your Tracking Summary</div>
+      <div class="highlight-box">
+        ${escapeHtml(trackingSummary.summary)}
+      </div>
+
+      ${
+        trackingSummary.notes.length > 0
+          ? `
+      <div style="margin-top:10px;">
+        <div class="helper-text" style="margin-bottom:6px;">From your logs</div>
+        ${trackingSummary.notes
+          .map((note) => `<div class="data-row"><span class="data-value">${escapeHtml(note)}</span></div>`)
+          .join('')}
+      </div>`
+          : ''
+      }
+    </div>`
+        : ''
+    }
 
     <div class="section">
       <div class="section-title">Cycle Summary</div>

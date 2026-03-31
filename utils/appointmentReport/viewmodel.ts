@@ -123,6 +123,53 @@ function buildConditionCards(
   })
 }
 
+function buildTrackingSummary(
+  metrics: any,
+  nextPeriod: string | null,
+  fertile: { fertileStart: string; fertileEnd: string } | null,
+  symptomLogs: SymptomLog[]
+) {
+  const notes: string[] = []
+
+  if (metrics.totalCycles < 3) {
+    notes.push('Predictions are based on limited tracking history so far.')
+  }
+
+  const heavyFlowDays = symptomLogs.filter((l) => l.flow === 'heavy').length
+  if (heavyFlowDays >= 3) {
+    notes.push('Heavy flow was logged multiple times.')
+  }
+
+  if (typeof metrics.minCycle === 'number' && typeof metrics.maxCycle === 'number') {
+    if (metrics.maxCycle - metrics.minCycle > 7) {
+      notes.push('Cycle length has varied across logged cycles.')
+    }
+  }
+
+  let summary = 'This summary is based on the information you have logged so far.'
+
+  if (nextPeriod && fertile) {
+    summary = `Based on your logs, your next period is estimated around ${formatDateShort(
+      nextPeriod
+    )}, and your fertile window is estimated ${formatDateShort(
+      fertile.fertileStart
+    )} to ${formatDateShort(fertile.fertileEnd)}.`
+  } else if (nextPeriod) {
+    summary = `Based on your logs, your next period is estimated around ${formatDateShort(
+      nextPeriod
+    )}.`
+  } else if (fertile) {
+    summary = `Based on your logs, your fertile window is estimated ${formatDateShort(
+      fertile.fertileStart
+    )} to ${formatDateShort(fertile.fertileEnd)}.`
+  }
+
+  return {
+    summary,
+    notes,
+  }
+}
+
 export function buildAppointmentReportViewModel(
   profile: Profile,
   periods: Period[],
@@ -162,6 +209,14 @@ export function buildAppointmentReportViewModel(
         : null,
     symptomEntryCount: symptomLogs.length,
     periodsLoggedCount: sortedPeriods.length,
+
+    trackingSummary: buildTrackingSummary(
+      metrics,
+      nextPeriod,
+      fertile,
+      symptomLogs
+    ),
+
     cycleSummary: {
       avgCycleLength: formatDays(metrics.avgCycleLength),
       avgPeriodLength: formatDays(metrics.avgPeriodLength),
@@ -172,12 +227,14 @@ export function buildAppointmentReportViewModel(
       predictionConfidence: getPredictionConfidence(metrics.totalCycles),
       recentPeriodStarts,
     },
+
     flowSummary: {
       heavyFlow,
       mediumFlow,
       lightFlow,
       hasAnyFlow: heavyFlow + mediumFlow + lightFlow > 0,
     },
+
     topSymptoms: buildTopSymptoms(metrics.symptomFrequency ?? {}),
     moodSummary: buildMoodSummary(symptomLogs),
     conditionCards: buildConditionCards(conditions, symptomLogs, sortedPeriods, profile),

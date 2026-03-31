@@ -26,7 +26,7 @@ export function getCycleConditionOverlay({
           ? ['Flow', 'Clots', 'Pain', 'Pressure']
           : ['Flow', 'Pain', 'Energy'],
       heroSubtitleOverride:
-        'Your cycle may feel heavier or more intense than expected. Focus on what your body is telling you .',
+        'Flow may still feel heavier today. Go gently and pay attention to your energy.',
       heroMetaOverride: undefined,
       insightOverride:
         'Your cycle may not follow standard patterns. Noticing changes in flow, pressure, and discomfort can help you better understand what is normal for your body over time.',
