@@ -16,5 +16,5 @@ export type NotificationSyncRecord = {
 export const EMPTY_LOCAL_NOTIFICATION_STATE: LocalNotificationState = {
   periodReminderIds: [],
   fertileReminderId: null,
-  dailyReminderId: null,
+  dailyReminderId: null
 }

@@ -10,11 +10,7 @@ type BodyInsightCardProps = {
   message: string
 }
 
-export default function BodyInsightCard({
-  colors,
-  title,
-  message,
-}: BodyInsightCardProps) {
+export default function BodyInsightCard({ colors, title, message }: BodyInsightCardProps) {
   const styles = makeHomeStyles(colors)
   const router = useRouter()
 
@@ -23,10 +19,7 @@ export default function BodyInsightCard({
     ? message
     : 'Start wherever you are. Even a small check-in helps your body tell its story.'
   return (
-    <Pressable
-      style={styles.intelligenceCard}
-      onPress={() => router.push('/(tabs)/insights')}
-    >
+    <Pressable style={styles.intelligenceCard} onPress={() => router.push('/(tabs)/insights')}>
       <View style={styles.intelligenceIconWrap}>
         <Brain color={colors.accentRose} size={20} strokeWidth={1.8} />
       </View>

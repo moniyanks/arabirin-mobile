@@ -8,10 +8,7 @@ type HomeHeaderProps = {
   firstLetter: string
 }
 
-export default function HomeHeader({
-  colors,
-  firstLetter,
-}: HomeHeaderProps) {
+export default function HomeHeader({ colors, firstLetter }: HomeHeaderProps) {
   const styles = makeHomeStyles(colors)
   const router = useRouter()
 
@@ -23,10 +20,7 @@ export default function HomeHeader({
           <Text style={styles.tagline}>BODY INTELLIGENCE FOR EVERY STAGE</Text>
         </View>
 
-        <Pressable
-          style={styles.avatar}
-          onPress={() => router.push('/(tabs)/profile')}
-        >
+        <Pressable style={styles.avatar} onPress={() => router.push('/(tabs)/profile')}>
           <Text style={styles.avatarText}>{firstLetter}</Text>
         </Pressable>
       </View>

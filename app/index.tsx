@@ -42,12 +42,14 @@ export default function Index() {
   }, [authStatus])
 
   return (
-    <View style={{
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.bgPrimary,
-    }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.bgPrimary
+      }}
+    >
       <ActivityIndicator color={colors.accentRose} />
     </View>
   )

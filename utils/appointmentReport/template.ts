@@ -1,10 +1,6 @@
 import { appointmentReportCss } from '../../styles/appointmentReport'
 import type { ReportViewModel, ConditionCard, TopSymptom, MoodSummaryItem } from './types'
-import {
-  REPORT_BRAND_NAME,
-  REPORT_COMPANY_NAME,
-  REPORT_CONTACT_EMAIL,
-} from './config'
+import { REPORT_BRAND_NAME, REPORT_COMPANY_NAME, REPORT_CONTACT_EMAIL } from './config'
 import { escapeHtml } from './helpers'
 
 function renderPatientField(label: string, value: string): string {
@@ -24,9 +20,7 @@ function renderDataRow(label: string, value: string, accent = false): string {
 }
 
 function renderSymptomBar(symptom: TopSymptom, maxCount: number): string {
-  const pct = maxCount > 0
-    ? Math.min((symptom.count / maxCount) * 100, 100)
-    : 0
+  const pct = maxCount > 0 ? Math.min((symptom.count / maxCount) * 100, 100) : 0
 
   return `
     <div class="symptom-bar-row">
@@ -104,9 +98,11 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
   <div class="patient-banner">
     ${renderPatientField('Prepared for', vm.preparedFor)}
     ${renderPatientField('Health journey', escapeHtml(vm.modeLabel))}
-    ${vm.trackedConditionsLabel
-      ? renderPatientField('Tracked conditions', escapeHtml(vm.trackedConditionsLabel))
-      : ''}
+    ${
+      vm.trackedConditionsLabel
+        ? renderPatientField('Tracked conditions', escapeHtml(vm.trackedConditionsLabel))
+        : ''
+    }
     ${renderPatientField('Report date', escapeHtml(vm.generatedDate))}
   </div>
 
@@ -135,7 +131,10 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
       <div style="margin-top:10px;">
         <div class="helper-text" style="margin-bottom:6px;">From your logs</div>
         ${trackingSummary.notes
-          .map((note) => `<div class="data-row"><span class="data-value">${escapeHtml(note)}</span></div>`)
+          .map(
+            (note) =>
+              `<div class="data-row"><span class="data-value">${escapeHtml(note)}</span></div>`
+          )
           .join('')}
       </div>`
           : ''
@@ -161,14 +160,20 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
         </div>
       </div>
 
-      ${cs.recentPeriodStarts.length > 0 ? `
+      ${
+        cs.recentPeriodStarts.length > 0
+          ? `
       <div style="margin-top:12px;">
         <div class="helper-text" style="margin-bottom:6px;">Most recent period starts</div>
         ${cs.recentPeriodStarts.map((date) => renderDataRow('Period start', date)).join('')}
-      </div>` : ''}
+      </div>`
+          : ''
+      }
     </div>
 
-    ${fs.hasAnyFlow ? `
+    ${
+      fs.hasAnyFlow
+        ? `
     <div class="section">
       <div class="section-title">Flow Severity</div>
       <div class="two-col">
@@ -176,28 +181,42 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
         ${fs.mediumFlow > 0 ? renderDataRow('Medium flow', `${fs.mediumFlow} days logged`) : ''}
         ${fs.lightFlow > 0 ? renderDataRow('Light flow', `${fs.lightFlow} days logged`) : ''}
       </div>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
-    ${vm.topSymptoms.length > 0 ? `
+    ${
+      vm.topSymptoms.length > 0
+        ? `
     <div class="section">
       <div class="section-title">Symptom Patterns (${vm.symptomEntryCount} total entries)</div>
       ${vm.topSymptoms.map((symptom) => renderSymptomBar(symptom, maxSymptomCount)).join('')}
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
-    ${vm.moodSummary.length > 0 ? `
+    ${
+      vm.moodSummary.length > 0
+        ? `
     <div class="section">
       <div class="section-title">Mood Patterns</div>
       ${vm.moodSummary.map(renderMoodRow).join('')}
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
-    ${vm.conditionCards.length > 0 ? `
+    ${
+      vm.conditionCards.length > 0
+        ? `
     <div class="section">
       <div class="section-title">Condition Pattern Analysis</div>
       ${vm.conditionCards.map(renderConditionCard).join('')}
       <div class="helper-text" style="margin-top:8px;font-style:italic;">
         Pattern analysis is based on logged symptoms only and does not constitute a medical diagnosis.
       </div>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
     <div class="section">
       <div class="section-title">Questions for Your Healthcare Provider</div>

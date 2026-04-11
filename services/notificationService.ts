@@ -39,7 +39,7 @@ function validateReminderTime(value: string | null): string | null {
       code: 'VALIDATION_ERROR',
       message: `Invalid reminder time: "${value}"`,
       userMessage: 'Please select a valid reminder time.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -60,7 +60,7 @@ function parseReminderTime(value: string): { hour: number; minute: number } {
       code: 'VALIDATION_ERROR',
       message: `Failed to parse reminder time "${value}"`,
       userMessage: 'Please select a valid reminder time.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -82,7 +82,7 @@ function buildDateTrigger(dateOnly: string, reminderTime: string) {
       code: 'DATE_ERROR',
       message: `Invalid schedule date "${dateOnly}"`,
       userMessage: 'We could not calculate your reminder schedule.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -90,8 +90,8 @@ function buildDateTrigger(dateOnly: string, reminderTime: string) {
     scheduledAt,
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: scheduledAt,
-    } as Notifications.NotificationTriggerInput,
+      date: scheduledAt
+    } as Notifications.NotificationTriggerInput
   }
 }
 
@@ -111,13 +111,13 @@ function buildPeriodReminderContent(mode: ReminderMode) {
   if (mode === 'ttc') {
     return {
       title: 'Àràbìrín',
-      body: 'Your next cycle may be starting around today. Check in with your body.',
+      body: 'Your next cycle may be starting around today. Check in with your body.'
     }
   }
 
   return {
     title: 'Àràbìrín',
-    body: 'Your next period may be starting around today. Take a moment to check in.',
+    body: 'Your next period may be starting around today. Take a moment to check in.'
   }
 }
 
@@ -125,13 +125,13 @@ function buildFertileReminderContent(mode: ReminderMode) {
   if (mode === 'ttc') {
     return {
       title: 'Àràbìrín',
-      body: 'Your fertile window may be starting around today.',
+      body: 'Your fertile window may be starting around today.'
     }
   }
 
   return {
     title: 'Àràbìrín',
-    body: 'Your fertile window may be starting around today.',
+    body: 'Your fertile window may be starting around today.'
   }
 }
 
@@ -149,7 +149,7 @@ async function requestNotificationPermissionIfNeeded(): Promise<void> {
       code: 'PERMISSION_DENIED',
       message: 'Notification permission was denied.',
       userMessage: 'Notifications are turned off. Please enable them in your device settings.',
-      retryable: false,
+      retryable: false
     })
   }
 }
@@ -181,7 +181,7 @@ async function fetchStoredReminderSettings(userId: string): Promise<ReminderPref
       message: 'Failed to load stored reminder settings.',
       userMessage: 'We could not load your reminder settings right now.',
       cause: error,
-      retryable: true,
+      retryable: true
     })
   }
 
@@ -190,7 +190,7 @@ async function fetchStoredReminderSettings(userId: string): Promise<ReminderPref
     reminderTime: validateReminderTime(data?.reminder_time ?? null),
     reminderPhaseTypes: normalizePhaseTypes(data?.reminder_phase_types ?? []),
     existingNotificationIds: Array.from(new Set((data?.notification_ids ?? []).filter(Boolean))),
-    dailyRemindersEnabled: data?.daily_reminders_enabled ?? false,
+    dailyRemindersEnabled: data?.daily_reminders_enabled ?? false
   }
 }
 
@@ -204,7 +204,7 @@ async function persistNotificationState(
     reminderTime: preferences.reminderTime,
     reminderPhaseTypes: preferences.reminderPhaseTypes,
     notificationIds,
-    updatedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   })
 }
 
@@ -215,13 +215,13 @@ async function scheduleDailyReminder(reminderTime: string): Promise<string> {
     content: {
       title: 'Àràbìrín',
       body: 'Take a moment to check in with your body today.',
-      sound: true,
+      sound: true
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour,
-      minute,
-    },
+      minute
+    }
   })
 }
 
@@ -241,9 +241,9 @@ async function scheduleDateReminder(params: {
     content: {
       title: params.title,
       body: params.body,
-      sound: true,
+      sound: true
     },
-    trigger,
+    trigger
   })
 
   return id
@@ -261,7 +261,7 @@ export const notificationService = {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not clear your reminders right now.',
-        retryable: true,
+        retryable: true
       })
     }
   },
@@ -280,7 +280,7 @@ export const notificationService = {
         existingNotificationIds: Array.from(
           new Set(preferences.existingNotificationIds.filter(Boolean))
         ),
-        dailyRemindersEnabled: preferences.dailyRemindersEnabled,
+        dailyRemindersEnabled: preferences.dailyRemindersEnabled
       }
 
       await cancelScheduledNotifications(normalizedPreferences.existingNotificationIds)
@@ -295,7 +295,7 @@ export const notificationService = {
           code: 'VALIDATION_ERROR',
           message: 'Reminder time is required when reminders are enabled.',
           userMessage: 'Please select a reminder time.',
-          retryable: false,
+          retryable: false
         })
       }
 
@@ -317,7 +317,7 @@ export const notificationService = {
           title: periodContent.title,
           body: periodContent.body,
           dateOnly: timeline.nextPeriodStart,
-          reminderTime: normalizedPreferences.reminderTime,
+          reminderTime: normalizedPreferences.reminderTime
         })
 
         if (periodReminderId) {
@@ -334,7 +334,7 @@ export const notificationService = {
           title: fertileContent.title,
           body: fertileContent.body,
           dateOnly: timeline.fertileStart,
-          reminderTime: normalizedPreferences.reminderTime,
+          reminderTime: normalizedPreferences.reminderTime
         })
 
         if (fertileReminderId) {
@@ -349,7 +349,7 @@ export const notificationService = {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not update your reminder settings right now.',
-        retryable: true,
+        retryable: true
       })
     }
   },
@@ -366,14 +366,14 @@ export const notificationService = {
       return await this.applyPreferences(userId, timeline, mode, {
         ...storedPreferences,
         dailyRemindersEnabled:
-          dailyRemindersEnabledOverride ?? storedPreferences.dailyRemindersEnabled,
+          dailyRemindersEnabledOverride ?? storedPreferences.dailyRemindersEnabled
       })
     } catch (error) {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not refresh your reminders right now.',
-        retryable: true,
+        retryable: true
       })
     }
-  },
+  }
 }

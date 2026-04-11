@@ -15,7 +15,7 @@ export function makeSistersPreviewCardStyles(colors: any) {
       shadowOpacity: 0.08,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
-      elevation: 2,
+      elevation: 2
     },
 
     eyebrow: {
@@ -24,7 +24,7 @@ export function makeSistersPreviewCardStyles(colors: any) {
       textTransform: 'uppercase',
       letterSpacing: 1,
       color: colors.textMuted,
-      marginBottom: 10,
+      marginBottom: 10
     },
 
     title: {
@@ -32,7 +32,7 @@ export function makeSistersPreviewCardStyles(colors: any) {
       fontSize: 21,
       lineHeight: 28,
       color: colors.accentGold,
-      marginBottom: 10,
+      marginBottom: 10
     },
 
     message: {
@@ -40,7 +40,7 @@ export function makeSistersPreviewCardStyles(colors: any) {
       fontSize: 15,
       lineHeight: 23,
       color: colors.textMuted,
-      marginBottom: 10,
+      marginBottom: 10
     },
 
     contextLine: {
@@ -49,13 +49,13 @@ export function makeSistersPreviewCardStyles(colors: any) {
       lineHeight: 18,
       color: colors.textMuted,
       marginBottom: 10,
-      opacity: 0.9,
+      opacity: 0.9
     },
 
     topicRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginBottom: 16,
+      marginBottom: 16
     },
 
     topicChip: {
@@ -66,20 +66,20 @@ export function makeSistersPreviewCardStyles(colors: any) {
       paddingVertical: 8,
       borderRadius: 999,
       marginRight: 8,
-      marginBottom: 8,
+      marginBottom: 8
     },
 
     topicChipText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 12,
-      color: colors.accentRose,
+      color: colors.accentRose
     },
 
     footerRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingTop: 2,
+      paddingTop: 2
     },
 
     footerText: {
@@ -88,13 +88,13 @@ export function makeSistersPreviewCardStyles(colors: any) {
       lineHeight: 19,
       color: colors.textMuted,
       flex: 1,
-      paddingRight: 12,
+      paddingRight: 12
     },
 
     cta: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 14,
-      color: colors.accentRose,
-    },
+      color: colors.accentRose
+    }
   })
 }

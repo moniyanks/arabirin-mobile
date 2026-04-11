@@ -21,7 +21,7 @@ export default function RootLayout() {
     'CormorantGaramond-SemiBold': require('../assets/fonts/CormorantGaramond-SemiBold.ttf'),
     'DMSans-Regular': require('../assets/fonts/DMSans-Regular.ttf'),
     'DMSans-Medium': require('../assets/fonts/DMSans-Medium.ttf'),
-    'DMSans-SemiBold': require('../assets/fonts/DMSans-SemiBold.ttf'),
+    'DMSans-SemiBold': require('../assets/fonts/DMSans-SemiBold.ttf')
   })
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function RootLayoutContent() {
 
         router.push({
           pathname: '/calendar',
-          params: query,
+          params: query
         })
         return
       }
@@ -91,7 +91,7 @@ function RootLayoutContent() {
               screenOptions={{
                 headerShown: false,
                 contentStyle: { backgroundColor: colors.bgPrimary },
-                animation: 'fade',
+                animation: 'fade'
               }}
             >
               <Stack.Screen name="index" />
@@ -139,7 +139,6 @@ function AuthGate() {
     const inSetup = rootGroup === '(setup)'
     const inTabs = rootGroup === '(tabs)'
     const inModals = rootGroup === '(modals)'
-    
 
     if (status === 'signed_out') {
       // Signed-out users can only remain in public auth screens.
@@ -157,7 +156,7 @@ function AuthGate() {
       }
 
       // Signed-in users are allowed in tabs, setup, modals, and root index.
-      if (inTabs || inSetup || inModals ) {
+      if (inTabs || inSetup || inModals) {
         return
       }
 

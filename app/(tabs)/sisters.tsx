@@ -1,49 +1,90 @@
-import { useState, useMemo } from 'react'
-import {
-  View, Text, Pressable, ScrollView,
-  TextInput, ActivityIndicator,
-} from 'react-native'
+import { useEffect, useMemo, useState } from 'react'
+import { View, Text, Pressable, ScrollView, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Users, AlertCircle } from 'lucide-react-native'
+import { AlertCircle } from 'lucide-react-native'
 import { useColors } from '../../styles'
 import { makeSistersStyles } from '../../styles/screens/sisters'
-import { useAuth } from '../../context/AuthContext'
+import { useAppData } from '../../context/AppDataContext'
+import { resolveConditionAwareCircles } from '../../features/sisters/resolveConditionAwareCircles'
+import {
+  resolveSistersCircleContent,
+  type SistersCircleKey
+} from '../../features/sisters/sistersContent'
+import { sistersRepository } from '../../repositories/sistersRepository'
+import type { SistersReflectionRecord } from '../../types/sisters'
 
-const FORMSPREE_URL = 'https://formspree.io/f/mvzwkpaz'
-
-const CIRCLES = [
-  { key: 'all',      label: 'All'             },
-  { key: 'general',  label: 'Cycle Support'         },
-  { key: 'fibroids', label: 'Fibroids'        },
-  { key: 'endo',     label: 'Endometriosis'   },
-  { key: 'pcos',     label: 'PCOS'            },
-  { key: 'maternal', label: 'Maternal Health' },
-  { key: 'loss',     label: 'Pregnancy Loss'  },
-]
-
-type SubmitState = 'idle' | 'loading' | 'success' | 'error'
+type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 export default function SistersScreen() {
   const colors = useColors()
-  const s      = useMemo(() => makeSistersStyles(colors), [colors])
-  const { user } = useAuth()
+  const s = useMemo(() => makeSistersStyles(colors), [colors])
+  const { profile } = useAppData()
 
-  const [activeCircle, setActiveCircle] = useState('all')
-  const [email,        setEmail]        = useState('')
-  const [submitState,  setSubmitState]  = useState<SubmitState>('idle')
+  const prioritizedConditions = profile?.conditions ?? []
 
-  const handleWaitlist = async () => {
-    if (!email.includes('@')) return
-    setSubmitState('loading')
+  const circles = useMemo(
+    () => resolveConditionAwareCircles(prioritizedConditions),
+    [prioritizedConditions]
+  )
+
+  const [activeCircle, setActiveCircle] = useState<SistersCircleKey>('all')
+  const [reflectionDraft, setReflectionDraft] = useState('')
+  const [saveState, setSaveState] = useState<SaveState>('idle')
+  const [savedReflections, setSavedReflections] = useState<SistersReflectionRecord[]>([])
+
+  const activeCircleContent = useMemo(
+    () => resolveSistersCircleContent(activeCircle, prioritizedConditions),
+    [activeCircle, prioritizedConditions]
+  )
+
+  const activeCircleLabel =
+    circles.find((circle) => circle.key === activeCircle)?.label ?? activeCircleContent.label
+
+  const trimmedReflection = reflectionDraft.trim()
+  const canSaveReflection = trimmedReflection.length >= 20
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadReflections = async () => {
+      try {
+        const reflections = await sistersRepository.listReflections(activeCircle)
+
+        if (isMounted) {
+          setSavedReflections(reflections)
+        }
+      } catch {
+        if (isMounted) {
+          setSavedReflections([])
+        }
+      }
+    }
+
+    void loadReflections()
+
+    return () => {
+      isMounted = false
+    }
+  }, [activeCircle])
+
+  const handleSaveReflection = async () => {
+    if (!canSaveReflection) {
+      return
+    }
+
+    setSaveState('saving')
+
     try {
-      const res = await fetch(FORMSPREE_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body:    JSON.stringify({ email, source: 'Sisters Circle Waitlist — Mobile' }),
+      const savedReflection = await sistersRepository.saveReflection({
+        circleKey: activeCircle,
+        reflectionText: trimmedReflection
       })
-      setSubmitState(res.ok ? 'success' : 'error')
+
+      setSavedReflections((prev) => [savedReflection, ...prev])
+      setReflectionDraft('')
+      setSaveState('saved')
     } catch {
-      setSubmitState('error')
+      setSaveState('error')
     }
   }
 
@@ -55,133 +96,142 @@ export default function SistersScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
         <View style={s.header}>
           <Text style={s.title}>Sisters Circle</Text>
           <Text style={s.subtitle}>
-            A safe space to share experiences — not medical advice
+            Condition-aware support rooted in lived experience, reflection, and shared
+            understanding.
           </Text>
         </View>
 
-        {/* Disclaimer */}
         <View style={s.disclaimer}>
           <AlertCircle color={colors.textMuted} size={15} strokeWidth={1.5} />
           <Text style={s.disclaimerText}>
-            Everything shared here is personal experience only. Always speak to a qualified healthcare provider about your symptoms and treatment.
+            Sisters Circle is for peer support only. It is not medical advice and does not
+            replace care from a qualified healthcare provider.
           </Text>
         </View>
 
         <View style={s.introCard}>
-          <Text style={s.introTitle}>What Sister’s Circle is for</Text>
-          <Text style={s.introText}>
-            A guided community for sharing lived experiences, asking thoughtful questions,
-            and feeling less alone through cycles, symptoms, fertility journeys, and women’s health conditions.
-          </Text>
+          <Text style={s.introTitle}>{activeCircleContent.title}</Text>
+          <Text style={s.introText}>{activeCircleContent.description}</Text>
           <Text style={s.introFootnote}>
-            Sister’s Circle is for support and shared experience. It is not a substitute for professional medical care.
+            This space is designed for thoughtful stories, respectful honesty, and support
+            that helps women feel less alone.
           </Text>
         </View>
 
-        {/* Waitlist card */}
-        {submitState !== 'success' ? (
-          <View style={s.waitlistCard}>
-            <View style={s.waitlistTop}>
-              <View style={s.waitlistIconWrap}>
-                <Users color={colors.accentRose} size={20} strokeWidth={1.5} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={s.waitlistTitle}>Be a founding sister</Text>
-                <Text style={s.waitlistCount}>Join the early acess list</Text>
-              </View>
-            </View>
-
-            <Text style={s.waitlistDesc}>
-              Sisters Circle is coming soon. Founding sisters get early access, a special badge, and help shape this community.
-            </Text>
-
-            <TextInput
-              style={s.waitlistInput}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="your@email.com"
-              placeholderTextColor={colors.textMuted}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-            />
-
-            {submitState === 'error' && (
-              <Text style={s.errorText}>Something went wrong. Please try again.</Text>
-            )}
-
-            <Pressable
-              style={[s.waitlistBtn, (!email.includes('@') || submitState === 'loading') && s.waitlistBtnDisabled]}
-              onPress={handleWaitlist}
-              disabled={!email.includes('@') || submitState === 'loading'}
-            >
-              {submitState === 'loading'
-                ? <ActivityIndicator color={colors.bgPrimary} />
-                : <Text style={s.waitlistBtnText}>Join the waitlist →</Text>
-              }
-            </Pressable>
-          </View>
-        ) : (
-          <View style={s.successCard}>
-            <Text style={s.successIcon}>◉</Text>
-            <Text style={s.successTitle}>You're in, sister</Text>
-            <Text style={s.successDesc}>
-              We'll let you know the moment Sisters Circle opens.
-            </Text>
-          </View>
-        )}
-
-        {/* Circles filter */}
         <Text style={s.sectionLabel}>Explore circles</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={s.circlesRow}
         >
-          {CIRCLES.map((c) => (
+          {circles.map((circle) => (
             <Pressable
-              key={c.key}
-              style={[s.circleBtn, activeCircle === c.key && s.circleBtnActive]}
-              onPress={() => setActiveCircle(c.key)}
+              key={circle.key}
+              style={[s.circleBtn, activeCircle === circle.key && s.circleBtnActive]}
+              onPress={() => {
+                setActiveCircle(circle.key as SistersCircleKey)
+                setSaveState('idle')
+              }}
             >
-              <Text style={[s.circleBtnText, activeCircle === c.key && s.circleBtnTextActive]}>
-                {c.label}
+              <Text
+                style={[
+                  s.circleBtnText,
+                  activeCircle === circle.key && s.circleBtnTextActive
+                ]}
+              >
+                {circle.label}
               </Text>
             </Pressable>
           ))}
         </ScrollView>
 
-        {/* Locked composer */}
-        <View style={s.composerLocked}>
-          <View style={s.composerAvatar}>
-            <Text style={s.composerAvatarText}>◉</Text>
-          </View>
-          <Text style={s.composerPlaceholder}>Share your experience with other sisters...</Text>
-          <View style={s.composerSoonPill}>
-            <Text style={s.composerSoonText}>Coming soon</Text>
-          </View>
+        <Text style={s.sectionLabel}>Guided prompts</Text>
+        <View style={s.emptyState}>
+          <Text style={s.emptyIcon}>◌</Text>
+          <Text style={s.emptyTitle}>Start with one of these prompts</Text>
+          <Text style={s.emptyText}>
+            These prompts are here to help women share more clearly and safely in{' '}
+            {activeCircleLabel}.
+          </Text>
+          <Text style={s.emptyFootnote}>
+            You do not need to answer everything. One honest reflection is enough.
+          </Text>
         </View>
 
-        {/* Empty state */}
-      <View style={s.emptyState}>
-        <Text style={s.emptyIcon}>◌</Text>
-        <Text style={s.emptyTitle}>
-          {activeCircle === 'all'
-            ? 'Sister’s Circle is opening soon'
-            : `No posts in ${CIRCLES.find((c) => c.key === activeCircle)?.label} yet`}
-        </Text>
-        <Text style={s.emptyText}>
-          Be among the first to share your experience when we launch. Your story could help another sister feel less alone.
-        </Text>
-        <Text style={s.emptyFootnote}>
-          Posts will be community-guided and moderated to help keep the space thoughtful, supportive, and safe.
-        </Text>
-      </View>
+        {activeCircleContent.prompts.map((prompt, index) => (
+          <View key={`${activeCircleContent.key}-prompt-${index}`} style={s.introCard}>
+            <Text style={s.introTitle}>Prompt {index + 1}</Text>
+            <Text style={s.introText}>{prompt}</Text>
+          </View>
+        ))}
 
+        <Text style={s.sectionLabel}>Community reflections</Text>
+        {savedReflections.length > 0 ? (
+          savedReflections.map((reflection) => (
+            <View key={reflection.id} style={s.introCard}>
+              <Text style={s.introTitle}>Your reflection</Text>
+              <Text style={s.introText}>{reflection.reflection_text}</Text>
+              <Text style={s.introFootnote}>
+                Saved {new Date(reflection.created_at).toLocaleDateString()}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <View style={s.emptyState}>
+            <Text style={s.emptyIcon}>◌</Text>
+            <Text style={s.emptyTitle}>No reflections yet</Text>
+            <Text style={s.emptyText}>
+              Be one of the first to share a thoughtful reflection in {activeCircleLabel}.
+            </Text>
+            <Text style={s.emptyFootnote}>
+              Real reflections will appear here once members start contributing.
+            </Text>
+          </View>
+        )}
+
+        <Text style={s.sectionLabel}>Share a reflection</Text>
+        <TextInput
+          style={s.reflectionInput}
+          value={reflectionDraft}
+          onChangeText={(value) => {
+            setReflectionDraft(value)
+            if (saveState !== 'idle') {
+              setSaveState('idle')
+            }
+          }}
+          placeholder="Write about what changed, what felt hard, or what helped..."
+          placeholderTextColor={colors.textMuted}
+          multiline
+        />
+
+        {saveState === 'error' && (
+          <Text style={s.errorText}>
+            We could not save your reflection right now. Please try again.
+          </Text>
+        )}
+
+        <Pressable
+          style={[s.waitlistBtn, !canSaveReflection && s.waitlistBtnDisabled]}
+          onPress={handleSaveReflection}
+          disabled={!canSaveReflection || saveState === 'saving'}
+        >
+          <Text style={s.waitlistBtnText}>
+            {saveState === 'saving' ? 'Saving...' : 'Save my reflection'}
+          </Text>
+        </Pressable>
+
+        {saveState === 'saved' && (
+          <View style={s.successCard}>
+            <Text style={s.successIcon}>◉</Text>
+            <Text style={s.successTitle}>Reflection saved</Text>
+            <Text style={s.successDesc}>
+              Your reflection is now part of your Sisters experience.
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   )

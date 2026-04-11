@@ -12,7 +12,7 @@ export function showsCycleEmptyState(mode: AppMode, periodsCount: number) {
   return showsCycleEducation(mode) && periodsCount === 0
 }
 
-export function showsConditionIntelligence(mode: AppMode) {
+export function showsConditionIntelligence(_mode: AppMode) {
   // Keep broad for now — can refine later
   return true
 }

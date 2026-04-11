@@ -15,64 +15,64 @@ export function makeCycleContextCardStyles(c: any) {
       shadowOpacity: 0.18,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 6 },
-      elevation: 3,
+      elevation: 3
     },
 
     topRow: {
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'space-between',
-      marginBottom: 14,
+      marginBottom: 14
     },
 
     leftBlock: {
       flex: 1,
-      paddingRight: 12,
+      paddingRight: 12
     },
 
     eyebrow: {
       ...theme.typography.label,
       color: c.textMuted,
-      marginBottom: 6,
+      marginBottom: 6
     },
 
     cycleDay: {
       ...theme.typography.displayLg,
       color: c.accentGold,
-      marginBottom: 4,
+      marginBottom: 4
     },
 
     phaseLabel: {
       ...theme.typography.bodyMd,
       fontWeight: '600',
-      color: c.accentRose,
+      color: c.accentRose
     },
 
     rightBlock: {
-      alignItems: 'flex-end',
+      alignItems: 'flex-end'
     },
 
     metaLabel: {
       ...theme.typography.label,
       color: c.textMuted,
-      marginBottom: 4,
+      marginBottom: 4
     },
 
     metaValue: {
       ...theme.typography.button,
-      color: c.accentGold,
+      color: c.accentGold
     },
 
     divider: {
       height: 1,
       backgroundColor: c.borderRose,
       opacity: 0.7,
-      marginBottom: 12,
+      marginBottom: 12
     },
 
     supportText: {
       ...theme.typography.bodyMd,
-      color: c.textMuted,
-    },
+      color: c.textMuted
+    }
   })
 }

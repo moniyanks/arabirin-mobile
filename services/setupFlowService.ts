@@ -32,7 +32,7 @@ function validateName(name: string): string {
       code: 'VALIDATION_ERROR',
       message: 'Onboarding name must be at least 2 characters.',
       userMessage: 'Please enter your first name.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -51,7 +51,7 @@ function validateCycleLength(value: number | null): number | null {
       code: 'VALIDATION_ERROR',
       message: 'Cycle length must be between 15 and 90 days.',
       userMessage: 'Enter a valid cycle length between 15 and 90 days.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -66,7 +66,7 @@ function validatePeriodLength(value: number | null): number | null {
       code: 'VALIDATION_ERROR',
       message: 'Period length must be between 1 and 15 days.',
       userMessage: 'Enter a valid period length.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -83,7 +83,7 @@ function validateDateOnly(value: string | null): string | null {
       code: 'DATE_ERROR',
       message: `Invalid date-only value: "${value}"`,
       userMessage: 'Please choose a valid date.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -107,13 +107,13 @@ export const setupFlowService = {
         privacyViewedAt: input.privacyViewedAt,
         termsViewedAt: input.termsViewedAt,
         appPlatform: input.appPlatform,
-        appVersion: input.appVersion,
+        appVersion: input.appVersion
       })
     } catch (error) {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not save your consent right now.',
-        retryable: true,
+        retryable: true
       })
     }
   },
@@ -136,7 +136,7 @@ export const setupFlowService = {
           code: 'VALIDATION_ERROR',
           message: 'A last period start date is required for predictive modes.',
           userMessage: 'Please choose when your last period started.',
-          retryable: false,
+          retryable: false
         })
       }
 
@@ -146,14 +146,14 @@ export const setupFlowService = {
         conditions,
         cycleLength,
         periodLength,
-        lastPeriodStartDate,
+        lastPeriodStartDate
       })
     } catch (error) {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not complete your account setup right now.',
-        retryable: true,
+        retryable: true
       })
     }
-  },
+  }
 }

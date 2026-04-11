@@ -1,11 +1,26 @@
-import { CONDITION_CATALOG, ConditionDefinition, ConditionKey } from '../constants/conditions'
+import { CONDITION_CATALOG } from '../constants/conditions'
+import type { ConditionDefinition, ConditionKey } from '../types/conditions'
 
 const CONDITION_ALIASES: Record<string, ConditionKey> = {
   fibroids: 'fibroids',
+
   pcos: 'pcos',
+
+  endometriosis: 'endometriosis',
+  endo: 'endometriosis',
+
+  'maternal health': 'maternal_health',
+  maternal_health: 'maternal_health',
+  maternal: 'maternal_health',
+
+  'pregnancy loss': 'pregnancy_loss',
+  pregnancy_loss: 'pregnancy_loss',
+  loss: 'pregnancy_loss',
+
   'sickle cell': 'sickle_cell',
   sickle_cell: 'sickle_cell',
-  thalassemia: 'thalassemia',
+
+  thalassemia: 'thalassemia'
 }
 
 export function normalizeConditionKey(value: string): ConditionKey | null {

@@ -5,29 +5,29 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
   StyleSheet.create({
     safe: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     container: {
-      flex: 1,
+      flex: 1
     },
 
     // ── Header ──
     header: {
       paddingHorizontal: 24,
       paddingTop: 8,
-      paddingBottom: 8,
+      paddingBottom: 8
     },
     stepLabel: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       color: c.textMuted,
       textAlign: 'center',
-      marginBottom: 12,
+      marginBottom: 12
     },
     progressRow: {
       flexDirection: 'row',
       justifyContent: 'center',
-      gap: 8,
+      gap: 8
     },
     progressDot: {
       width: 8,
@@ -43,14 +43,14 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
     },
     progressDotDone: {
       backgroundColor: c.accentGold,
-      borderColor: c.accentGold,
+      borderColor: c.accentGold
     },
 
     // ── Content area ──
     content: {
       flex: 1,
       paddingHorizontal: 24,
-      paddingTop: 40,
+      paddingTop: 40
     },
 
     // ── Welcome step ──
@@ -58,21 +58,21 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingBottom: 40,
+      paddingBottom: 40
     },
     logoMark: {
       fontFamily: theme.fonts.serif,
       fontSize: 56,
       color: c.accentRose,
       textAlign: 'center',
-      marginBottom: 16,
+      marginBottom: 16
     },
     appName: {
       fontFamily: theme.fonts.serif,
       fontSize: 36,
       color: c.accentRose,
       textAlign: 'center',
-      marginBottom: 12,
+      marginBottom: 12
     },
     subtitle: {
       fontFamily: theme.fonts.sans,
@@ -81,7 +81,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       textAlign: 'center',
       lineHeight: 22,
       marginBottom: 56,
-      paddingHorizontal: 16,
+      paddingHorizontal: 16
     },
 
     // ── Questions ──
@@ -91,7 +91,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       color: c.accentGold,
       marginBottom: 8,
       lineHeight: 34,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     hint: {
       fontFamily: theme.fonts.sans,
@@ -99,7 +99,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       color: c.textMuted,
       lineHeight: 20,
       marginBottom: 32,
-      textAlign: 'center',
+      textAlign: 'center'
     },
 
     // ── Text input ──
@@ -114,7 +114,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       fontFamily: theme.fonts.sans,
       fontSize: 16,
       marginBottom: 32,
-      minHeight: 54,
+      minHeight: 54
     },
 
     // ── Option buttons ──
@@ -123,7 +123,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       flexWrap: 'wrap',
       gap: 10,
       marginBottom: 16,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     optionBtn: {
       backgroundColor: c.bgSecondary,
@@ -135,26 +135,26 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       minHeight: 44,
       minWidth: 44,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     optionBtnText: {
       fontFamily: theme.fonts.sans,
       fontSize: 15,
-      color: c.textMuted,
+      color: c.textMuted
     },
     optionSelected: {
       backgroundColor: c.accentRose,
-      borderColor: c.accentRose,
+      borderColor: c.accentRose
     },
     optionSelectedText: {
       color: c.bgPrimary,
-      fontFamily: theme.fonts.sansSemiBold,
+      fontFamily: theme.fonts.sansSemiBold
     },
 
     // ── Mode list ──
     modeList: {
       width: '100%',
-      gap: 12,
+      gap: 12
     },
     modeBtn: {
       backgroundColor: c.bgSecondary,
@@ -167,26 +167,26 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 12,
-      minHeight: 64,
+      minHeight: 64
     },
     modeBtnSelected: {
       borderColor: c.accentRose,
-      backgroundColor: 'rgba(217, 155, 155, 0.08)',
+      backgroundColor: 'rgba(217, 155, 155, 0.08)'
     },
     modeBtnInner: {
       flex: 1,
-      gap: 3,
+      gap: 3
     },
     modeLabel: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 15,
-      color: c.accentGold,
+      color: c.accentGold
     },
     modeDesc: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       color: c.textMuted,
-      lineHeight: 18,
+      lineHeight: 18
     },
     modeCheck: {
       width: 22,
@@ -196,16 +196,16 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       borderColor: c.borderRose,
       alignItems: 'center',
       justifyContent: 'center',
-      flexShrink: 0,
+      flexShrink: 0
     },
     modeCheckActive: {
       backgroundColor: c.accentRose,
-      borderColor: c.accentRose,
+      borderColor: c.accentRose
     },
     modeCheckTick: {
       color: c.bgPrimary,
       fontSize: 12,
-      fontWeight: '700',
+      fontWeight: '700'
     },
 
     modeCard: {
@@ -215,24 +215,24 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       borderColor: c.borderRose,
       borderRadius: 16,
       paddingVertical: 18,
-      paddingHorizontal: 16,
+      paddingHorizontal: 16
     },
     modeCardActive: {
       borderColor: c.accentRose,
-      backgroundColor: c.bgSecondary,
+      backgroundColor: c.bgSecondary
     },
     modeTitle: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 20,
       color: c.accentGold,
-      marginBottom: 6,
+      marginBottom: 6
     },
     modeTitleActive: {
-      color: c.accentRose,
+      color: c.accentRose
     },
 
     modeDescActive: {
-      color: c.textPrimary,
+      color: c.textPrimary
     },
 
     // ── Date display ──
@@ -245,61 +245,61 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       paddingHorizontal: 20,
       marginBottom: 12,
       minHeight: 54,
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     dateDisplayText: {
       fontFamily: theme.fonts.sans,
       fontSize: 16,
-      color: c.accentGold,
+      color: c.accentGold
     },
     dateHint: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       color: c.textMuted,
       marginBottom: 32,
-      lineHeight: 18,
+      lineHeight: 18
     },
 
     // ── Inline date picker rows ──
     datePickerRow: {
       flexDirection: 'row',
       gap: 8,
-      marginBottom: 32,
+      marginBottom: 32
     },
     datePickerCol: {
       flex: 1,
-      gap: 6,
+      gap: 6
     },
     datePickerLabel: {
       fontFamily: theme.fonts.sans,
       fontSize: 10,
       color: c.textMuted,
       letterSpacing: 1.2,
-      textTransform: 'uppercase',
+      textTransform: 'uppercase'
     },
     datePickerScroll: {
       backgroundColor: c.bgSecondary,
       borderWidth: 1,
       borderColor: c.borderRose,
       borderRadius: 12,
-      maxHeight: 180,
+      maxHeight: 180
     },
     datePickerItem: {
       paddingVertical: 12,
       paddingHorizontal: 12,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     datePickerItemText: {
       fontFamily: theme.fonts.sans,
       fontSize: 15,
-      color: c.textMuted,
+      color: c.textMuted
     },
     datePickerItemSelected: {
-      backgroundColor: 'rgba(217, 155, 155, 0.12)',
+      backgroundColor: 'rgba(217, 155, 155, 0.12)'
     },
     datePickerItemTextSelected: {
       color: c.accentRose,
-      fontFamily: theme.fonts.sansSemiBold,
+      fontFamily: theme.fonts.sansSemiBold
     },
 
     // ── Footer ──
@@ -310,38 +310,38 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       borderTopWidth: 1,
       borderTopColor: c.borderRose,
       backgroundColor: c.bgPrimary,
-      gap: 12,
+      gap: 12
     },
     btn: {
       minHeight: 54,
       borderRadius: 999,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.accentRose,
+      backgroundColor: c.accentRose
     },
     btnDisabled: {
-      opacity: 0.5,
+      opacity: 0.5
     },
     btnText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 16,
-      color: c.bgPrimary,
+      color: c.bgPrimary
     },
     ghostBtn: {
       alignItems: 'center',
       minHeight: 44,
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     ghostBtnText: {
       fontFamily: theme.fonts.sans,
       fontSize: 15,
-      color: c.textMuted,
+      color: c.textMuted
     },
     error: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       color: c.accentRose,
-      textAlign: 'center',
+      textAlign: 'center'
     },
 
     stepCount: {
@@ -351,7 +351,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       letterSpacing: 1.6,
       textTransform: 'uppercase',
       marginBottom: 24,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     questionSmall: {
       fontFamily: theme.fonts.serif,
@@ -360,7 +360,7 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       textAlign: 'center',
       marginBottom: 8,
       marginTop: 32,
-      lineHeight: 30,
+      lineHeight: 30
     },
     dateField: {
       width: '100%',
@@ -372,12 +372,11 @@ export const makeOnboardingStyles = (c: ThemeColors) =>
       paddingHorizontal: 20,
       marginBottom: 32,
       minHeight: 54,
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     dateFieldText: {
       fontFamily: theme.fonts.sans,
       fontSize: 16,
-      color: c.accentGold,
-    }, 
-    
+      color: c.accentGold
+    }
   })

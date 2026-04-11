@@ -42,7 +42,7 @@ export function getCycleStatus({
   periods,
   cycleLength,
   todayStr,
-  symptomLogs,
+  symptomLogs
 }: GetCycleStatusArgs): CycleStatus {
   if (mode !== 'cycle' && mode !== 'ttc') {
     return 'hidden'
@@ -52,9 +52,7 @@ export function getCycleStatus({
     return 'insufficient_data'
   }
 
-  const sortedPeriods = [...periods].sort((a, b) =>
-    a.startDate.localeCompare(b.startDate)
-  )
+  const sortedPeriods = [...periods].sort((a, b) => a.startDate.localeCompare(b.startDate))
 
   const lastPeriod = sortedPeriods[sortedPeriods.length - 1]
   const expectedNextPeriodStart = addDaysToDateStr(lastPeriod.startDate, cycleLength)
@@ -88,51 +86,48 @@ export function getCycleStatusCopy(status: CycleStatus): {
     case 'period_expected':
       return {
         title: 'Your next period may be close',
-        body: 'Based on your cycle pattern, your next period may be approaching soon.',
+        body: 'Based on your cycle pattern, your next period may be approaching soon.'
       }
 
     case 'awaiting_user_update':
       return {
         title: 'We’re waiting for your next update',
-        body: 'Log your next period or check-in so your body insight stays aligned with you.',
+        body: 'Log your next period or check-in so your body insight stays aligned with you.'
       }
 
     case 'period_overdue':
       return {
         title: 'Your cycle may be asking for a check-in',
-        body: 'Your next period has not been logged yet. Bodies can shift for many reasons.',
+        body: 'Your next period has not been logged yet. Bodies can shift for many reasons.'
       }
 
     case 'journey_check_in':
       return {
         title: 'A gentle journey check-in',
-        body: 'Your pattern may have changed. If something new is unfolding, you can tell Àràbìrìn.',
+        body: 'Your pattern may have changed. If something new is unfolding, you can tell Àràbìrìn.'
       }
 
     case 'on_track':
       return {
         title: 'Your cycle rhythm looks steady',
-        body: 'We’ll keep learning from your logged patterns as you continue checking in.',
+        body: 'We’ll keep learning from your logged patterns as you continue checking in.'
       }
 
     case 'insufficient_data':
       return {
         title: 'Keep logging to build your body insight',
-        body: 'The more you log, the more personalised your cycle guidance becomes.',
+        body: 'The more you log, the more personalised your cycle guidance becomes.'
       }
 
     default:
       return {
         title: '',
-        body: '',
+        body: ''
       }
   }
 }
 
-export function shouldShowJourneyCard(
-  profile: Profile,
-  status: CycleStatus
-): boolean {
+export function shouldShowJourneyCard(profile: Profile, status: CycleStatus): boolean {
   if (!profile) return false
   if (profile.mode !== 'cycle' && profile.mode !== 'ttc') return false
   return status !== 'hidden'

@@ -1,17 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'expo-router'
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { format } from 'date-fns'
-
+import type { ConditionKey } from '../../../types/conditions'
 import { supportsCyclePredictions, type AppMode } from '../../../constants/appMode'
 import { useColors } from '../../../styles'
 import { makeOnboardingStyles } from '../../../styles/screens/onboarding'
@@ -31,40 +24,56 @@ const MODES: Array<{
   {
     key: 'cycle',
     label: 'Tracking my cycle',
-    desc: 'Understanding my phases, symptoms and patterns',
+    desc: 'Understanding my phases, symptoms and patterns'
   },
   {
     key: 'ttc',
     label: 'Trying to conceive',
-    desc: 'Fertile window, ovulation tracking and cycle quality',
+    desc: 'Fertile window, ovulation tracking and cycle quality'
   },
   {
     key: 'pregnant',
     label: 'Pregnant',
-    desc: 'Weekly milestones, symptoms and care prompts',
+    desc: 'Weekly milestones, symptoms and care prompts'
   },
   {
     key: 'postpartum',
     label: 'Postpartum',
-    desc: 'Recovery, return to cycle and emotional support',
+    desc: 'Recovery, return to cycle and emotional support'
   },
   {
     key: 'healing',
     label: 'Loss or recovery',
-    desc: 'Healing tracking, symptom monitoring and support',
+    desc: 'Healing tracking, symptom monitoring and support'
   },
   {
     key: 'perimenopause',
     label: 'Perimenopause',
-    desc: 'Cycle changes, symptoms and transition support',
-  },
+    desc: 'Cycle changes, symptoms and transition support'
+  }
 ]
 
-const CONDITIONS = [
-  { key: 'fibroids', label: 'Fibroids', desc: 'Uterine fibroids or suspected fibroids' },
-  { key: 'endo', label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis' },
-  { key: 'pcos', label: 'PCOS', desc: 'Polycystic ovary syndrome' },
-  { key: 'thalassemia', label: 'Thalassemia', desc: 'Thalassemia trait or thalassemia major' },
+const CONDITIONS: Array<{ key: ConditionKey; label: string; desc: string }> = [
+  {
+    key: 'fibroids',
+    label: 'Fibroids',
+    desc: 'Uterine fibroids or suspected fibroids'
+  },
+  {
+    key: 'endometriosis',
+    label: 'Endometriosis',
+    desc: 'Diagnosed or suspected endometriosis'
+  },
+  {
+    key: 'pcos',
+    label: 'PCOS',
+    desc: 'Polycystic ovary syndrome'
+  },
+  {
+    key: 'thalassemia',
+    label: 'Thalassemia',
+    desc: 'Thalassemia trait or thalassemia major'
+  }
 ]
 
 export default function OnboardingScreen() {
@@ -76,7 +85,7 @@ export default function OnboardingScreen() {
   const [step, setStep] = useState<Step>('name')
   const [name, setName] = useState('')
   const [mode, setMode] = useState<AppMode>('cycle')
-  const [conditions, setConditions] = useState<string[]>([])
+  const [conditions, setConditions] = useState<ConditionKey[]>([])
 
   const [periodLength, setPeriodLength] = useState(5)
   const [cycleLength, setCycleLength] = useState(28)
@@ -144,7 +153,7 @@ export default function OnboardingScreen() {
         conditions,
         cycleLength: supportsPredictions ? resolvedCycleLength : null,
         periodLength: supportsPredictions ? periodLength : null,
-        lastPeriodStartDate: supportsPredictions ? selectedDateStr : null,
+        lastPeriodStartDate: supportsPredictions ? selectedDateStr : null
       })
 
       await refetchAll()
@@ -153,7 +162,7 @@ export default function OnboardingScreen() {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not complete your account setup right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
     } finally {
@@ -190,7 +199,7 @@ export default function OnboardingScreen() {
     if (prev) setStep(prev)
   }
 
-  const toggleCondition = (key: string) => {
+  const toggleCondition = (key: ConditionKey) => {
     setConditions((prev) =>
       prev.includes(key) ? prev.filter((value) => value !== key) : [...prev, key]
     )
@@ -210,7 +219,7 @@ export default function OnboardingScreen() {
               style={[
                 s.progressDot,
                 i < stepIndex && s.progressDotDone,
-                i === stepIndex && s.progressDotActive,
+                i === stepIndex && s.progressDotActive
               ]}
             />
           ))}
@@ -276,12 +285,8 @@ export default function OnboardingScreen() {
                       if (error) setError('')
                     }}
                   >
-                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>
-                      {item.label}
-                    </Text>
-                    <Text style={[s.modeDesc, active && s.modeDescActive]}>
-                      {item.desc}
-                    </Text>
+                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>{item.label}</Text>
+                    <Text style={[s.modeDesc, active && s.modeDescActive]}>{item.desc}</Text>
                   </Pressable>
                 )
               })}
@@ -332,19 +337,16 @@ export default function OnboardingScreen() {
                       if (error) setError('')
                     }}
                   >
-                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>
-                      {item.label}
-                    </Text>
-                    <Text style={[s.modeDesc, active && s.modeDescActive]}>
-                      {item.desc}
-                    </Text>
+                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>{item.label}</Text>
+                    <Text style={[s.modeDesc, active && s.modeDescActive]}>{item.desc}</Text>
                   </Pressable>
                 )
               })}
             </View>
 
             <Text style={s.hint}>
-              None of these apply or not sure? That&apos;s okay. You can update this anytime in your profile.
+              None of these apply or not sure? That&apos;s okay. You can update this anytime in your
+              profile.
             </Text>
           </ScrollView>
 
@@ -397,9 +399,7 @@ export default function OnboardingScreen() {
                   />
                 )}
 
-                <Text style={s.questionSmall}>
-                  How many days does your period usually last?
-                </Text>
+                <Text style={s.questionSmall}>How many days does your period usually last?</Text>
 
                 <View style={s.optionRow}>
                   {[2, 3, 4, 5, 6, 7].map((value) => (
@@ -412,10 +412,7 @@ export default function OnboardingScreen() {
                       }}
                     >
                       <Text
-                        style={[
-                          s.optionBtnText,
-                          periodLength === value && s.optionSelectedText,
-                        ]}
+                        style={[s.optionBtnText, periodLength === value && s.optionSelectedText]}
                       >
                         {value}
                       </Text>
@@ -429,21 +426,14 @@ export default function OnboardingScreen() {
                       if (error) setError('')
                     }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        periodLength === 8 && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, periodLength === 8 && s.optionSelectedText]}>
                       7+
                     </Text>
                   </Pressable>
                 </View>
 
                 <Text style={s.questionSmall}>How long is your usual cycle?</Text>
-                <Text style={s.hint}>
-                  From the first day of one period to the next 🌙
-                </Text>
+                <Text style={s.hint}>From the first day of one period to the next 🌙</Text>
 
                 <View style={s.optionRow}>
                   {[21, 28, 30, 35].map((value) => (
@@ -454,7 +444,7 @@ export default function OnboardingScreen() {
                         !useCustomCycleLength &&
                           !isCycleLengthUnknown &&
                           cycleLength === value &&
-                          s.optionSelected,
+                          s.optionSelected
                       ]}
                       onPress={() => {
                         setUseCustomCycleLength(false)
@@ -470,7 +460,7 @@ export default function OnboardingScreen() {
                           !useCustomCycleLength &&
                             !isCycleLengthUnknown &&
                             cycleLength === value &&
-                            s.optionSelectedText,
+                            s.optionSelectedText
                         ]}
                       >
                         {value}d
@@ -486,12 +476,7 @@ export default function OnboardingScreen() {
                       if (error) setError('')
                     }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        useCustomCycleLength && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, useCustomCycleLength && s.optionSelectedText]}>
                       Custom
                     </Text>
                   </Pressable>
@@ -505,12 +490,7 @@ export default function OnboardingScreen() {
                       if (error) setError('')
                     }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        isCycleLengthUnknown && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, isCycleLengthUnknown && s.optionSelectedText]}>
                       I’m not sure
                     </Text>
                   </Pressable>
@@ -534,9 +514,7 @@ export default function OnboardingScreen() {
                 {useCustomCycleLength &&
                   customCycleLength.trim().length > 0 &&
                   !isValidResolvedCycleLength && (
-                    <Text style={s.error}>
-                      Enter a valid cycle length between 15 and 90 days.
-                    </Text>
+                    <Text style={s.error}>Enter a valid cycle length between 15 and 90 days.</Text>
                   )}
               </>
             ) : (

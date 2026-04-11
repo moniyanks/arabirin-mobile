@@ -19,7 +19,7 @@ function getContextCopy(conditions: string[], mode: string) {
       title: 'Others are navigating this too.',
       message:
         'Women with fibroids often share patterns of heavy flow, pressure, and fatigue. Explore how others are making sense of it.',
-      footer: 'Find conversations that feel relevant to your experience.',
+      footer: 'Find conversations that feel relevant to your experience.'
     }
   }
 
@@ -28,7 +28,7 @@ function getContextCopy(conditions: string[], mode: string) {
       title: 'Others are navigating this too.',
       message:
         'Many women with PCOS talk about irregular timing, body changes, and uncertainty. Explore stories that may feel familiar.',
-      footer: 'Find conversations that meet you where you are.',
+      footer: 'Find conversations that meet you where you are.'
     }
   }
 
@@ -37,7 +37,7 @@ function getContextCopy(conditions: string[], mode: string) {
       title: 'Others are navigating this too.',
       message:
         'Pain, fatigue, and cycle disruption can feel isolating. Explore how others with endometriosis are navigating it.',
-      footer: 'Find conversations that feel relevant to your experience.',
+      footer: 'Find conversations that feel relevant to your experience.'
     }
   }
 
@@ -46,22 +46,21 @@ function getContextCopy(conditions: string[], mode: string) {
       title: 'You’re not navigating this alone.',
       message:
         'Explore stories, support, and conversations from women trying to understand their fertile rhythm.',
-      footer: 'Find a circle that meets you where you are.',
+      footer: 'Find a circle that meets you where you are.'
     }
   }
 
   return {
     title: 'You’re not alone.',
-    message:
-      'Explore stories, support, and conversations that feel relevant to this season.',
-    footer: 'Find a circle that meets you where you are.',
+    message: 'Explore stories, support, and conversations that feel relevant to this season.',
+    footer: 'Find a circle that meets you where you are.'
   }
 }
 
 export default function SistersPreviewCard({
   colors,
   conditions = [],
-  mode = 'cycle',
+  mode = 'cycle'
 }: SistersPreviewCardProps) {
   const styles = useMemo(() => makeSistersPreviewCardStyles(colors), [colors])
   const router = useRouter()
@@ -84,19 +83,14 @@ export default function SistersPreviewCard({
       : fallbackTopics
 
   return (
-    <Pressable
-      style={styles.card}
-      onPress={() => router.push('/(tabs)/sisters')}
-    >
+    <Pressable style={styles.card} onPress={() => router.push('/(tabs)/sisters')}>
       <Text style={styles.eyebrow}>Sister’s Circle</Text>
 
       <Text style={styles.title}>{copy.title}</Text>
 
       <Text style={styles.message}>{copy.message}</Text>
       {conditionDefinitions.length > 0 ? (
-        <Text style={styles.contextLine}>
-          Circles related to your experience
-        </Text>
+        <Text style={styles.contextLine}>Circles related to your experience</Text>
       ) : null}
 
       <View style={styles.topicRow}>

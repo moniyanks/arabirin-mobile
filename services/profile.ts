@@ -30,7 +30,7 @@ export function buildFormState(profile: Profile): ProfileFormState {
     periodLength: profile?.period_length?.toString() || '5',
     pregnancyDatingMethod: profile?.pregnancy_dating_method === 'edd' ? 'edd' : 'lmp',
     pregnancyLmpDate: profile?.pregnancy_lmp_date || '',
-    pregnancyDueDate: profile?.pregnancy_due_date || '',
+    pregnancyDueDate: profile?.pregnancy_due_date || ''
   }
 }
 
@@ -47,14 +47,14 @@ export function buildProfilePayload(userId: string, form: ProfileFormState) {
     period_length: parseInt(form.periodLength, 10),
     pregnancy_lmp_date: form.mode === 'pregnant' ? form.pregnancyLmpDate || null : null,
     pregnancy_due_date: form.mode === 'pregnant' ? form.pregnancyDueDate || null : null,
-    pregnancy_dating_method: form.mode === 'pregnant' ? form.pregnancyDatingMethod : null,
+    pregnancy_dating_method: form.mode === 'pregnant' ? form.pregnancyDatingMethod : null
   }
 }
 
 export async function saveProfile(form: ProfileFormState) {
   const {
     data: { user },
-    error: userError,
+    error: userError
   } = await supabase.auth.getUser()
 
   if (userError) throw userError
@@ -62,9 +62,7 @@ export async function saveProfile(form: ProfileFormState) {
 
   const payload = buildProfilePayload(user.id, form)
 
-  const { error } = await supabase
-    .from('profiles')
-    .upsert(payload, { onConflict: 'id' })
+  const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' })
 
   if (error) throw error
 }

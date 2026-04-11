@@ -6,7 +6,7 @@ export const APP_MODES = [
   'pregnant',
   'postpartum',
   'healing',
-  'perimenopause',
+  'perimenopause'
 ] as const
 
 export type AppMode = (typeof APP_MODES)[number]

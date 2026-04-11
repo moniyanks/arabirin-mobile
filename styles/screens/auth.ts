@@ -5,15 +5,15 @@ export const makeAuthStyles = (c: ThemeColors) =>
   StyleSheet.create({
     safe: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     scroll: {
-      flex: 1,
+      flex: 1
     },
     inner: {
       flex: 1,
       paddingHorizontal: 28,
-      paddingBottom: 40,
+      paddingBottom: 40
     },
 
     // ── Welcome step ──
@@ -22,7 +22,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       paddingBottom: 40,
-      gap: 0,
+      gap: 0
     },
     // arc decoration sits behind everything
     arcContainer: {
@@ -31,10 +31,10 @@ export const makeAuthStyles = (c: ThemeColors) =>
       left: 0,
       right: 0,
       alignItems: 'center',
-      height: 300,
+      height: 300
     },
     logoMark: {
-      marginBottom: 0,
+      marginBottom: 0
     },
     appName: {
       fontFamily: theme.fonts.serif,
@@ -42,7 +42,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       color: c.accentRose,
       textAlign: 'center',
       marginBottom: 14,
-      lineHeight: 42,
+      lineHeight: 42
     },
     subtitle: {
       fontFamily: theme.fonts.sans,
@@ -51,7 +51,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       textAlign: 'center',
       lineHeight: 23,
       marginBottom: 40,
-      paddingHorizontal: 24,
+      paddingHorizontal: 24
     },
 
     // ── Email / OTP steps ──
@@ -59,7 +59,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       flex: 1,
       justifyContent: 'center',
       paddingHorizontal: 0,
-      paddingBottom: 80,
+      paddingBottom: 80
     },
     stepLabel: {
       fontFamily: theme.fonts.sans,
@@ -68,25 +68,25 @@ export const makeAuthStyles = (c: ThemeColors) =>
       letterSpacing: 1.2,
       textTransform: 'uppercase',
       marginBottom: 12,
-      opacity: 0.6,
+      opacity: 0.6
     },
     heading: {
       fontFamily: theme.fonts.serif,
       fontSize: 32,
       color: c.accentRose,
       marginBottom: 10,
-      lineHeight: 38,
+      lineHeight: 38
     },
     hint: {
       fontFamily: theme.fonts.sans,
       fontSize: 14,
       color: c.textMuted,
       lineHeight: 22,
-      marginBottom: 28,
+      marginBottom: 28
     },
     emailHighlight: {
       color: c.accentRose,
-      fontFamily: theme.fonts.sansMedium,
+      fontFamily: theme.fonts.sansMedium
     },
     input: {
       backgroundColor: c.bgSecondary,
@@ -99,7 +99,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       fontFamily: theme.fonts.sans,
       fontSize: 15,
       marginBottom: 28,
-      minHeight: 54,
+      minHeight: 54
     },
     otpInput: {
       backgroundColor: c.bgSecondary,
@@ -114,7 +114,7 @@ export const makeAuthStyles = (c: ThemeColors) =>
       letterSpacing: 12,
       textAlign: 'center',
       marginBottom: 28,
-      minHeight: 64,
+      minHeight: 64
     },
 
     // ── Buttons ──
@@ -126,28 +126,28 @@ export const makeAuthStyles = (c: ThemeColors) =>
       paddingHorizontal: 40,
       alignItems: 'center',
       alignSelf: 'stretch',
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     btnDisabled: {
-      opacity: 0.3,
+      opacity: 0.3
     },
     btnText: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 15,
       color: c.accentRose,
-      letterSpacing: 0.4,
+      letterSpacing: 0.4
     },
     ghostBtn: {
       alignItems: 'center',
       marginTop: 14,
       padding: 8,
       minHeight: 44,
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     ghostBtnText: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textMuted
     },
     error: {
       fontFamily: theme.fonts.sans,
@@ -155,6 +155,6 @@ export const makeAuthStyles = (c: ThemeColors) =>
       color: '#e07878',
       textAlign: 'center',
       marginBottom: 16,
-      lineHeight: 19,
-    },
+      lineHeight: 19
+    }
   })

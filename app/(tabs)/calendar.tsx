@@ -9,29 +9,20 @@ import { useColors } from '../../styles'
 import { makeCalendarStyles } from '../../styles/screens/calendar'
 import { useAppData } from '../../context/AppDataContext'
 import { supportsCyclePredictions } from '../../constants/appMode'
-import {
-  getPredictedPeriods,
-  getAllFertileWindows,
-} from '../../utils/cycleHelper'
+import { getPredictedPeriods, getAllFertileWindows } from '../../utils/cycleHelper'
 import {
   buildMonthGrid,
   getMonthLabel,
   getWeekdayLabels,
   goToNextMonth,
   goToPreviousMonth,
-  getSelectedDateInfo,
+  getSelectedDateInfo
 } from '../../utils/calendarHelper'
 import { CalendarDayCell } from '../../components/calendar/CalendarDayCell'
 import { CalendarSheet } from '../../components/calendar/CalendarSheet'
 import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
-type SheetMode =
-  | 'log'
-  | 'symptoms'
-  | 'predicted'
-  | 'fertile'
-  | 'ovulation'
-  | 'extend'
+type SheetMode = 'log' | 'symptoms' | 'predicted' | 'fertile' | 'ovulation' | 'extend'
 
 export default function CalendarScreen() {
   const colors = useColors()
@@ -44,14 +35,7 @@ export default function CalendarScreen() {
     focus?: string
   }>()
 
-  const {
-    profile,
-    periods,
-    symptomLogs,
-    cycleLength,
-    periodLength,
-    refetchAll,
-  } = useAppData()
+  const { profile, periods, symptomLogs, cycleLength, periodLength, refetchAll } = useAppData()
 
   const mode = profile?.mode || 'cycle'
   const supportsPredictions = supportsCyclePredictions(mode as any)
@@ -65,17 +49,9 @@ export default function CalendarScreen() {
     ? getPredictedPeriods(periods, cycleLength, periodLength, 6)
     : []
 
-  const fertileWindows = supportsPredictions
-    ? getAllFertileWindows(periods, cycleLength)
-    : []
+  const fertileWindows = supportsPredictions ? getAllFertileWindows(periods, cycleLength) : []
 
-  const days = buildMonthGrid(
-    monthDate,
-    selectedDate,
-    periods,
-    predictedPeriods,
-    fertileWindows
-  )
+  const days = buildMonthGrid(monthDate, selectedDate, periods, predictedPeriods, fertileWindows)
 
   const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
   const todayStr = format(new Date(), 'yyyy-MM-dd')
@@ -98,9 +74,7 @@ export default function CalendarScreen() {
     return selectedDateStr === w.ovulationDay
   })
 
-  const selectedLog = symptomLogs.find(
-    (log) => log.log_date === selectedDateStr
-  )
+  const selectedLog = symptomLogs.find((log) => log.log_date === selectedDateStr)
   const todayLog = symptomLogs.find((log) => log.log_date === todayStr)
 
   const incomingFocus = typeof params.focus === 'string' ? params.focus : null
@@ -123,7 +97,7 @@ export default function CalendarScreen() {
     isPeriod: !!selectedPeriod,
     isPredictedPeriod: !!selectedPredicted,
     isFertile: !!selectedFertile,
-    isOvulation: !!selectedOvulation,
+    isOvulation: !!selectedOvulation
   })
 
   const weekdayLabels = getWeekdayLabels()
@@ -230,9 +204,7 @@ export default function CalendarScreen() {
           <Text style={styles.todayCardEyebrow}>Today’s check-in</Text>
 
           <Text style={styles.todayCardTitle}>
-            {todayLog
-              ? 'You’ve checked in today'
-              : 'Take a moment to notice how your body feels'}
+            {todayLog ? 'You’ve checked in today' : 'Take a moment to notice how your body feels'}
           </Text>
 
           <Text style={styles.todayCardText}>
@@ -288,10 +260,7 @@ export default function CalendarScreen() {
 
           <Text style={styles.monthLabel}>{getMonthLabel(monthDate)}</Text>
 
-          <Pressable
-            style={styles.monthBtn}
-            onPress={() => setMonthDate(goToNextMonth(monthDate))}
-          >
+          <Pressable style={styles.monthBtn} onPress={() => setMonthDate(goToNextMonth(monthDate))}>
             <ChevronRight color={colors.accentRose} size={18} strokeWidth={1.8} />
           </Pressable>
         </View>
@@ -395,9 +364,7 @@ export default function CalendarScreen() {
               )}
               {selectedLog.extras?.length > 0 && (
                 <View style={styles.logChip}>
-                  <Text style={styles.logChipText}>
-                    +{selectedLog.extras.length} more
-                  </Text>
+                  <Text style={styles.logChipText}>+{selectedLog.extras.length} more</Text>
                 </View>
               )}
             </View>
@@ -411,9 +378,7 @@ export default function CalendarScreen() {
             )}
 
             {!selectedOvulation && selectedFertile && (
-              <Text style={styles.detailText}>
-                Higher chance of conception during this window
-              </Text>
+              <Text style={styles.detailText}>Higher chance of conception during this window</Text>
             )}
 
             {(selectedFertile || selectedOvulation) && (
@@ -440,10 +405,7 @@ export default function CalendarScreen() {
 
         <MedicalDisclaimer />
 
-        <Pressable
-          style={styles.historyBtn}
-          onPress={() => router.push('/(modals)/periods')}
-        >
+        <Pressable style={styles.historyBtn} onPress={() => router.push('/(modals)/periods')}>
           <History color={colors.textMuted} size={16} strokeWidth={1.5} />
           <Text style={styles.historyBtnText}>View and manage period history</Text>
           <ChevronRight color={colors.textMuted} size={16} strokeWidth={1.5} />

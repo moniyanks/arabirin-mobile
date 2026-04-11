@@ -1,8 +1,4 @@
-import {
-  getGestationalAge,
-  getTrimester,
-  getWeeksRemaining,
-} from './pregnancyHelper'
+import { getGestationalAge, getTrimester, getWeeksRemaining } from './pregnancyHelper'
 
 type PregnancyHomeInsight = {
   weekLabel: string
@@ -18,7 +14,7 @@ function formatDisplayDate(value: string): string {
   return date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
-    day: 'numeric',
+    day: 'numeric'
   })
 }
 
@@ -27,7 +23,7 @@ function getPregnancySupportMessage(weeks: number): { title: string; message: st
     return {
       title: 'A new chapter is taking shape',
       message:
-        'This season can bring fatigue, tenderness, nausea, or emotional shifts. A gentle check-in can help you notice what feels true for you.',
+        'This season can bring fatigue, tenderness, nausea, or emotional shifts. A gentle check-in can help you notice what feels true for you.'
     }
   }
 
@@ -35,14 +31,14 @@ function getPregnancySupportMessage(weeks: number): { title: string; message: st
     return {
       title: 'Your body may be finding a new rhythm',
       message:
-        'Some women notice more steadiness in this stage, while others still need rest and softness. Keep checking in with what your body is asking for.',
+        'Some women notice more steadiness in this stage, while others still need rest and softness. Keep checking in with what your body is asking for.'
     }
   }
 
   return {
     title: 'Your body is carrying more each week',
     message:
-      'This stage can bring heaviness, stretching, and changing energy. Let today’s check-in help you notice what support feels most helpful.',
+      'This stage can bring heaviness, stretching, and changing energy. Let today’s check-in help you notice what support feels most helpful.'
   }
 }
 
@@ -63,13 +59,17 @@ export function getPregnancyHomeInsight(params: {
   return {
     weekLabel: `Week ${weeks}, Day ${days}`,
     trimesterLabel:
-      trimester === 1 ? 'First trimester' : trimester === 2 ? 'Second trimester' : 'Third trimester',
+      trimester === 1
+        ? 'First trimester'
+        : trimester === 2
+          ? 'Second trimester'
+          : 'Third trimester',
     dueDateLabel: `Due ${formatDisplayDate(dueDate)}`,
     supportTitle: support.title,
     supportMessage: support.message,
     weeksRemainingLabel:
       weeksRemaining > 0
         ? `${weeksRemaining} week${weeksRemaining === 1 ? '' : 's'} to go`
-        : 'Near your due date',
+        : 'Near your due date'
   }
 }

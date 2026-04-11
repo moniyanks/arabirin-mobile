@@ -30,8 +30,7 @@ export function buildTtcHeroContent(fertilityInsight: any) {
   const fertileStatus = fertilityInsight.fertileWindowStatus as FertileStatus
 
   const statusMessage =
-    FERTILE_STATUS_MESSAGES[fertileStatus] ??
-    'Keep logging to improve fertile predictions.'
+    FERTILE_STATUS_MESSAGES[fertileStatus] ?? 'Keep logging to improve fertile predictions.'
 
   const title =
     fertileStatus === 'no_data'
@@ -65,7 +64,7 @@ export function buildTtcHeroContent(fertilityInsight: any) {
     subtitle,
     meta,
     confidenceLabel: mapConfidenceLabel(fertilityInsight.confidence),
-    fertileStatus,
+    fertileStatus
   }
 }
 
@@ -91,7 +90,7 @@ export function buildPregnancyInsightMessage(pregnancyOverlay: any): {
     title: pregnancyOverlay?.title || 'Body insight',
     message:
       pregnancyOverlay?.message ||
-      'Your body is moving through steady change. Gentle awareness can help you notice shifts in energy, rest, and physical comfort over time.',
+      'Your body is moving through steady change. Gentle awareness can help you notice shifts in energy, rest, and physical comfort over time.'
   }
 }
 
@@ -101,6 +100,6 @@ export function buildCycleInsightMessage(phase: SupportedPhase): {
 } {
   return {
     title: 'Body insight',
-    message: getPhaseAwareCycleMessage(phase),
+    message: getPhaseAwareCycleMessage(phase)
   }
 }

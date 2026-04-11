@@ -13,18 +13,14 @@ export function escapeHtml(value: string): string {
 }
 
 export function safeString(value: unknown, fallback = ''): string {
-  return typeof value === 'string' && value.trim().length > 0
-    ? value.trim()
-    : fallback
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : fallback
 }
 
 export function isSupportedMode(value: unknown): value is SupportedMode {
   return typeof value === 'string' && value in MODE_LABELS
 }
 
-function normalizeDateInput(
-  value: string | Date | null | undefined
-): Date | null {
+function normalizeDateInput(value: string | Date | null | undefined): Date | null {
   if (!value) {
     return null
   }
@@ -60,14 +56,12 @@ export function formatDateLong(date: Date): string {
 }
 
 export function formatDays(value: ReportMetricValue): string {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? `${value} days`
-    : 'Not enough data'
+  return typeof value === 'number' && Number.isFinite(value) ? `${value} days` : 'Not enough data'
 }
 
 export function formatCycleRange(
   minValue: ReportMetricValue,
-  maxValue: ReportMetricValue,
+  maxValue: ReportMetricValue
 ): string | null {
   const hasMin = typeof minValue === 'number' && Number.isFinite(minValue)
   const hasMax = typeof maxValue === 'number' && Number.isFinite(maxValue)
@@ -80,7 +74,7 @@ export function formatCycleRange(
 }
 
 export function getPredictionConfidence(
-  totalCycles: ReportMetricValue,
+  totalCycles: ReportMetricValue
 ): 'High' | 'Good' | 'Building' {
   if (typeof totalCycles !== 'number' || !Number.isFinite(totalCycles)) {
     return 'Building'

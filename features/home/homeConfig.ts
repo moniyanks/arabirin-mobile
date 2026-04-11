@@ -14,29 +14,29 @@ const defaultQuickActions: HomeQuickAction[] = [
     title: 'Cycle History',
     subtitle: 'History & logs',
     route: '/(tabs)/calendar',
-    icon: 'calendar',
+    icon: 'calendar'
   },
   {
     key: 'health',
     title: 'Health',
     subtitle: 'Explore factors',
     route: '/(tabs)/health',
-    icon: 'heart',
+    icon: 'heart'
   },
   {
     key: 'body-insights',
     title: 'Body Insights',
     subtitle: 'See patterns',
     route: '/(tabs)/insights',
-    icon: 'activity',
+    icon: 'activity'
   },
   {
     key: 'sisters-circle',
-    title: "Sister’s Circle",
+    title: 'Sister’s Circle',
     subtitle: 'Community support',
     route: '/(tabs)/sisters',
-    icon: 'moon',
-  },
+    icon: 'moon'
+  }
 ]
 
 const defaultSections: HomeSection[] = [
@@ -46,7 +46,7 @@ const defaultSections: HomeSection[] = [
   { type: 'insight' },
   { type: 'shortcuts' },
   { type: 'quickActions' },
-  { type: 'sistersPreview' },
+  { type: 'sistersPreview' }
 ]
 
 export const HOME_CONFIG: Record<AppMode, ModeHomeConfig> = {
@@ -54,36 +54,36 @@ export const HOME_CONFIG: Record<AppMode, ModeHomeConfig> = {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
+    quickActions: defaultQuickActions
   },
   ttc: {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
+    quickActions: defaultQuickActions
   },
   pregnant: {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
+    quickActions: defaultQuickActions
   },
   postpartum: {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
+    quickActions: defaultQuickActions
   },
   healing: {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
+    quickActions: defaultQuickActions
   },
   perimenopause: {
     showDisclaimer: false,
     showSistersPreview: true,
     sections: defaultSections,
-    quickActions: defaultQuickActions,
-  },
+    quickActions: defaultQuickActions
+  }
 }

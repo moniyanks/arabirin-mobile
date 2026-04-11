@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, TextInput, Pressable } from 'react-native'
 import { makeProfileStyles } from '../../styles/screens/profile'
-import {
-  CYCLE_OPTIONS,
-  PERIOD_OPTIONS,
-  LIMITS,
-  clampNumber,
-} from '../../utils/profileValidation'
+import { CYCLE_OPTIONS, PERIOD_OPTIONS, LIMITS, clampNumber } from '../../utils/profileValidation'
 
 type Props = {
   s: ReturnType<typeof makeProfileStyles>
@@ -25,7 +20,7 @@ export default function CycleCard({
   periodLength,
   setCycleLength,
   setPeriodLength,
-  errors,
+  errors
 }: Props) {
   const [showCustomCycle, setShowCustomCycle] = useState(false)
   const [showCustomPeriod, setShowCustomPeriod] = useState(false)
@@ -49,7 +44,7 @@ export default function CycleCard({
               key={n}
               style={[
                 s.optionBtn,
-                Number(cycleLength) === n && !showCustomCycle && s.optionSelected,
+                Number(cycleLength) === n && !showCustomCycle && s.optionSelected
               ]}
               onPress={() => {
                 setCycleLength(n.toString())
@@ -59,7 +54,7 @@ export default function CycleCard({
               <Text
                 style={[
                   s.optionBtnText,
-                  Number(cycleLength) === n && !showCustomCycle && s.optionSelectedText,
+                  Number(cycleLength) === n && !showCustomCycle && s.optionSelectedText
                 ]}
               >
                 {n}d
@@ -76,9 +71,7 @@ export default function CycleCard({
               }
             }}
           >
-            <Text style={[s.optionBtnText, showCustomCycle && s.optionSelectedText]}>
-              Custom
-            </Text>
+            <Text style={[s.optionBtnText, showCustomCycle && s.optionSelectedText]}>Custom</Text>
           </Pressable>
         </View>
 
@@ -108,7 +101,7 @@ export default function CycleCard({
               key={n}
               style={[
                 s.optionBtn,
-                Number(periodLength) === n && !showCustomPeriod && s.optionSelected,
+                Number(periodLength) === n && !showCustomPeriod && s.optionSelected
               ]}
               onPress={() => {
                 setPeriodLength(n.toString())
@@ -118,7 +111,7 @@ export default function CycleCard({
               <Text
                 style={[
                   s.optionBtnText,
-                  Number(periodLength) === n && !showCustomPeriod && s.optionSelectedText,
+                  Number(periodLength) === n && !showCustomPeriod && s.optionSelectedText
                 ]}
               >
                 {n}d
@@ -135,9 +128,7 @@ export default function CycleCard({
               }
             }}
           >
-            <Text style={[s.optionBtnText, showCustomPeriod && s.optionSelectedText]}>
-              Custom
-            </Text>
+            <Text style={[s.optionBtnText, showCustomPeriod && s.optionSelectedText]}>Custom</Text>
           </Pressable>
         </View>
 

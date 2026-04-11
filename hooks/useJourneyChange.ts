@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { useAppData } from '../context/AppDataContext'
 import {
   updateJourneyTransition,
-  type JourneyTransitionInput,
+  type JourneyTransitionInput
 } from '../utils/journeyTransitionHelper'
 
 export function useJourneyChange() {
@@ -47,6 +47,6 @@ export function useJourneyChange() {
     error,
     open,
     close,
-    submit,
+    submit
   }
 }

@@ -26,11 +26,9 @@ function calculateLmpFromDueDate(dueDate: string): string {
   return format(addDays(parseISO(dueDate), -280), 'yyyy-MM-dd')
 }
 
-export async function updateJourneyTransition(
-  input: JourneyTransitionInput
-): Promise<void> {
+export async function updateJourneyTransition(input: JourneyTransitionInput): Promise<void> {
   const {
-    data: { user },
+    data: { user }
   } = await supabase.auth.getUser()
 
   if (!user) {
@@ -41,15 +39,12 @@ export async function updateJourneyTransition(
 
   if (input.mode === 'pregnant') {
     const pregnancy_lmp_date =
-      input.lmpDate ??
-      (input.dueDate ? calculateLmpFromDueDate(input.dueDate) : null)
+      input.lmpDate ?? (input.dueDate ? calculateLmpFromDueDate(input.dueDate) : null)
 
     const pregnancy_due_date =
-      input.dueDate ??
-      (input.lmpDate ? calculateDueDateFromLmp(input.lmpDate) : null)
+      input.dueDate ?? (input.lmpDate ? calculateDueDateFromLmp(input.lmpDate) : null)
 
-    const pregnancy_dating_method =
-      input.lmpDate ? 'lmp' : input.dueDate ? 'due_date' : null
+    const pregnancy_dating_method = input.lmpDate ? 'lmp' : input.dueDate ? 'due_date' : null
 
     const { error } = await supabase
       .from('profiles')
@@ -58,7 +53,7 @@ export async function updateJourneyTransition(
         pregnancy_lmp_date,
         pregnancy_due_date,
         pregnancy_dating_method,
-        updated_at: updatedAt,
+        updated_at: updatedAt
       })
       .eq('id', user.id)
 
@@ -74,7 +69,7 @@ export async function updateJourneyTransition(
       .from('profiles')
       .update({
         mode: 'postpartum',
-        updated_at: updatedAt,
+        updated_at: updatedAt
       })
       .eq('id', user.id)
 
@@ -89,7 +84,7 @@ export async function updateJourneyTransition(
     .from('profiles')
     .update({
       mode: input.mode,
-      updated_at: updatedAt,
+      updated_at: updatedAt
     })
     .eq('id', user.id)
 

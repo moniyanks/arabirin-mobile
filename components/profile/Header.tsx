@@ -13,16 +13,7 @@ type Props = {
   bmiColor?: string
 }
 
-export default function Header({
-  s,
-  name,
-  modeLabel,
-  age,
-  height,
-  weight,
-  bmi,
-  bmiColor,
-}: Props) {
+export default function Header({ s, name, modeLabel, age, height, weight, bmi, bmiColor }: Props) {
   const firstLetter = name.charAt(0).toUpperCase() || 'A'
 
   return (
@@ -41,7 +32,7 @@ export default function Header({
             { label: 'Age', value: age ? `${age} yrs` : '—' },
             { label: 'Height', value: height ? `${height} cm` : '—' },
             { label: 'Weight', value: weight ? `${weight} kg` : '—' },
-            { label: 'BMI', value: bmi, color: bmiColor },
+            { label: 'BMI', value: bmi, color: bmiColor }
           ].map((item) => (
             <View key={item.label} style={s.statCard}>
               <Text style={s.statLabel}>{item.label}</Text>

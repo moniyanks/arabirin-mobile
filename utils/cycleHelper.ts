@@ -6,7 +6,7 @@ import {
   formatDateOnly,
   isDateOnlyInRange,
   parseDateOnly,
-  todayDateOnly,
+  todayDateOnly
 } from '../lib/dates/dateOnly'
 
 export type Period = { id: string; startDate: string; endDate: string | null }
@@ -42,7 +42,7 @@ export const getFertileWindow = (periods: Period[], cycleLength: number): Fertil
   return {
     fertileStart: addDaysDateOnly(ovulationDay, -5),
     fertileEnd: addDaysDateOnly(ovulationDay, 1),
-    ovulationDay,
+    ovulationDay
   }
 }
 
@@ -62,7 +62,7 @@ export const getPredictedPeriods = (
 
     return {
       startDate,
-      endDate,
+      endDate
     }
   })
 }
@@ -79,7 +79,7 @@ export const getAllFertileWindows = (periods: Period[], cycleLength: number): Fe
     return {
       fertileStart: addDaysDateOnly(ovulationDay, -5),
       fertileEnd: addDaysDateOnly(ovulationDay, 1),
-      ovulationDay,
+      ovulationDay
     }
   })
 }
@@ -87,9 +87,7 @@ export const getAllFertileWindows = (periods: Period[], cycleLength: number): Fe
 export const isTodayPeriodDay = (periods: Period[]) => {
   const today = todayDateOnly()
 
-  return periods.some((period) =>
-    isDateOnlyInRange(today, period.startDate, period.endDate)
-  )
+  return periods.some((period) => isDateOnlyInRange(today, period.startDate, period.endDate))
 }
 
 export const formatDate = (dateStr: string) =>
@@ -126,7 +124,7 @@ export const getPhaseInfo = (
     return {
       phase: 'fertile',
       message: `Fertile Window 🌿 · ${Math.max(fertileDaysLeft, 1)} days left`,
-      showDay: false,
+      showDay: false
     }
   }
 

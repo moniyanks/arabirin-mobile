@@ -2,16 +2,13 @@ import { Platform } from 'react-native'
 import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
 import { buildAppointmentReportViewModel } from './viewmodel'
-import {  renderAppointmentReportHtml } from './template'
+import { renderAppointmentReportHtml } from './template'
 
 export async function generateAndShareAppointmentPDF(
   profile: any,
   periods: any[],
   symptomLogs: any[]
-): Promise<
-  | { success: true; uri: string; shared: boolean }
-  | { success: false; error: string }
-> {
+): Promise<{ success: true; uri: string; shared: boolean } | { success: false; error: string }> {
   try {
     const viewModel = buildAppointmentReportViewModel(profile, periods, symptomLogs)
     const html = renderAppointmentReportHtml(viewModel)
@@ -35,7 +32,7 @@ export async function generateAndShareAppointmentPDF(
 
     // ✅ MOBILE FLOW
     const { uri } = await Print.printToFileAsync({
-      html,
+      html
     })
 
     if (await Sharing.isAvailableAsync()) {
@@ -44,16 +41,12 @@ export async function generateAndShareAppointmentPDF(
     }
 
     return { success: true, uri, shared: false }
-
   } catch (error) {
     console.error('PDF generation error:', error)
 
     return {
       success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : 'Failed to generate report',
+      error: error instanceof Error ? error.message : 'Failed to generate report'
     }
   }
 }

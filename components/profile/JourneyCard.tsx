@@ -9,7 +9,7 @@ const MODES: Array<{ key: AppMode; label: string }> = [
   { key: 'pregnant', label: 'Pregnant' },
   { key: 'postpartum', label: 'Postpartum' },
   { key: 'healing', label: 'Loss or recovery' },
-  { key: 'perimenopause', label: 'Perimenopause' },
+  { key: 'perimenopause', label: 'Perimenopause' }
 ]
 
 type Props = {
@@ -29,9 +29,7 @@ export default function JourneyCard({ s, mode, setMode }: Props) {
             style={[s.modeBtn, mode === m.key && s.modeBtnSelected]}
             onPress={() => setMode(m.key)}
           >
-            <Text style={[s.modeBtnText, mode === m.key && s.modeBtnTextSelected]}>
-              {m.label}
-            </Text>
+            <Text style={[s.modeBtnText, mode === m.key && s.modeBtnTextSelected]}>{m.label}</Text>
           </Pressable>
         ))}
       </View>

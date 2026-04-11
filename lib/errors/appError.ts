@@ -51,6 +51,6 @@ export function toAppError(error: unknown, fallback?: Partial<AppError>): AppErr
     message,
     userMessage: fallback?.userMessage ?? 'Something went wrong. Please try again.',
     cause: error,
-    retryable: fallback?.retryable ?? false,
+    retryable: fallback?.retryable ?? false
   })
 }

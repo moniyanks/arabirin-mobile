@@ -26,13 +26,9 @@ import {
   saveProfile,
   deleteUserData,
   type ProfileFormState,
-  type PregnancyDatingMethod,
+  type PregnancyDatingMethod
 } from '../../services/profile'
-import {
-  calculateBMI,
-  getBMICategory,
-  validateProfileForm,
-} from '../../utils/profileValidation'
+import { calculateBMI, getBMICategory, validateProfileForm } from '../../utils/profileValidation'
 import { notificationPreferencesService } from '../../services/notificationPreferencesService'
 
 const MODES: Array<{ key: AppMode; label: string }> = [
@@ -41,7 +37,7 @@ const MODES: Array<{ key: AppMode; label: string }> = [
   { key: 'pregnant', label: 'Pregnant' },
   { key: 'postpartum', label: 'Postpartum' },
   { key: 'healing', label: 'Loss or recovery' },
-  { key: 'perimenopause', label: 'Perimenopause' },
+  { key: 'perimenopause', label: 'Perimenopause' }
 ]
 
 function normalizeNotificationIds(value: unknown): string[] {
@@ -49,24 +45,24 @@ function normalizeNotificationIds(value: unknown): string[] {
     return []
   }
 
-  return value.filter(
-    (item): item is string => typeof item === 'string' && item.trim().length > 0
-  )
+  return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
 }
 
-function getProfileSyncKey(profile: {
-  id?: string | null
-  updated_at?: string | null
-  mode?: string | null
-  name?: string | null
-} | null): string {
+function getProfileSyncKey(
+  profile: {
+    id?: string | null
+    updated_at?: string | null
+    mode?: string | null
+    name?: string | null
+  } | null
+): string {
   if (!profile) return 'profile:null'
 
   return [
     profile.id ?? 'no-id',
     profile.updated_at ?? 'no-updated-at',
     profile.mode ?? 'no-mode',
-    profile.name ?? 'no-name',
+    profile.name ?? 'no-name'
   ].join('|')
 }
 
@@ -106,18 +102,14 @@ export default function ProfileScreen() {
     setRemindersEnabled(settings?.reminders_enabled ?? false)
   }, [settings?.reminders_enabled])
 
-  const updateField = <K extends keyof ProfileFormState>(
-    field: K,
-    value: ProfileFormState[K]
-  ) => {
+  const updateField = <K extends keyof ProfileFormState>(field: K, value: ProfileFormState[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
   const bmi = useMemo(() => calculateBMI(form.weight, form.height), [form.weight, form.height])
   const bmiCategory = useMemo(() => getBMICategory(bmi), [bmi])
 
-  const modeLabel =
-    MODES.find((m) => m.key === form.mode)?.label || 'Tracking my cycle'
+  const modeLabel = MODES.find((m) => m.key === form.mode)?.label || 'Tracking my cycle'
 
   const existingNotificationIds = useMemo(
     () => normalizeNotificationIds(settings?.notification_ids),
@@ -160,14 +152,14 @@ export default function ProfileScreen() {
         remindersEnabled: value,
         reminderTime: value ? '08:00' : null,
         reminderPhaseTypes: [],
-        existingNotificationIds,
+        existingNotificationIds
       })
 
       await refetchAll()
     } catch (err: any) {
       setRemindersEnabled(!value)
       setErrors({
-        save: err?.message || 'Failed to update reminders',
+        save: err?.message || 'Failed to update reminders'
       })
     } finally {
       setSavingReminders(false)
@@ -182,7 +174,7 @@ export default function ProfileScreen() {
       router.replace('/(public)/auth')
     } catch (err: any) {
       setErrors({
-        save: err?.message || 'We could not log you out right now.',
+        save: err?.message || 'We could not log you out right now.'
       })
     }
   }

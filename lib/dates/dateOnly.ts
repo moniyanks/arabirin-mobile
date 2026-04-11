@@ -16,7 +16,7 @@ function assertValidParts(year: number, month: number, day: number): void {
     throw new AppError({
       code: 'DATE_ERROR',
       message: `Invalid calendar date: ${year}-${month}-${day}`,
-      userMessage: 'A date in your health timeline is invalid.',
+      userMessage: 'A date in your health timeline is invalid.'
     })
   }
 }
@@ -28,7 +28,7 @@ export function parseDateOnly(value: string): Date {
     throw new AppError({
       code: 'DATE_ERROR',
       message: `Invalid date-only format: ${value}`,
-      userMessage: 'A date in your health timeline is invalid.',
+      userMessage: 'A date in your health timeline is invalid.'
     })
   }
 
@@ -66,11 +66,7 @@ export function diffDaysDateOnly(from: string, to: string): number {
   return Math.round((toDate.getTime() - fromDate.getTime()) / msPerDay)
 }
 
-export function isDateOnlyInRange(
-  target: string,
-  start: string,
-  end: string | null
-): boolean {
+export function isDateOnlyInRange(target: string, start: string, end: string | null): boolean {
   const targetDate = parseDateOnly(target).getTime()
   const startDate = parseDateOnly(start).getTime()
   const endDate = parseDateOnly(end ?? start).getTime()

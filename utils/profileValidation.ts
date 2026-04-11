@@ -6,7 +6,7 @@ export const LIMITS = {
   period: { min: 1, max: 14 },
   age: { min: 18, max: 80 },
   height: { min: 100, max: 220 },
-  weight: { min: 30, max: 200 },
+  weight: { min: 30, max: 200 }
 }
 
 export function clampNumber(value: string, min: number, max: number) {
@@ -21,7 +21,7 @@ export function calculateBMI(weight: string, height: string) {
 
   if (!w || !h || h <= 0) return null
 
-  return (w / ((h / 100) ** 2)).toFixed(1)
+  return (w / (h / 100) ** 2).toFixed(1)
 }
 
 export function getBMICategory(bmi: string | null) {
@@ -52,7 +52,7 @@ export function formatDisplayDate(value: string) {
   return date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
-    day: 'numeric',
+    day: 'numeric'
   })
 }
 
@@ -83,16 +83,14 @@ export function validateProfileForm(form: {
 
   if (
     form.height &&
-    (parseFloat(form.height) < LIMITS.height.min ||
-      parseFloat(form.height) > LIMITS.height.max)
+    (parseFloat(form.height) < LIMITS.height.min || parseFloat(form.height) > LIMITS.height.max)
   ) {
     errors.height = `Height must be between ${LIMITS.height.min} and ${LIMITS.height.max} cm`
   }
 
   if (
     form.weight &&
-    (parseFloat(form.weight) < LIMITS.weight.min ||
-      parseFloat(form.weight) > LIMITS.weight.max)
+    (parseFloat(form.weight) < LIMITS.weight.min || parseFloat(form.weight) > LIMITS.weight.max)
   ) {
     errors.weight = `Weight must be between ${LIMITS.weight.min} and ${LIMITS.weight.max} kg`
   }

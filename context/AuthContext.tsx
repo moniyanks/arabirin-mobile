@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { toAppError } from '../lib/errors/appError'
@@ -41,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     const {
-      data: { subscription },
+      data: { subscription }
     } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null)
       setStatus(session?.user ? 'signed_in' : 'signed_out')
@@ -60,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw toAppError(error, {
         code: 'AUTH_FAILED',
         userMessage: 'We could not sign you out right now.',
-        retryable: true,
+        retryable: true
       })
     }
 
@@ -69,11 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('signed_out')
   }, [])
 
-  return (
-    <AuthContext.Provider value={{ user, status, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={{ user, status, signOut }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

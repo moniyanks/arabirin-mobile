@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native'
 import Svg, { Circle } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -29,7 +29,7 @@ function ArcDecoration({ color }: { color: string }) {
         left: 0,
         right: 0,
         alignItems: 'center',
-        height: 280,
+        height: 280
       }}
     >
       <Svg width="390" height="280" viewBox="0 0 390 280" fill="none">
@@ -134,7 +134,8 @@ export default function AuthScreen() {
 
                 <Pressable style={s.ghostBtn} onPress={() => setStep('email')}>
                   <Text style={s.ghostBtnText}>
-                    Already have an account? <Text style={{ textDecorationLine: 'underline' }}>Sign in</Text>
+                    Already have an account?{' '}
+                    <Text style={{ textDecorationLine: 'underline' }}>Sign in</Text>
                   </Text>
                 </Pressable>
               </View>
@@ -144,9 +145,7 @@ export default function AuthScreen() {
               <View style={s.stepContainer}>
                 <Text style={s.stepLabel}>Sign in</Text>
                 <Text style={s.heading}>Enter your email</Text>
-                <Text style={s.hint}>
-                  We&apos;ll send you a secure one-time sign-in code.
-                </Text>
+                <Text style={s.hint}>We&apos;ll send you a secure one-time sign-in code.</Text>
 
                 <TextInput
                   style={s.input}

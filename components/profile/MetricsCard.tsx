@@ -24,7 +24,7 @@ export default function MetricsCard({
   setAge,
   setHeight,
   setWeight,
-  errors,
+  errors
 }: Props) {
   return (
     <>

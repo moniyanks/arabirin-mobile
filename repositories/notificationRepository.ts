@@ -3,11 +3,11 @@ import { AppError } from '../lib/errors/appError'
 import {
   EMPTY_LOCAL_NOTIFICATION_STATE,
   type LocalNotificationState,
-  type NotificationSyncRecord,
+  type NotificationSyncRecord
 } from '../lib/notifications/notificationTypes'
 import {
   normalizeNotificationSyncRecord,
-  serializeNotificationSyncRecord,
+  serializeNotificationSyncRecord
 } from '../lib/notifications/notificationMapper'
 
 function throwReadError(message: string, cause: unknown): never {
@@ -16,7 +16,7 @@ function throwReadError(message: string, cause: unknown): never {
     message,
     userMessage: 'We could not load your notification settings right now.',
     cause,
-    retryable: true,
+    retryable: true
   })
 }
 
@@ -26,7 +26,7 @@ function throwWriteError(message: string, cause: unknown): never {
     message,
     userMessage: 'We could not save your notification settings right now.',
     cause,
-    retryable: true,
+    retryable: true
   })
 }
 
@@ -45,7 +45,7 @@ export const notificationRepository = {
     if (!data?.notification_ids) {
       return {
         pushToken: null,
-        localState: EMPTY_LOCAL_NOTIFICATION_STATE,
+        localState: EMPTY_LOCAL_NOTIFICATION_STATE
       }
     }
 
@@ -63,8 +63,8 @@ export const notificationRepository = {
       .update({
         notification_ids: serializeNotificationSyncRecord({
           pushToken: current.pushToken,
-          localState,
-        }),
+          localState
+        })
       })
       .eq('user_id', userId)
 
@@ -81,8 +81,8 @@ export const notificationRepository = {
       .update({
         notification_ids: serializeNotificationSyncRecord({
           pushToken,
-          localState: current.localState,
-        }),
+          localState: current.localState
+        })
       })
       .eq('user_id', userId)
 
@@ -97,13 +97,13 @@ export const notificationRepository = {
       .update({
         notification_ids: serializeNotificationSyncRecord({
           pushToken: null,
-          localState: EMPTY_LOCAL_NOTIFICATION_STATE,
-        }),
+          localState: EMPTY_LOCAL_NOTIFICATION_STATE
+        })
       })
       .eq('user_id', userId)
 
     if (error) {
       throwWriteError('Failed to clear notification state.', error)
     }
-  },
+  }
 }

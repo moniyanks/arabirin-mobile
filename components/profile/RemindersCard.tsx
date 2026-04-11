@@ -15,7 +15,7 @@ export default function RemindersCard({
   colors,
   remindersEnabled,
   savingReminders,
-  onToggle,
+  onToggle
 }: Props) {
   return (
     <>
@@ -36,7 +36,7 @@ export default function RemindersCard({
             disabled={savingReminders}
             trackColor={{
               false: colors.borderRose,
-              true: 'rgba(217,155,155,0.4)',
+              true: 'rgba(217,155,155,0.4)'
             }}
             thumbColor={remindersEnabled ? colors.accentRose : colors.bgPrimary}
           />

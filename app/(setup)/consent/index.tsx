@@ -1,13 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from 'react-native'
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Constants from 'expo-constants'
@@ -16,7 +9,10 @@ import * as Device from 'expo-device'
 import { useColors } from '../../../styles'
 import { makeConsentStyles } from '../../../styles/screens/consent'
 import { useAppData } from '../../../context/AppDataContext'
-import { PrivacyPolicyContent, TermsOfServiceContent } from '../../../components/legal/LegalDocuments'
+import {
+  PrivacyPolicyContent,
+  TermsOfServiceContent
+} from '../../../components/legal/LegalDocuments'
 import { setupFlowService } from '../../../services/setupFlowService'
 import { toAppError } from '../../../lib/errors/appError'
 
@@ -93,7 +89,7 @@ export default function ConsentScreen() {
         privacyViewedAt: privacyViewedAt ?? new Date().toISOString(),
         termsViewedAt: termsViewedAt ?? new Date().toISOString(),
         appPlatform: Device.osName?.toLowerCase() ?? 'unknown',
-        appVersion: APP_VERSION,
+        appVersion: APP_VERSION
       })
 
       await refetchAll()
@@ -102,7 +98,7 @@ export default function ConsentScreen() {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not save your consent right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
     } finally {
@@ -132,7 +128,7 @@ export default function ConsentScreen() {
               style={[
                 s.progressDot,
                 i < stepIndex && s.progressDotDone,
-                i === stepIndex && s.progressDotActive,
+                i === stepIndex && s.progressDotActive
               ]}
             />
           ))}
@@ -144,9 +140,9 @@ export default function ConsentScreen() {
           <Text style={s.ageIcon}>🔒</Text>
           <Text style={s.ageTitle}>Are you 18 years or older?</Text>
           <Text style={s.ageSubtitle}>
-            Àràbìrín collects and processes sensitive reproductive health data.
-            Under applicable data protection law, we are required to verify your
-            age before processing this category of personal data.
+            Àràbìrín collects and processes sensitive reproductive health data. Under applicable
+            data protection law, we are required to verify your age before processing this category
+            of personal data.
           </Text>
           <View style={s.ageBtns}>
             <Pressable style={s.ageBtn} onPress={() => setStep('privacy')}>
@@ -190,8 +186,7 @@ export default function ConsentScreen() {
               </Pressable>
 
               <Text style={s.checkLabel}>
-                I have read and agree to the{' '}
-                <Text style={s.checkLabelBold}>Privacy Policy</Text>
+                I have read and agree to the <Text style={s.checkLabelBold}>Privacy Policy</Text>
               </Text>
             </View>
 
@@ -240,8 +235,7 @@ export default function ConsentScreen() {
               </Pressable>
 
               <Text style={s.checkLabel}>
-                I have read and agree to the{' '}
-                <Text style={s.checkLabelBold}>Terms of Service</Text>
+                I have read and agree to the <Text style={s.checkLabelBold}>Terms of Service</Text>
               </Text>
             </View>
 
@@ -290,10 +284,10 @@ export default function ConsentScreen() {
               </Pressable>
 
               <Text style={s.checkLabel}>
-                I consent to Àràbìrín Technologies collecting, storing and processing
-                my <Text style={s.checkLabelBold}>sensitive reproductive health data</Text>{' '}
-                for the purpose of providing cycle tracking and health insights,
-                in accordance with the Privacy Policy.
+                I consent to Àràbìrín Technologies collecting, storing and processing my{' '}
+                <Text style={s.checkLabelBold}>sensitive reproductive health data</Text> for the
+                purpose of providing cycle tracking and health insights, in accordance with the
+                Privacy Policy.
               </Text>
             </View>
           </ScrollView>

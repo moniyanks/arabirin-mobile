@@ -2,14 +2,8 @@ import React, { useState } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { makeProfileStyles } from '../../styles/screens/profile'
-import {
-  formatDisplayDate,
-  isValidDateOnly,
-} from '../../utils/profileValidation'
-import {
-  calculateDueDateFromLmp,
-  calculateLmpFromDueDate,
-} from '../../utils/pregnancyHelper'
+import { formatDisplayDate, isValidDateOnly } from '../../utils/profileValidation'
+import { calculateDueDateFromLmp, calculateLmpFromDueDate } from '../../utils/pregnancyHelper'
 import type { PregnancyDatingMethod } from '../../services/profile'
 
 type Props = {
@@ -33,7 +27,7 @@ export default function PregnancyCard({
   setPregnancyDatingMethod,
   setPregnancyLmpDate,
   setPregnancyDueDate,
-  errors,
+  errors
 }: Props) {
   const [showLmpPicker, setShowLmpPicker] = useState(false)
   const [showDueDatePicker, setShowDueDatePicker] = useState(false)
@@ -52,8 +46,8 @@ export default function PregnancyCard({
     <View style={s.card}>
       <Text style={s.cardLabel}>Pregnancy timeline</Text>
       <Text style={s.cardHint}>
-        Use the first day of your last period or your estimated due date. This helps
-        Àràbìrín adapt your experience more thoughtfully.
+        Use the first day of your last period or your estimated due date. This helps Àràbìrín adapt
+        your experience more thoughtfully.
       </Text>
 
       <View style={s.optionRow}>
@@ -61,12 +55,7 @@ export default function PregnancyCard({
           style={[s.optionBtn, pregnancyDatingMethod === 'lmp' && s.optionSelected]}
           onPress={() => setPregnancyDatingMethod('lmp')}
         >
-          <Text
-            style={[
-              s.optionBtnText,
-              pregnancyDatingMethod === 'lmp' && s.optionSelectedText,
-            ]}
-          >
+          <Text style={[s.optionBtnText, pregnancyDatingMethod === 'lmp' && s.optionSelectedText]}>
             Use last period
           </Text>
         </Pressable>
@@ -75,12 +64,7 @@ export default function PregnancyCard({
           style={[s.optionBtn, pregnancyDatingMethod === 'edd' && s.optionSelected]}
           onPress={() => setPregnancyDatingMethod('edd')}
         >
-          <Text
-            style={[
-              s.optionBtnText,
-              pregnancyDatingMethod === 'edd' && s.optionSelectedText,
-            ]}
-          >
+          <Text style={[s.optionBtnText, pregnancyDatingMethod === 'edd' && s.optionSelectedText]}>
             Use due date
           </Text>
         </Pressable>
@@ -92,9 +76,7 @@ export default function PregnancyCard({
 
           <Pressable style={s.input} onPress={() => setShowLmpPicker(true)}>
             <Text
-              style={
-                pregnancyLmpDate ? s.cardValue : [s.cardValue, { color: colors.textMuted }]
-              }
+              style={pregnancyLmpDate ? s.cardValue : [s.cardValue, { color: colors.textMuted }]}
             >
               {pregnancyLmpDate ? formatDisplayDate(pregnancyLmpDate) : 'Select a date'}
             </Text>
@@ -106,7 +88,9 @@ export default function PregnancyCard({
 
           <Text style={[s.cardHint, { marginTop: 10 }]}>Estimated due date</Text>
           <Text style={s.cardValue}>
-            {pregnancyDueDate ? formatDisplayDate(pregnancyDueDate) : 'Will appear once a valid date is entered'}
+            {pregnancyDueDate
+              ? formatDisplayDate(pregnancyDueDate)
+              : 'Will appear once a valid date is entered'}
           </Text>
         </>
       ) : (
@@ -115,9 +99,7 @@ export default function PregnancyCard({
 
           <Pressable style={s.input} onPress={() => setShowDueDatePicker(true)}>
             <Text
-              style={
-                pregnancyDueDate ? s.cardValue : [s.cardValue, { color: colors.textMuted }]
-              }
+              style={pregnancyDueDate ? s.cardValue : [s.cardValue, { color: colors.textMuted }]}
             >
               {pregnancyDueDate ? formatDisplayDate(pregnancyDueDate) : 'Select a date'}
             </Text>
@@ -129,7 +111,8 @@ export default function PregnancyCard({
 
           {pregnancyLmpDate ? (
             <Text style={[s.cardHint, { marginTop: 10 }]}>
-              We’ll estimate your pregnancy timeline from around {formatDisplayDate(pregnancyLmpDate)}.
+              We’ll estimate your pregnancy timeline from around{' '}
+              {formatDisplayDate(pregnancyLmpDate)}.
             </Text>
           ) : null}
         </>

@@ -1,6 +1,4 @@
-const getRequiredEnv = (
-  key: 'EXPO_PUBLIC_SUPABASE_URL' | 'EXPO_PUBLIC_SUPABASE_ANON_KEY'
-) => {
+const getRequiredEnv = (key: 'EXPO_PUBLIC_SUPABASE_URL' | 'EXPO_PUBLIC_SUPABASE_ANON_KEY') => {
   const value = process.env[key]
 
   if (!value) {
@@ -14,5 +12,5 @@ const getRequiredEnv = (
 
 export const appConfig = {
   supabaseUrl: getRequiredEnv('EXPO_PUBLIC_SUPABASE_URL'),
-  supabaseAnonKey: getRequiredEnv('EXPO_PUBLIC_SUPABASE_ANON_KEY'),
+  supabaseAnonKey: getRequiredEnv('EXPO_PUBLIC_SUPABASE_ANON_KEY')
 } as const

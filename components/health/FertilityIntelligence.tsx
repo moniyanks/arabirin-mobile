@@ -10,7 +10,7 @@ import {
   calculateFertilityInsight,
   CYCLE_QUALITY_LABELS,
   CYCLE_QUALITY_COLORS,
-  FERTILE_STATUS_MESSAGES,
+  FERTILE_STATUS_MESSAGES
 } from '../../utils/fertilityIntelligence'
 
 export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
@@ -30,8 +30,7 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
   const qualityColor = CYCLE_QUALITY_COLORS[insight.cycleQuality]
   const statusMessage = FERTILE_STATUS_MESSAGES[insight.fertileWindowStatus]
 
-  const formatDateShort = (d: string | null) =>
-    d ? format(parseISO(d), 'd MMM') : '—'
+  const formatDateShort = (d: string | null) => (d ? format(parseISO(d), 'd MMM') : '—')
 
   if (mode !== 'ttc') return null
 
@@ -45,8 +44,8 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
             s.confidencePill,
             {
               backgroundColor: colors.accentRose + '20',
-              borderColor: colors.accentRose + '50',
-            },
+              borderColor: colors.accentRose + '50'
+            }
           ]}
         >
           <Text style={[s.confidencePillText, { color: colors.accentRose }]}>
@@ -80,15 +79,14 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
         </View>
       )}
 
-      {insight.fertileWindowStatus === 'before_fertile' &&
-        insight.daysUntilFertile !== null && (
-          <View style={s.countdownCard}>
-            <Text style={s.countdownNumber}>{insight.daysUntilFertile}</Text>
-            <Text style={s.countdownLabel}>
-              day{insight.daysUntilFertile !== 1 ? 's' : ''} until your fertile window
-            </Text>
-          </View>
-        )}
+      {insight.fertileWindowStatus === 'before_fertile' && insight.daysUntilFertile !== null && (
+        <View style={s.countdownCard}>
+          <Text style={s.countdownNumber}>{insight.daysUntilFertile}</Text>
+          <Text style={s.countdownLabel}>
+            day{insight.daysUntilFertile !== 1 ? 's' : ''} until your fertile window
+          </Text>
+        </View>
+      )}
 
       <Pressable style={s.qualityRow} onPress={() => setExpanded(!expanded)}>
         <View style={s.qualityLeft}>
@@ -103,8 +101,8 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
               s.qualityFill,
               {
                 width: `${insight.cycleQualityScore}%` as any,
-                backgroundColor: qualityColor,
-              },
+                backgroundColor: qualityColor
+              }
             ]}
           />
         </View>
@@ -126,10 +124,8 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
                   s.factorDot,
                   {
                     backgroundColor:
-                      insight.lutealStatus === 'short'
-                        ? colors.accentRose
-                        : colors.accentSage,
-                  },
+                      insight.lutealStatus === 'short' ? colors.accentRose : colors.accentSage
+                  }
                 ]}
               />
               <Text style={s.factorText}>
@@ -153,23 +149,17 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
           <View style={s.symptomRow}>
             {insight.cervicalMucusLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Cervical mucus × {insight.cervicalMucusLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Cervical mucus × {insight.cervicalMucusLogs}</Text>
               </View>
             )}
             {insight.ovulationPainLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Ovulation pain × {insight.ovulationPainLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Ovulation pain × {insight.ovulationPainLogs}</Text>
               </View>
             )}
             {insight.spottingLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Spotting × {insight.spottingLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Spotting × {insight.spottingLogs}</Text>
               </View>
             )}
           </View>
@@ -179,14 +169,12 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
       <View style={s.disclaimer}>
         <AlertCircle color={colors.textMuted} size={13} strokeWidth={1.5} />
         <Text style={s.disclaimerText}>
-          Predictions are estimates based on your logged data. Always confirm with a healthcare provider.
+          Predictions are estimates based on your logged data. Always confirm with a healthcare
+          provider.
         </Text>
       </View>
 
-      <Pressable
-        style={s.ctaBtn}
-        onPress={() => router.push('/(modals)/appointment')}
-      >
+      <Pressable style={s.ctaBtn} onPress={() => router.push('/(modals)/appointment')}>
         <Text style={s.ctaBtnText}>Prepare for your appointment →</Text>
       </Pressable>
     </View>

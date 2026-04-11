@@ -16,7 +16,7 @@ export default function AccountCard({
   saving,
   showDeleteConfirm,
   onLogout,
-  onDeleteData,
+  onDeleteData
 }: Props) {
   return (
     <>
@@ -38,8 +38,8 @@ export default function AccountCard({
             {showDeleteConfirm ? 'Tap again to confirm' : 'Delete my data'}
           </Text>
           <Text style={s.deleteWarning}>
-            This permanently deletes your profile, cycle history, symptom logs, settings,
-            and consent records, then signs you out.
+            This permanently deletes your profile, cycle history, symptom logs, settings, and
+            consent records, then signs you out.
           </Text>
           <Text style={s.deleteSupportText}>
             Need help with your account or data? Contact support at titayanks@gmail.com

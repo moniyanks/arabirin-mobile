@@ -8,7 +8,7 @@ function throwWriteError(message: string, cause: unknown): never {
     message,
     userMessage: 'We could not save your account setup right now.',
     cause,
-    retryable: true,
+    retryable: true
   })
 }
 
@@ -47,7 +47,7 @@ export const setupRepository = {
   async getCurrentUserId(): Promise<string> {
     const {
       data: { user },
-      error,
+      error
     } = await supabase.auth.getUser()
 
     if (error || !user?.id) {
@@ -56,7 +56,7 @@ export const setupRepository = {
         message: 'No authenticated user found during setup flow.',
         userMessage: 'Your session expired. Please sign in again.',
         cause: error,
-        retryable: false,
+        retryable: false
       })
     }
 
@@ -77,7 +77,7 @@ export const setupRepository = {
         privacy_viewed_at: input.privacyViewedAt,
         terms_viewed_at: input.termsViewedAt,
         app_platform: input.appPlatform,
-        app_version: input.appVersion,
+        app_version: input.appVersion
       },
       { onConflict: 'user_id' }
     )
@@ -94,7 +94,7 @@ export const setupRepository = {
       p_conditions: input.conditions,
       p_cycle_length: input.cycleLength,
       p_period_length: input.periodLength,
-      p_last_period_start_date: input.lastPeriodStartDate,
+      p_last_period_start_date: input.lastPeriodStartDate
     })
 
     if (error) {
@@ -106,22 +106,20 @@ export const setupRepository = {
     userId: string,
     input: NotificationPreferencesWriteInput
   ): Promise<void> {
-    const { error } = await supabase
-      .from('user_settings')
-      .upsert(
-        {
-          user_id: userId,
-          reminders_enabled: input.remindersEnabled,
-          reminder_time: input.reminderTime,
-          reminder_phase_types: input.reminderPhaseTypes,
-          notification_ids: input.notificationIds,
-          updated_at: input.updatedAt,
-        },
-        { onConflict: 'user_id' }
-      )
+    const { error } = await supabase.from('user_settings').upsert(
+      {
+        user_id: userId,
+        reminders_enabled: input.remindersEnabled,
+        reminder_time: input.reminderTime,
+        reminder_phase_types: input.reminderPhaseTypes,
+        notification_ids: input.notificationIds,
+        updated_at: input.updatedAt
+      },
+      { onConflict: 'user_id' }
+    )
 
     if (error) {
       throwWriteError('Failed to update notification preferences.', error)
     }
-  },
+  }
 }

@@ -1,7 +1,7 @@
 import {
   EMPTY_LOCAL_NOTIFICATION_STATE,
   type LocalNotificationState,
-  type NotificationSyncRecord,
+  type NotificationSyncRecord
 } from './notificationTypes'
 
 type UnknownNotificationBlob = unknown
@@ -15,21 +15,18 @@ export function normalizeLocalNotificationState(
 
   const source = value as Record<string, unknown>
 
-  const rawPeriodIds =
-    source.periodReminderIds ?? source.periodIds ?? source.period_reminder_ids
+  const rawPeriodIds = source.periodReminderIds ?? source.periodIds ?? source.period_reminder_ids
 
-  const rawFertileId =
-    source.fertileReminderId ?? source.fertileId ?? source.fertile_reminder_id
+  const rawFertileId = source.fertileReminderId ?? source.fertileId ?? source.fertile_reminder_id
 
-  const rawDailyId =
-    source.dailyReminderId ?? source.dailyId ?? source.daily_reminder_id
+  const rawDailyId = source.dailyReminderId ?? source.dailyId ?? source.daily_reminder_id
 
   return {
     periodReminderIds: Array.isArray(rawPeriodIds)
       ? rawPeriodIds.filter((id): id is string => typeof id === 'string')
       : [],
     fertileReminderId: typeof rawFertileId === 'string' ? rawFertileId : null,
-    dailyReminderId: typeof rawDailyId === 'string' ? rawDailyId : null,
+    dailyReminderId: typeof rawDailyId === 'string' ? rawDailyId : null
   }
 }
 
@@ -49,7 +46,7 @@ export function normalizeNotificationSyncRecord(
 ): NotificationSyncRecord {
   return {
     pushToken: extractPushToken(value),
-    localState: normalizeLocalNotificationState(value),
+    localState: normalizeLocalNotificationState(value)
   }
 }
 
@@ -60,6 +57,6 @@ export function serializeNotificationSyncRecord(
     pushToken: record.pushToken,
     periodReminderIds: record.localState.periodReminderIds,
     fertileReminderId: record.localState.fertileReminderId,
-    dailyReminderId: record.localState.dailyReminderId,
+    dailyReminderId: record.localState.dailyReminderId
   }
 }

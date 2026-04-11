@@ -51,11 +51,7 @@ function getCenterLabel(title?: string | null, ringLabel?: string | null): strin
   return 'Today'
 }
 
-export default function HeroSection({
-  styles,
-  colors,
-  hero,
-}: HeroSectionProps) {
+export default function HeroSection({ styles, colors, hero }: HeroSectionProps) {
   if (!hero) return null
 
   if (hero.kind === 'cycle') {
@@ -108,9 +104,7 @@ export default function HeroSection({
           </View>
         )}
 
-        {!!hero.subtitle && (
-          <Text style={styles.heroMessage}>{hero.subtitle}</Text>
-        )}
+        {!!hero.subtitle && <Text style={styles.heroMessage}>{hero.subtitle}</Text>}
       </View>
     )
   }

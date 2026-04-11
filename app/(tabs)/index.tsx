@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import {
   getCycleStatus,
   getCycleStatusCopy,
-  shouldShowJourneyCard,
+  shouldShowJourneyCard
 } from '../../utils/journeyStatusHelper'
 import { useColors } from '../../styles'
 import { useAppData } from '../../context/AppDataContext'
@@ -34,7 +34,7 @@ export default function HomeScreen() {
         periods,
         symptomLogs,
         cycleLength,
-        periodLength,
+        periodLength
       }),
     [profile, periods, symptomLogs, cycleLength, periodLength]
   )
@@ -50,7 +50,7 @@ export default function HomeScreen() {
     periods,
     cycleLength,
     todayStr,
-    symptomLogs,
+    symptomLogs
   })
 
   const cycleStatusCopy = getCycleStatusCopy(cycleStatus)
@@ -77,13 +77,8 @@ export default function HomeScreen() {
             <Text style={styles.journeyCardTitle}>{cycleStatusCopy.title}</Text>
             <Text style={styles.journeyCardText}>{cycleStatusCopy.body}</Text>
 
-            <Pressable
-              style={styles.journeyCardButton}
-              onPress={journeyChange.open}
-            >
-              <Text style={styles.journeyCardButtonText}>
-                My journey has changed
-              </Text>
+            <Pressable style={styles.journeyCardButton} onPress={journeyChange.open}>
+              <Text style={styles.journeyCardButtonText}>My journey has changed</Text>
             </Pressable>
           </View>
         )}

@@ -19,7 +19,7 @@ export default function IdentityCard({
   setEditingName,
   name,
   setName,
-  error,
+  error
 }: Props) {
   return (
     <View style={s.card}>

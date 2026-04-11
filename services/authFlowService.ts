@@ -9,7 +9,7 @@ export const authFlowService = {
       throw toAppError(error, {
         code: 'AUTH_FAILED',
         userMessage: 'We could not send your sign-in code.',
-        retryable: true,
+        retryable: true
       })
     }
   },
@@ -27,8 +27,8 @@ export const authFlowService = {
       throw toAppError(error, {
         code: 'AUTH_FAILED',
         userMessage: 'We could not verify your sign-in code.',
-        retryable: true,
+        retryable: true
       })
     }
-  },
+  }
 }

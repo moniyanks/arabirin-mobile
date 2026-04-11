@@ -6,10 +6,10 @@ export function makeJourneyChangeSheetStyles(c: any) {
     overlay: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.45)',
-      justifyContent: 'flex-end',
+      justifyContent: 'flex-end'
     },
     backdrop: {
-      flex: 1,
+      flex: 1
     },
     sheet: {
       backgroundColor: c.bgSecondary,
@@ -18,28 +18,28 @@ export function makeJourneyChangeSheetStyles(c: any) {
       paddingHorizontal: 20,
       paddingTop: 12,
       paddingBottom: 24,
-      gap: 14,
+      gap: 14
     },
     handleWrap: {
       alignItems: 'center',
-      marginBottom: 2,
+      marginBottom: 2
     },
     handle: {
       width: 44,
       height: 5,
       borderRadius: 999,
-      backgroundColor: c.borderSoft,
+      backgroundColor: c.borderSoft
     },
     title: {
       ...theme.typography.titleLg,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     body: {
       ...theme.typography.bodyMd,
-      color: c.textMuted,
+      color: c.textMuted
     },
     optionsList: {
-      gap: 10,
+      gap: 10
     },
     optionCard: {
       padding: 16,
@@ -47,28 +47,28 @@ export function makeJourneyChangeSheetStyles(c: any) {
       borderWidth: 1,
       borderColor: c.borderSoft,
       backgroundColor: c.cardSoft,
-      gap: 4,
+      gap: 4
     },
     optionCardDisabled: {
-      opacity: 0.55,
+      opacity: 0.55
     },
     optionTitle: {
       ...theme.typography.titleMd,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     optionText: {
       ...theme.typography.bodySm,
-      color: c.textMuted,
+      color: c.textMuted
     },
     sectionTitle: {
       ...theme.typography.titleMd,
       color: c.textPrimary,
-      marginTop: 2,
+      marginTop: 2
     },
     helperText: {
       ...theme.typography.bodySm,
       color: c.textMuted,
-      lineHeight: 20,
+      lineHeight: 20
     },
     dateField: {
       paddingHorizontal: 14,
@@ -76,20 +76,20 @@ export function makeJourneyChangeSheetStyles(c: any) {
       borderRadius: 14,
       borderWidth: 1,
       borderColor: c.borderSoft,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     dateFieldText: {
       ...theme.typography.bodyMd,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     error: {
       ...theme.typography.bodySm,
-      color: c.accentRose,
+      color: c.accentRose
     },
     actionRow: {
       flexDirection: 'row',
       gap: 10,
-      marginTop: 4,
+      marginTop: 4
     },
     secondaryBtn: {
       flex: 1,
@@ -99,11 +99,11 @@ export function makeJourneyChangeSheetStyles(c: any) {
       borderColor: c.borderSoft,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.bgSecondary,
+      backgroundColor: c.bgSecondary
     },
     secondaryBtnText: {
       ...theme.typography.button,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     primaryBtn: {
       flex: 1,
@@ -111,14 +111,14 @@ export function makeJourneyChangeSheetStyles(c: any) {
       borderRadius: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.accentRose,
+      backgroundColor: c.accentRose
     },
     primaryBtnDisabled: {
-      opacity: 0.7,
+      opacity: 0.7
     },
     primaryBtnText: {
       ...theme.typography.button,
-      color: c.bgPrimary,
-    },
+      color: c.bgPrimary
+    }
   })
 }

@@ -1,4 +1,5 @@
 import { AppMode } from '../constants/appMode'
+import type { ConditionKey } from './conditions'
 
 export type BootstrapStatus = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -26,7 +27,7 @@ export type Profile = {
   mode: AppMode
   cycle_length: number
   period_length: number
-  conditions: string[]
+  conditions: ConditionKey[]
   age?: number | null
   height?: number | null
   weight?: number | null

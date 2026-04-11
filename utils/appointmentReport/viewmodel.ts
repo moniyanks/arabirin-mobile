@@ -5,7 +5,7 @@ import type {
   ConditionCard,
   QuestionSourceKey,
   SupportedMode,
-  MoodSummaryItem,
+  MoodSummaryItem
 } from './types'
 import {
   DOCTOR_QUESTIONS,
@@ -13,7 +13,7 @@ import {
   FALLBACK_NAME,
   MAX_DOCTOR_QUESTIONS,
   MAX_TOP_SYMPTOMS,
-  MODE_LABELS,
+  MODE_LABELS
 } from './config'
 import {
   escapeHtml,
@@ -26,7 +26,7 @@ import {
   getSymptomLabel,
   isSupportedMode,
   safeString,
-  sortPeriodsByStartDate,
+  sortPeriodsByStartDate
 } from './helpers'
 import { buildBodyMetrics } from '../bodyIntelligence'
 import {
@@ -34,19 +34,17 @@ import {
   getConditionsFromProfile,
   CONDITION_LABELS,
   SCORE_LEVEL_LABELS,
-  type ConditionKey,
+  type ConditionKey
 } from '../conditionIntelligence'
 import { getFertileWindow, getNextPeriodDate } from '../cycleHelper'
 
-function buildTopSymptoms(
-  symptomFrequency: Record<string, number>
-): TopSymptom[] {
+function buildTopSymptoms(symptomFrequency: Record<string, number>): TopSymptom[] {
   return Object.entries(symptomFrequency)
     .filter(([, count]) => typeof count === 'number' && Number.isFinite(count) && count > 0)
     .map(([key, count]) => ({
       key,
       label: getSymptomLabel(key),
-      count,
+      count
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, MAX_TOP_SYMPTOMS)
@@ -66,14 +64,11 @@ function buildMoodSummary(symptomLogs: SymptomLog[]): MoodSummaryItem[] {
     .slice(0, 3)
     .map(([mood, count]) => ({
       mood,
-      count,
+      count
     }))
 }
 
-function buildDoctorQuestions(
-  conditions: ConditionKey[],
-  mode: SupportedMode,
-): string[] {
+function buildDoctorQuestions(conditions: ConditionKey[], mode: SupportedMode): string[] {
   const sourceKeys: QuestionSourceKey[] =
     conditions.length > 0
       ? (conditions as QuestionSourceKey[])
@@ -105,7 +100,7 @@ function buildConditionCards(
   conditions: ConditionKey[],
   symptomLogs: SymptomLog[],
   periods: Period[],
-  profile: Profile,
+  profile: Profile
 ): ConditionCard[] {
   return conditions.map((condition) => {
     const score = calculateConditionScore(condition, symptomLogs, periods, profile)
@@ -115,10 +110,10 @@ function buildConditionCards(
       scoreLabel: SCORE_LEVEL_LABELS[score.level] ?? score.level,
       signals: score.signals.map((s) => ({
         label: s.label,
-        met: Boolean(s.met),
+        met: Boolean(s.met)
       })),
       enoughData: Boolean(score.hasEnoughData),
-      logsAnalysed: typeof score.logsAnalysed === 'number' ? score.logsAnalysed : 0,
+      logsAnalysed: typeof score.logsAnalysed === 'number' ? score.logsAnalysed : 0
     }
   })
 }
@@ -166,14 +161,14 @@ function buildTrackingSummary(
 
   return {
     summary,
-    notes,
+    notes
   }
 }
 
 export function buildAppointmentReportViewModel(
   profile: Profile,
   periods: Period[],
-  symptomLogs: SymptomLog[],
+  symptomLogs: SymptomLog[]
 ): ReportViewModel {
   const sortedPeriods = sortPeriodsByStartDate(periods)
   const preparedFor = escapeHtml(safeString(profile?.name, FALLBACK_NAME))
@@ -204,18 +199,11 @@ export function buildAppointmentReportViewModel(
     preparedFor,
     modeLabel: MODE_LABELS[mode],
     trackedConditionsLabel:
-      conditions.length > 0
-        ? conditions.map((c) => CONDITION_LABELS[c]).join(', ')
-        : null,
+      conditions.length > 0 ? conditions.map((c) => CONDITION_LABELS[c]).join(', ') : null,
     symptomEntryCount: symptomLogs.length,
     periodsLoggedCount: sortedPeriods.length,
 
-    trackingSummary: buildTrackingSummary(
-      metrics,
-      nextPeriod,
-      fertile,
-      symptomLogs
-    ),
+    trackingSummary: buildTrackingSummary(metrics, nextPeriod, fertile, symptomLogs),
 
     cycleSummary: {
       avgCycleLength: formatDays(metrics.avgCycleLength),
@@ -225,19 +213,19 @@ export function buildAppointmentReportViewModel(
       nextPeriodPredicted: nextPeriod ? formatDateShort(nextPeriod) : null,
       fertileWindow,
       predictionConfidence: getPredictionConfidence(metrics.totalCycles),
-      recentPeriodStarts,
+      recentPeriodStarts
     },
 
     flowSummary: {
       heavyFlow,
       mediumFlow,
       lightFlow,
-      hasAnyFlow: heavyFlow + mediumFlow + lightFlow > 0,
+      hasAnyFlow: heavyFlow + mediumFlow + lightFlow > 0
     },
 
     topSymptoms: buildTopSymptoms(metrics.symptomFrequency ?? {}),
     moodSummary: buildMoodSummary(symptomLogs),
     conditionCards: buildConditionCards(conditions, symptomLogs, sortedPeriods, profile),
-    questions: buildDoctorQuestions(conditions, mode),
+    questions: buildDoctorQuestions(conditions, mode)
   }
 }

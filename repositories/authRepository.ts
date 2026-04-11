@@ -17,7 +17,7 @@ function assertValidEmail(email: string): string {
       code: 'VALIDATION_ERROR',
       message: `Invalid email submitted: "${email}"`,
       userMessage: 'Please enter a valid email address.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -32,7 +32,7 @@ function assertValidOtp(token: string): string {
       code: 'VALIDATION_ERROR',
       message: 'OTP must be exactly 6 digits.',
       userMessage: 'Enter the 6-digit code from your email.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -44,7 +44,7 @@ export const authRepository = {
     const normalizedEmail = assertValidEmail(email)
 
     const { error } = await supabase.auth.signInWithOtp({
-      email: normalizedEmail,
+      email: normalizedEmail
     })
 
     if (error) {
@@ -53,7 +53,7 @@ export const authRepository = {
         message: 'Failed to send email OTP.',
         userMessage: error.message || 'We could not send your sign-in code.',
         cause: error,
-        retryable: true,
+        retryable: true
       })
     }
 
@@ -67,7 +67,7 @@ export const authRepository = {
     const { error } = await supabase.auth.verifyOtp({
       email: normalizedEmail,
       token: normalizedToken,
-      type: 'email',
+      type: 'email'
     })
 
     if (error) {
@@ -76,13 +76,13 @@ export const authRepository = {
         message: 'Failed to verify email OTP.',
         userMessage: 'Invalid or expired code. Please request a new one.',
         cause: error,
-        retryable: true,
+        retryable: true
       })
     }
 
     const {
       data: { user },
-      error: userError,
+      error: userError
     } = await supabase.auth.getUser()
 
     if (userError || !user?.id) {
@@ -91,7 +91,7 @@ export const authRepository = {
         message: 'OTP verification succeeded but no authenticated user was returned.',
         userMessage: 'Authentication failed. Please try again.',
         cause: userError,
-        retryable: true,
+        retryable: true
       })
     }
 
@@ -101,16 +101,8 @@ export const authRepository = {
   async resolvePostAuthRoute(userId: string): Promise<PostAuthRoute> {
     const [{ data: consent, error: consentError }, { data: profile, error: profileError }] =
       await Promise.all([
-        supabase
-          .from('user_consents')
-          .select('user_id')
-          .eq('user_id', userId)
-          .maybeSingle(),
-        supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', userId)
-          .maybeSingle(),
+        supabase.from('user_consents').select('user_id').eq('user_id', userId).maybeSingle(),
+        supabase.from('profiles').select('id').eq('id', userId).maybeSingle()
       ])
 
     if (consentError) {
@@ -119,7 +111,7 @@ export const authRepository = {
         message: 'Failed to load user consent after auth.',
         userMessage: 'We could not load your account setup status.',
         cause: consentError,
-        retryable: true,
+        retryable: true
       })
     }
 
@@ -129,7 +121,7 @@ export const authRepository = {
         message: 'Failed to load profile after auth.',
         userMessage: 'We could not load your account setup status.',
         cause: profileError,
-        retryable: true,
+        retryable: true
       })
     }
 
@@ -142,5 +134,5 @@ export const authRepository = {
     }
 
     return '/(tabs)'
-  },
+  }
 }

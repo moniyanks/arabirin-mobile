@@ -15,7 +15,7 @@ export default function CycleContextCard({
   cycleDay,
   phaseLabel,
   phaseSupportText,
-  nextPeriodText,
+  nextPeriodText
 }: CycleContextCardProps) {
   const styles = useMemo(() => makeCycleContextCardStyles(colors), [colors])
 
@@ -24,9 +24,7 @@ export default function CycleContextCard({
       <View style={styles.topRow}>
         <View style={styles.leftBlock}>
           <Text style={styles.eyebrow}>Your body today</Text>
-          <Text style={styles.cycleDay}>
-            {cycleDay ? `Day ${cycleDay}` : 'No cycle data'}
-          </Text>
+          <Text style={styles.cycleDay}>{cycleDay ? `Day ${cycleDay}` : 'No cycle data'}</Text>
           <Text style={styles.phaseLabel}>{phaseLabel}</Text>
         </View>
 

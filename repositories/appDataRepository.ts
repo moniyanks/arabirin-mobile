@@ -8,7 +8,7 @@ function throwReadError(message: string, cause: unknown): never {
     message,
     userMessage: 'We could not load your health data right now.',
     cause,
-    retryable: true,
+    retryable: true
   })
 }
 
@@ -18,7 +18,7 @@ function throwWriteError(message: string, cause: unknown): never {
     message,
     userMessage: 'We could not save your changes right now.',
     cause,
-    retryable: true,
+    retryable: true
   })
 }
 
@@ -68,7 +68,7 @@ export const appDataRepository = {
     return (data || []).map((row) => ({
       id: row.id,
       startDate: row.start_date,
-      endDate: row.end_date,
+      endDate: row.end_date
     }))
   },
 
@@ -87,7 +87,7 @@ export const appDataRepository = {
     const { error } = await supabase.from('periods').insert({
       user_id: userId,
       start_date: startDate,
-      end_date: endDate,
+      end_date: endDate
     })
 
     if (error) throwWriteError('Failed to insert period.', error)
@@ -108,7 +108,7 @@ export const appDataRepository = {
       .from('periods')
       .update({
         start_date: startDate,
-        end_date: endDate,
+        end_date: endDate
       })
       .eq('id', id)
       .eq('user_id', userId)
@@ -136,11 +136,11 @@ export const appDataRepository = {
         cramps: logData.cramps ?? null,
         energy: logData.energy ?? null,
         extras: logData.extras ?? [],
-        notes: logData.notes ?? null,
+        notes: logData.notes ?? null
       },
       { onConflict: 'user_id,log_date' }
     )
 
     if (error) throwWriteError('Failed to upsert symptom log.', error)
-  },
+  }
 }

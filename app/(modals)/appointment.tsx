@@ -1,29 +1,22 @@
 import { useMemo, useState } from 'react'
-import {
-  View, Text, Pressable, ScrollView, ActivityIndicator,
-} from 'react-native'
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { X, Share2, FileText, ChevronDown, ChevronUp } from 'lucide-react-native'
+import { X, Share2, ChevronDown, ChevronUp } from 'lucide-react-native'
 import { format } from 'date-fns'
 import { useColors } from '../../styles'
 import { makeAppointmentStyles } from '../../styles/screens/appointment'
 import { useAppData } from '../../context/AppDataContext'
 import { buildBodyMetrics } from '../../utils/bodyIntelligence'
 import { generateAndShareAppointmentPDF } from '../../utils/appointmentReport'
-import {
-  DOCTOR_QUESTIONS,
-  SYMPTOM_LABELS,
-  MODE_LABELS,
-} from '../../utils/appointmentReport/config'
-import type { QuestionSourceKey , SupportedMode} from '../../utils/appointmentReport/types'
-
+import { DOCTOR_QUESTIONS, SYMPTOM_LABELS, MODE_LABELS } from '../../utils/appointmentReport/config'
+import type { QuestionSourceKey, SupportedMode } from '../../utils/appointmentReport/types'
 
 export default function AppointmentScreen() {
-  const colors  = useColors()
-  const s       = useMemo(() => makeAppointmentStyles(colors), [colors])
-  const router  = useRouter()
-  const { profile, periods, symptomLogs, cycleLength, periodLength } = useAppData()
+  const colors = useColors()
+  const s = useMemo(() => makeAppointmentStyles(colors), [colors])
+  const router = useRouter()
+  const { profile, periods, symptomLogs, periodLength } = useAppData()
 
   const [expandedSection, setExpandedSection] = useState<string | null>('symptoms')
   const [sharing, setSharing] = useState(false)
@@ -32,8 +25,8 @@ export default function AppointmentScreen() {
   const name = profile?.name ?? 'Sister'
   const questions = DOCTOR_QUESTIONS[mode as QuestionSourceKey] ?? DOCTOR_QUESTIONS.cycle
 
-  const metrics = useMemo(() =>
-    buildBodyMetrics(periods, symptomLogs, profile),
+  const metrics = useMemo(
+    () => buildBodyMetrics(periods, symptomLogs, profile),
     [periods, symptomLogs, profile]
   )
 
@@ -43,8 +36,10 @@ export default function AppointmentScreen() {
     const counts: Record<string, number> = {}
     symptomLogs.forEach((log) => {
       if (log.cramps && log.cramps !== 'none') counts.cramps = (counts.cramps || 0) + 1
-      if (log.flow && log.flow !== 'none')     counts.flow   = (counts.flow   || 0) + 1
-      log.extras?.forEach((ex) => { counts[ex] = (counts[ex] || 0) + 1 })
+      if (log.flow && log.flow !== 'none') counts.flow = (counts.flow || 0) + 1
+      log.extras?.forEach((ex) => {
+        counts[ex] = (counts[ex] || 0) + 1
+      })
     })
     return Object.entries(counts)
       .map(([key, count]) => ({ key, label: SYMPTOM_LABELS[key] || key, count }))
@@ -53,9 +48,9 @@ export default function AppointmentScreen() {
 
   // ── Flow severity summary ──
   const flowSummary = useMemo(() => {
-    const heavy  = symptomLogs.filter((l) => l.flow === 'heavy').length
+    const heavy = symptomLogs.filter((l) => l.flow === 'heavy').length
     const medium = symptomLogs.filter((l) => l.flow === 'medium').length
-    const light  = symptomLogs.filter((l) => l.flow === 'light').length
+    const light = symptomLogs.filter((l) => l.flow === 'light').length
     return { heavy, medium, light, total: heavy + medium + light }
   }, [symptomLogs])
 
@@ -98,8 +93,7 @@ export default function AppointmentScreen() {
     }
   }
 
-  const toggleSection = (key: string) =>
-    setExpandedSection((prev) => prev === key ? null : key)
+  const toggleSection = (key: string) => setExpandedSection((prev) => (prev === key ? null : key))
 
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
@@ -132,20 +126,19 @@ export default function AppointmentScreen() {
         {/* Disclaimer */}
         <View style={s.disclaimer}>
           <Text style={s.disclaimerText}>
-            This is your personal tracking data — not a medical diagnosis. Share it with your healthcare provider to support your conversation.
+            This is your personal tracking data — not a medical diagnosis. Share it with your
+            healthcare provider to support your conversation.
           </Text>
         </View>
 
         {/* Section 1 — Cycle pattern */}
-        <Pressable
-          style={s.sectionHeader}
-          onPress={() => toggleSection('cycle')}
-        >
+        <Pressable style={s.sectionHeader} onPress={() => toggleSection('cycle')}>
           <Text style={s.sectionTitle}>Cycle Pattern</Text>
-          {expandedSection === 'cycle'
-            ? <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
-            : <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
-          }
+          {expandedSection === 'cycle' ? (
+            <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
+          ) : (
+            <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
+          )}
         </Pressable>
 
         {expandedSection === 'cycle' && (
@@ -171,7 +164,9 @@ export default function AppointmentScreen() {
                 {metrics.minCycle && metrics.maxCycle && (
                   <View style={s.dataRow}>
                     <Text style={s.dataLabel}>Cycle range</Text>
-                    <Text style={s.dataValue}>{metrics.minCycle}–{metrics.maxCycle} days</Text>
+                    <Text style={s.dataValue}>
+                      {metrics.minCycle}–{metrics.maxCycle} days
+                    </Text>
                   </View>
                 )}
                 {periods[periods.length - 1] && (
@@ -188,31 +183,33 @@ export default function AppointmentScreen() {
         )}
 
         {/* Section 2 — Symptom patterns */}
-        <Pressable
-          style={s.sectionHeader}
-          onPress={() => toggleSection('symptoms')}
-        >
+        <Pressable style={s.sectionHeader} onPress={() => toggleSection('symptoms')}>
           <Text style={s.sectionTitle}>Symptom Patterns</Text>
-          {expandedSection === 'symptoms'
-            ? <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
-            : <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
-          }
+          {expandedSection === 'symptoms' ? (
+            <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
+          ) : (
+            <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
+          )}
         </Pressable>
 
         {expandedSection === 'symptoms' && (
           <View style={s.sectionBody}>
             {symptomLogs.length === 0 ? (
-              <Text style={s.emptyText}>No symptoms logged yet. Start logging to build your report.</Text>
+              <Text style={s.emptyText}>
+                No symptoms logged yet. Start logging to build your report.
+              </Text>
             ) : (
               <>
                 {/* Flow severity */}
                 {flowSummary.total > 0 && (
                   <View style={s.subSection}>
                     <Text style={s.subSectionTitle}>Flow severity</Text>
-                    {flowSummary.heavy  > 0 && (
+                    {flowSummary.heavy > 0 && (
                       <View style={s.dataRow}>
                         <Text style={s.dataLabel}>Heavy flow</Text>
-                        <Text style={[s.dataValue, { color: colors.accentRose }]}>{flowSummary.heavy} days logged</Text>
+                        <Text style={[s.dataValue, { color: colors.accentRose }]}>
+                          {flowSummary.heavy} days logged
+                        </Text>
                       </View>
                     )}
                     {flowSummary.medium > 0 && (
@@ -249,7 +246,9 @@ export default function AppointmentScreen() {
                     <Text style={s.subSectionTitle}>Mood patterns</Text>
                     {moodSummary.map((item) => (
                       <View key={item.mood} style={s.dataRow}>
-                        <Text style={[s.dataLabel, { textTransform: 'capitalize' }]}>{item.mood}</Text>
+                        <Text style={[s.dataLabel, { textTransform: 'capitalize' }]}>
+                          {item.mood}
+                        </Text>
                         <Text style={s.dataValue}>{item.count}x logged</Text>
                       </View>
                     ))}
@@ -261,21 +260,20 @@ export default function AppointmentScreen() {
         )}
 
         {/* Section 3 — Questions for doctor */}
-        <Pressable
-          style={s.sectionHeader}
-          onPress={() => toggleSection('questions')}
-        >
+        <Pressable style={s.sectionHeader} onPress={() => toggleSection('questions')}>
           <Text style={s.sectionTitle}>Questions for Your Doctor</Text>
-          {expandedSection === 'questions'
-            ? <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
-            : <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
-          }
+          {expandedSection === 'questions' ? (
+            <ChevronUp color={colors.textMuted} size={18} strokeWidth={1.5} />
+          ) : (
+            <ChevronDown color={colors.textMuted} size={18} strokeWidth={1.5} />
+          )}
         </Pressable>
 
         {expandedSection === 'questions' && (
           <View style={s.sectionBody}>
             <Text style={s.questionsIntro}>
-              Based on your {MODE_LABELS[mode as SupportedMode] || mode} journey, here are questions worth raising:
+              Based on your {MODE_LABELS[mode as SupportedMode] || mode} journey, here are questions
+              worth raising:
             </Text>
             {questions.map((q, i) => (
               <View key={i} style={s.questionItem}>
@@ -287,24 +285,22 @@ export default function AppointmentScreen() {
             ))}
           </View>
         )}
-        
+
         {/* Share button */}
         <Pressable style={s.shareBtn} onPress={handleShare} disabled={sharing}>
-          {sharing
-            ? <ActivityIndicator color={colors.bgPrimary} />
-            : (
-              <>
-                <Share2 color={colors.bgPrimary} size={18} strokeWidth={1.5} />
-                <Text style={s.shareBtnText}>Download PDF report</Text>
-              </>
-            )
-          }
+          {sharing ? (
+            <ActivityIndicator color={colors.bgPrimary} />
+          ) : (
+            <>
+              <Share2 color={colors.bgPrimary} size={18} strokeWidth={1.5} />
+              <Text style={s.shareBtnText}>Download PDF report</Text>
+            </>
+          )}
         </Pressable>
 
         <Text style={s.footerNote}>
           Generated by Àràbìrín · Your data, your story, your health.
         </Text>
-
       </ScrollView>
     </SafeAreaView>
   )

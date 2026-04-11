@@ -47,7 +47,7 @@ function computeCheckInRhythm(
     return {
       count: 0,
       status: 'inactive',
-      lastLoggedDate: null,
+      lastLoggedDate: null
     }
   }
 
@@ -59,7 +59,7 @@ function computeCheckInRhythm(
     return {
       count: 0,
       status: 'inactive',
-      lastLoggedDate: uniqueDates[0],
+      lastLoggedDate: uniqueDates[0]
     }
   }
 
@@ -82,7 +82,7 @@ function computeCheckInRhythm(
   return {
     count,
     status: daysSinceMostRecentLog === 0 ? 'active' : 'grace',
-    lastLoggedDate: uniqueDates[0],
+    lastLoggedDate: uniqueDates[0]
   }
 }
 
@@ -92,20 +92,20 @@ function buildCopy(
   if (result.status === 'inactive' || result.count === 0) {
     return {
       title: 'Check in today',
-      subtitle: 'Begin building your rhythm with one gentle check-in.',
+      subtitle: 'Begin building your rhythm with one gentle check-in.'
     }
   }
 
   if (result.status === 'grace') {
     return {
       title: 'Check in today',
-      subtitle: 'You’re still in rhythm. A check-in today keeps it going.',
+      subtitle: 'You’re still in rhythm. A check-in today keeps it going.'
     }
   }
 
   return {
     title: 'You checked in today',
-    subtitle: 'Your rhythm is building, one check-in at a time.',
+    subtitle: 'Your rhythm is building, one check-in at a time.'
   }
 }
 
@@ -123,6 +123,6 @@ export function getCheckInRhythmInsight(
     title: copy.title,
     subtitle: copy.subtitle,
     lastLoggedDate: computed.lastLoggedDate,
-    hasCheckedInToday: computed.lastLoggedDate === effectiveToday,
+    hasCheckedInToday: computed.lastLoggedDate === effectiveToday
   }
 }

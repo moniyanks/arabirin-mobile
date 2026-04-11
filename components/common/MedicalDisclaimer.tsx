@@ -10,7 +10,8 @@ export default function MedicalDisclaimer() {
   return (
     <View style={s.wrap}>
       <Text style={s.text}>
-        Àràbìrìn provides wellness and educational insights only. It does not provide medical advice, diagnosis, or treatment.
+        Àràbìrìn provides wellness and educational insights only. It does not provide medical
+        advice, diagnosis, or treatment.
       </Text>
     </View>
   )

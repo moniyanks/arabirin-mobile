@@ -8,13 +8,7 @@ export type SupportedMode =
   | 'healing'
   | 'perimenopause'
 
-export type QuestionSourceKey =
-  | 'fibroids'
-  | 'endo'
-  | 'pcos'
-  | 'thalassemia'
-  | 'cycle'
-  | 'ttc'
+export type QuestionSourceKey = 'fibroids' | 'endo' | 'pcos' | 'thalassemia' | 'cycle' | 'ttc'
 
 export type ReportMetricValue = string | number | null | undefined
 

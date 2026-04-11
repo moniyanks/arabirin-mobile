@@ -26,7 +26,7 @@ export default function AppearanceCard({ s, colors, isDark, onToggle }: Props) {
             onValueChange={onToggle}
             trackColor={{
               false: colors.borderRose,
-              true: 'rgba(217,155,155,0.4)',
+              true: 'rgba(217,155,155,0.4)'
             }}
             thumbColor={isDark ? colors.accentRose : colors.bgPrimary}
           />

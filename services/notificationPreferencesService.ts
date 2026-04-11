@@ -23,7 +23,7 @@ function validateReminderTime(value: string | null): string | null {
       code: 'VALIDATION_ERROR',
       message: `Invalid reminder time: "${value}"`,
       userMessage: 'Please select a valid reminder time.',
-      retryable: false,
+      retryable: false
     })
   }
 
@@ -50,7 +50,7 @@ export const notificationPreferencesService = {
       const [profile, settings, periods] = await Promise.all([
         appDataRepository.fetchProfile(userId),
         appDataRepository.fetchSettings(userId),
-        appDataRepository.fetchPeriods(userId),
+        appDataRepository.fetchPeriods(userId)
       ])
 
       const mode = normalizeAppMode(profile?.mode)
@@ -63,7 +63,7 @@ export const notificationPreferencesService = {
         userId,
         {
           nextPeriodStart,
-          fertileStart: fertile?.fertileStart ?? null,
+          fertileStart: fertile?.fertileStart ?? null
         },
         mode,
         {
@@ -71,7 +71,7 @@ export const notificationPreferencesService = {
           reminderTime,
           reminderPhaseTypes,
           existingNotificationIds,
-          dailyRemindersEnabled: settings?.daily_reminders_enabled ?? false,
+          dailyRemindersEnabled: settings?.daily_reminders_enabled ?? false
         }
       )
 
@@ -80,8 +80,8 @@ export const notificationPreferencesService = {
       throw toAppError(error, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not update your reminder settings right now.',
-        retryable: true,
+        retryable: true
       })
     }
-  },
+  }
 }

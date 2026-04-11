@@ -1,20 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  View,
-  Text,
-  Pressable,
-  Modal,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, Pressable, Modal, ActivityIndicator } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { format } from 'date-fns'
 
 import { useColors } from '../../styles'
 import { makeJourneyChangeSheetStyles } from '../../styles/components/journeyChangeSheet'
-import type {
-  JourneyMode,
-  JourneyTransitionInput,
-} from '../../utils/journeyTransitionHelper'
+import type { JourneyMode, JourneyTransitionInput } from '../../utils/journeyTransitionHelper'
 
 type Props = {
   visible: boolean
@@ -33,7 +24,7 @@ export default function JourneyChangeSheet({
   error,
   currentMode,
   onClose,
-  onSubmit,
+  onSubmit
 }: Props) {
   const colors = useColors()
   const s = useMemo(() => makeJourneyChangeSheetStyles(colors), [colors])
@@ -63,28 +54,24 @@ export default function JourneyChangeSheet({
     if (pendingMode === 'pregnant') {
       await onSubmit({
         mode: 'pregnant',
-        lmpDate: lmpDateStr,
+        lmpDate: lmpDateStr
       })
       return
     }
 
     if (pendingMode === 'postpartum') {
       await onSubmit({
-        mode: 'postpartum',
+        mode: 'postpartum'
       })
       return
     }
 
     await onSubmit({
-      mode: pendingMode,
+      mode: pendingMode
     })
   }
 
-  const modeOption = (
-    mode: JourneyMode,
-    title: string,
-    description?: string
-  ) => {
+  const modeOption = (mode: JourneyMode, title: string, description?: string) => {
     const disabled = currentMode === mode
 
     return (
@@ -103,12 +90,7 @@ export default function JourneyChangeSheet({
   }
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={s.overlay}>
         <Pressable style={s.backdrop} onPress={onClose} />
 
@@ -119,17 +101,12 @@ export default function JourneyChangeSheet({
 
           <Text style={s.title}>My journey has changed</Text>
           <Text style={s.body}>
-            Tell Àràbìrìn what feels true for you now. We’ll gently reshape your
-            experience.
+            Tell Àràbìrìn what feels true for you now. We’ll gently reshape your experience.
           </Text>
 
           {!pendingMode && (
             <View style={s.optionsList}>
-              {modeOption(
-                'pregnant',
-                'I’m pregnant',
-                'Shift into pregnancy support and guidance'
-              )}
+              {modeOption('pregnant', 'I’m pregnant', 'Shift into pregnancy support and guidance')}
 
               {modeOption(
                 'postpartum',
@@ -165,14 +142,9 @@ export default function JourneyChangeSheet({
 
           {pendingMode === 'pregnant' && (
             <>
-              <Text style={s.sectionTitle}>
-                When did your last period start?
-              </Text>
+              <Text style={s.sectionTitle}>When did your last period start?</Text>
 
-              <Pressable
-                style={s.dateField}
-                onPress={() => setShowLmpPicker(true)}
-              >
+              <Pressable style={s.dateField} onPress={() => setShowLmpPicker(true)}>
                 <Text style={s.dateFieldText}>{lmpDateLabel}</Text>
               </Pressable>
 
@@ -190,8 +162,7 @@ export default function JourneyChangeSheet({
               )}
 
               <Text style={s.helperText}>
-                We’ll use this to shape your pregnancy timeline. You can refine
-                it later.
+                We’ll use this to shape your pregnancy timeline. You can refine it later.
               </Text>
             </>
           )}
@@ -200,11 +171,7 @@ export default function JourneyChangeSheet({
 
           {!!pendingMode && (
             <View style={s.actionRow}>
-              <Pressable
-                style={s.secondaryBtn}
-                onPress={handleBack}
-                disabled={loading}
-              >
+              <Pressable style={s.secondaryBtn} onPress={handleBack} disabled={loading}>
                 <Text style={s.secondaryBtnText}>Back</Text>
               </Pressable>
 

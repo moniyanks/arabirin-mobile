@@ -4,7 +4,7 @@ export function formatShortDate(value?: string | null): string {
   try {
     return new Date(value).toLocaleDateString(undefined, {
       day: 'numeric',
-      month: 'short',
+      month: 'short'
     })
   } catch {
     return '—'

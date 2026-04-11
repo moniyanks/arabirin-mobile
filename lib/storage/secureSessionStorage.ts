@@ -11,7 +11,7 @@ type SupportedStorage = {
 }
 
 const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
-  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
 }
 
 const isWeb = Platform.OS === 'web'
@@ -25,7 +25,7 @@ async function assertSecureStoreAvailable(): Promise<void> {
       message: 'Secure storage is not available on this device.',
       userMessage:
         'Secure sign-in is not available on this device right now. Please try again on a supported device.',
-      retryable: false,
+      retryable: false
     })
   }
 }
@@ -43,10 +43,9 @@ const secureStorage: SupportedStorage = {
       throw new AppError({
         code: 'AUTH_FAILED',
         message: `Secure storage read failed for key "${key}".`,
-        userMessage:
-          'We could not securely restore your session. Please sign in again.',
+        userMessage: 'We could not securely restore your session. Please sign in again.',
         cause: error,
-        retryable: false,
+        retryable: false
       })
     }
   },
@@ -64,10 +63,9 @@ const secureStorage: SupportedStorage = {
       throw new AppError({
         code: 'AUTH_FAILED',
         message: `Secure storage write failed for key "${key}".`,
-        userMessage:
-          'We could not securely save your session. Please try signing in again.',
+        userMessage: 'We could not securely save your session. Please try signing in again.',
         cause: error,
-        retryable: false,
+        retryable: false
       })
     }
   },
@@ -85,13 +83,12 @@ const secureStorage: SupportedStorage = {
       throw new AppError({
         code: 'AUTH_FAILED',
         message: `Secure storage delete failed for key "${key}".`,
-        userMessage:
-          'We could not securely clear your session. Please close and reopen the app.',
+        userMessage: 'We could not securely clear your session. Please close and reopen the app.',
         cause: error,
-        retryable: false,
+        retryable: false
       })
     }
-  },
+  }
 }
 
 export const secureSessionStorage = secureStorage

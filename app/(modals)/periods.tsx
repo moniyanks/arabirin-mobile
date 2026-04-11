@@ -1,8 +1,5 @@
 import { useState, useMemo } from 'react'
-import {
-  View, Text, Pressable, ScrollView,
-  ActivityIndicator, Alert,
-} from 'react-native'
+import { View, Text, Pressable, ScrollView, ActivityIndicator, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { X, Pencil, Trash2, Plus } from 'lucide-react-native'
@@ -22,36 +19,35 @@ type EditingPeriod = {
 
 export default function PeriodsScreen() {
   const colors = useColors()
-  const s      = useMemo(() => makePeriodsStyles(colors), [colors])
+  const s = useMemo(() => makePeriodsStyles(colors), [colors])
   const router = useRouter()
   const { periods, updatePeriod, deletePeriod, addPeriod, periodLength } = useAppData()
 
-  const [editing, setEditing]             = useState<EditingPeriod | null>(null)
-  const [saving, setSaving]               = useState(false)
-  const [showPicker, setShowPicker]       = useState(false)
-  const [addingNew, setAddingNew]         = useState(false)
-  const [newStart, setNewStart]           = useState(new Date())
+  const [editing, setEditing] = useState<EditingPeriod | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [showPicker, setShowPicker] = useState(false)
+  const [addingNew, setAddingNew] = useState(false)
+  const [newStart, setNewStart] = useState(new Date())
   const [showNewPicker, setShowNewPicker] = useState(false)
 
-  const sorted = useMemo(() =>
-    [...periods].sort((a, b) => b.startDate.localeCompare(a.startDate)),
+  const sorted = useMemo(
+    () => [...periods].sort((a, b) => b.startDate.localeCompare(a.startDate)),
     [periods]
   )
 
   const getDuration = (p: Period) => {
     if (!p.endDate) return '—'
-    const days = Math.round(
-      (parseISO(p.endDate).getTime() - parseISO(p.startDate).getTime()) / 86400000
-    ) + 1
+    const days =
+      Math.round((parseISO(p.endDate).getTime() - parseISO(p.startDate).getTime()) / 86400000) + 1
     return `${days} days`
   }
 
   const handleEdit = (p: Period) => {
     setEditing({
-      id:        p.id,
+      id: p.id,
       startDate: parseISO(p.startDate),
-      endDate:   p.endDate ? parseISO(p.endDate) : parseISO(p.startDate),
-      field:     null,
+      endDate: p.endDate ? parseISO(p.endDate) : parseISO(p.startDate),
+      field: null
     })
   }
 
@@ -62,7 +58,7 @@ export default function PeriodsScreen() {
       await updatePeriod(
         editing.id,
         format(editing.startDate, 'yyyy-MM-dd'),
-        format(editing.endDate,   'yyyy-MM-dd'),
+        format(editing.endDate, 'yyyy-MM-dd')
       )
       setEditing(null)
     } finally {
@@ -81,10 +77,13 @@ export default function PeriodsScreen() {
           style: 'destructive',
           onPress: async () => {
             setSaving(true)
-            try { await deletePeriod(p.id) }
-            finally { setSaving(false) }
-          },
-        },
+            try {
+              await deletePeriod(p.id)
+            } finally {
+              setSaving(false)
+            }
+          }
+        }
       ]
     )
   }
@@ -127,13 +126,8 @@ export default function PeriodsScreen() {
           <View style={s.addCard}>
             <Text style={s.addCardTitle}>Add a period</Text>
             <Text style={s.addCardLabel}>Start date</Text>
-            <Pressable
-              style={s.dateField}
-              onPress={() => setShowNewPicker(true)}
-            >
-              <Text style={s.dateFieldText}>
-                {format(newStart, 'd MMMM yyyy')}
-              </Text>
+            <Pressable style={s.dateField} onPress={() => setShowNewPicker(true)}>
+              <Text style={s.dateFieldText}>{format(newStart, 'd MMMM yyyy')}</Text>
             </Pressable>
 
             {showNewPicker && (
@@ -156,7 +150,10 @@ export default function PeriodsScreen() {
             <View style={s.addCardBtns}>
               <Pressable
                 style={s.cancelBtn}
-                onPress={() => { setAddingNew(false); setNewStart(new Date()) }}
+                onPress={() => {
+                  setAddingNew(false)
+                  setNewStart(new Date())
+                }}
               >
                 <Text style={s.cancelBtnText}>Cancel</Text>
               </Pressable>
@@ -165,10 +162,11 @@ export default function PeriodsScreen() {
                 onPress={handleAddNew}
                 disabled={saving}
               >
-                {saving
-                  ? <ActivityIndicator color={colors.bgPrimary} size="small" />
-                  : <Text style={s.saveBtnText}>Add period</Text>
-                }
+                {saving ? (
+                  <ActivityIndicator color={colors.bgPrimary} size="small" />
+                ) : (
+                  <Text style={s.saveBtnText}>Add period</Text>
+                )}
               </Pressable>
             </View>
           </View>
@@ -178,9 +176,7 @@ export default function PeriodsScreen() {
         {sorted.length === 0 ? (
           <View style={s.emptyState}>
             <Text style={s.emptyText}>No periods logged yet.</Text>
-            <Text style={s.emptySubtext}>
-              Log your first period from the Calendar tab.
-            </Text>
+            <Text style={s.emptySubtext}>Log your first period from the Calendar tab.</Text>
           </View>
         ) : (
           sorted.map((p) => (
@@ -197,9 +193,7 @@ export default function PeriodsScreen() {
                       setShowPicker(true)
                     }}
                   >
-                    <Text style={s.dateFieldText}>
-                      {format(editing.startDate, 'd MMMM yyyy')}
-                    </Text>
+                    <Text style={s.dateFieldText}>{format(editing.startDate, 'd MMMM yyyy')}</Text>
                   </Pressable>
 
                   <Text style={s.editLabel}>End date</Text>
@@ -210,9 +204,7 @@ export default function PeriodsScreen() {
                       setShowPicker(true)
                     }}
                   >
-                    <Text style={s.dateFieldText}>
-                      {format(editing.endDate, 'd MMMM yyyy')}
-                    </Text>
+                    <Text style={s.dateFieldText}>{format(editing.endDate, 'd MMMM yyyy')}</Text>
                   </Pressable>
 
                   {showPicker && (
@@ -234,10 +226,7 @@ export default function PeriodsScreen() {
                   )}
 
                   <View style={s.addCardBtns}>
-                    <Pressable
-                      style={s.cancelBtn}
-                      onPress={() => setEditing(null)}
-                    >
+                    <Pressable style={s.cancelBtn} onPress={() => setEditing(null)}>
                       <Text style={s.cancelBtnText}>Cancel</Text>
                     </Pressable>
                     <Pressable
@@ -245,39 +234,31 @@ export default function PeriodsScreen() {
                       onPress={handleSave}
                       disabled={saving}
                     >
-                      {saving
-                        ? <ActivityIndicator color={colors.bgPrimary} size="small" />
-                        : <Text style={s.saveBtnText}>Save</Text>
-                      }
+                      {saving ? (
+                        <ActivityIndicator color={colors.bgPrimary} size="small" />
+                      ) : (
+                        <Text style={s.saveBtnText}>Save</Text>
+                      )}
                     </Pressable>
                   </View>
                 </View>
               ) : (
                 <View style={s.periodCard}>
                   <View style={s.periodCardLeft}>
-                    <Text style={s.periodStart}>
-                      {format(parseISO(p.startDate), 'd MMM yyyy')}
-                    </Text>
+                    <Text style={s.periodStart}>{format(parseISO(p.startDate), 'd MMM yyyy')}</Text>
                     <Text style={s.periodEnd}>
                       {p.endDate
                         ? `to ${format(parseISO(p.endDate), 'd MMM yyyy')}`
-                        : 'End date not set'
-                      }
+                        : 'End date not set'}
                     </Text>
                     <Text style={s.periodDuration}>{getDuration(p)}</Text>
                   </View>
 
                   <View style={s.periodCardActions}>
-                    <Pressable
-                      style={s.actionBtn}
-                      onPress={() => handleEdit(p)}
-                    >
+                    <Pressable style={s.actionBtn} onPress={() => handleEdit(p)}>
                       <Pencil color={colors.textMuted} size={16} strokeWidth={1.5} />
                     </Pressable>
-                    <Pressable
-                      style={s.actionBtn}
-                      onPress={() => handleDelete(p)}
-                    >
+                    <Pressable style={s.actionBtn} onPress={() => handleDelete(p)}>
                       <Trash2 color={colors.accentRose} size={16} strokeWidth={1.5} />
                     </Pressable>
                   </View>

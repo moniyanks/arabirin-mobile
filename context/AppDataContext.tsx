@@ -5,7 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
-  type ReactNode,
+  type ReactNode
 } from 'react'
 import { appDataRepository } from '../repositories/appDataRepository'
 import type {
@@ -14,7 +14,7 @@ import type {
   SymptomLog,
   Profile,
   Consent,
-  Settings,
+  Settings
 } from '../types/appData'
 import { useAuth } from './AuthContext'
 import { rescheduleAllReminders } from '../utils/notifications'
@@ -67,7 +67,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const syncRemindersForPeriods = useCallback(
-    async (userId: string, nextPeriods: Period[], nextProfile?: Profile | null, nextSettings?: Settings | null) => {
+    async (
+      userId: string,
+      nextPeriods: Period[],
+      nextProfile?: Profile | null,
+      nextSettings?: Settings | null
+    ) => {
       const activeProfile = nextProfile ?? profile
       const activeSettings = nextSettings ?? settings
 
@@ -94,14 +99,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       setError(null)
 
       try {
-        const [consentData, profileData, settingsData, periodsData, logsData] =
-          await Promise.all([
-            appDataRepository.fetchConsent(userId),
-            appDataRepository.fetchProfile(userId),
-            appDataRepository.fetchSettings(userId),
-            appDataRepository.fetchPeriods(userId),
-            appDataRepository.fetchSymptomLogs(userId),
-          ])
+        const [consentData, profileData, settingsData, periodsData, logsData] = await Promise.all([
+          appDataRepository.fetchConsent(userId),
+          appDataRepository.fetchProfile(userId),
+          appDataRepository.fetchSettings(userId),
+          appDataRepository.fetchPeriods(userId),
+          appDataRepository.fetchSymptomLogs(userId)
+        ])
 
         setConsent(consentData)
         setProfile(profileData)
@@ -119,7 +123,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         const appError = toAppError(err, {
           code: 'DB_READ_FAILED',
           userMessage: 'We could not load your health data right now.',
-          retryable: true,
+          retryable: true
         })
 
         setError(appError.userMessage)
@@ -158,7 +162,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not save your period right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
       throw appError
@@ -179,7 +183,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not update your period right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
       throw appError
@@ -200,7 +204,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not save your period changes right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
       throw appError
@@ -221,7 +225,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not delete that period right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
       throw appError
@@ -238,7 +242,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_WRITE_FAILED',
         userMessage: 'We could not save your symptom log right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
       throw appError
@@ -259,7 +263,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const appError = toAppError(err, {
         code: 'DB_READ_FAILED',
         userMessage: 'We could not refresh your profile right now.',
-        retryable: true,
+        retryable: true
       })
       setError(appError.userMessage)
     }
@@ -283,7 +287,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       endPeriod,
       updatePeriod,
       deletePeriod,
-      saveSymptomLog,
+      saveSymptomLog
     }),
     [
       profile,
@@ -297,7 +301,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       periodLength,
       refetchAll,
       refetchProfile,
-      resetState,
+      resetState
     ]
   )
 

@@ -9,8 +9,8 @@ Notifications.setNotificationHandler({
     shouldShowBanner: true,
     shouldShowList: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
+    shouldSetBadge: false
+  })
 })
 
 export async function configureNotifications(): Promise<void> {
@@ -19,7 +19,7 @@ export async function configureNotifications(): Promise<void> {
       name: 'Àràbìrín',
       importance: Notifications.AndroidImportance.DEFAULT,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#C9847A',
+      lightColor: '#C9847A'
     })
   }
 }
@@ -35,7 +35,7 @@ export async function rescheduleAllReminders(
     userId,
     {
       nextPeriodStart: nextPeriodDate,
-      fertileStart,
+      fertileStart
     },
     mode,
     dailyRemindersEnabled
