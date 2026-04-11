@@ -1,62 +1,79 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'expo-router'
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { format } from 'date-fns'
-import { supabase } from '../../../lib/supabase'
+import type { ConditionKey } from '../../../types/conditions'
+import { supportsCyclePredictions, type AppMode } from '../../../constants/appMode'
 import { useColors } from '../../../styles'
 import { makeOnboardingStyles } from '../../../styles/screens/onboarding'
 import { useAppData } from '../../../context/AppDataContext'
+import { setupFlowService } from '../../../services/setupFlowService'
+import { toAppError } from '../../../lib/errors/appError'
 
 type Step = 'name' | 'mode' | 'conditions' | 'final'
+
 const STEPS: Step[] = ['name', 'mode', 'conditions', 'final']
 
-const MODES = [
+const MODES: Array<{
+  key: AppMode
+  label: string
+  desc: string
+}> = [
   {
     key: 'cycle',
     label: 'Tracking my cycle',
-    desc: 'Understanding my phases, symptoms and patterns',
+    desc: 'Understanding my phases, symptoms and patterns'
   },
   {
     key: 'ttc',
     label: 'Trying to conceive',
-    desc: 'Fertile window, ovulation tracking and cycle quality',
+    desc: 'Fertile window, ovulation tracking and cycle quality'
   },
   {
     key: 'pregnant',
     label: 'Pregnant',
-    desc: 'Weekly milestones, symptoms and care prompts',
+    desc: 'Weekly milestones, symptoms and care prompts'
   },
   {
     key: 'postpartum',
     label: 'Postpartum',
-    desc: 'Recovery, return to cycle and emotional support',
+    desc: 'Recovery, return to cycle and emotional support'
   },
   {
     key: 'healing',
     label: 'Loss or recovery',
-    desc: 'Healing tracking, symptom monitoring and support',
+    desc: 'Healing tracking, symptom monitoring and support'
   },
   {
     key: 'perimenopause',
     label: 'Perimenopause',
-    desc: 'Cycle changes, symptoms and transition support',
-  },
+    desc: 'Cycle changes, symptoms and transition support'
+  }
 ]
 
-const CONDITIONS = [
-  { key: 'fibroids', label: 'Fibroids',      desc: 'Uterine fibroids or suspected fibroids' },
-  { key: 'endo',     label: 'Endometriosis', desc: 'Diagnosed or suspected endometriosis'   },
-  { key: 'pcos',     label: 'PCOS',          desc: 'Polycystic ovary syndrome'              },
-  { key: 'thalassemia', label: 'Thalassemia',   desc: 'Thalassemia trait or thalassemia major' },
+const CONDITIONS: Array<{ key: ConditionKey; label: string; desc: string }> = [
+  {
+    key: 'fibroids',
+    label: 'Fibroids',
+    desc: 'Uterine fibroids or suspected fibroids'
+  },
+  {
+    key: 'endometriosis',
+    label: 'Endometriosis',
+    desc: 'Diagnosed or suspected endometriosis'
+  },
+  {
+    key: 'pcos',
+    label: 'PCOS',
+    desc: 'Polycystic ovary syndrome'
+  },
+  {
+    key: 'thalassemia',
+    label: 'Thalassemia',
+    desc: 'Thalassemia trait or thalassemia major'
+  }
 ]
 
 export default function OnboardingScreen() {
@@ -67,8 +84,8 @@ export default function OnboardingScreen() {
 
   const [step, setStep] = useState<Step>('name')
   const [name, setName] = useState('')
-  const [mode, setMode] = useState('cycle')
-  const [conditions, setConditions] = useState<string[]>([])
+  const [mode, setMode] = useState<AppMode>('cycle')
+  const [conditions, setConditions] = useState<ConditionKey[]>([])
 
   const [periodLength, setPeriodLength] = useState(5)
   const [cycleLength, setCycleLength] = useState(28)
@@ -85,101 +102,69 @@ export default function OnboardingScreen() {
 
   const stepIndex = STEPS.indexOf(step)
   const totalSteps = STEPS.length
+  const supportsPredictions = supportsCyclePredictions(mode)
 
   const selectedDateStr = format(lastPeriodDate, 'yyyy-MM-dd')
   const selectedDateDisplay = format(lastPeriodDate, 'd MMMM yyyy')
 
-  const resolvedCycleLength =
-    isCycleLengthUnknown
-      ? null
-      : useCustomCycleLength
-        ? Number(customCycleLength)
-        : cycleLength
+  const resolvedCycleLength = useMemo<number | null>(() => {
+    if (isCycleLengthUnknown) return null
+    if (useCustomCycleLength) return Number(customCycleLength)
+    return cycleLength
+  }, [customCycleLength, cycleLength, isCycleLengthUnknown, useCustomCycleLength])
 
-  const isValidResolvedCycleLength =
-    resolvedCycleLength === null ||
-    (Number.isFinite(resolvedCycleLength) &&
-      resolvedCycleLength >= 15 &&
-      resolvedCycleLength <= 90)
+  const isValidResolvedCycleLength = useMemo(() => {
+    return (
+      resolvedCycleLength === null ||
+      (Number.isFinite(resolvedCycleLength) &&
+        resolvedCycleLength >= 15 &&
+        resolvedCycleLength <= 90)
+    )
+  }, [resolvedCycleLength])
 
-  const canAdvance = () => {
-    switch (step) {
-      case 'name':
-        return name.trim().length >= 2
-      default:
-        return true
+  const canAdvance = (): boolean => {
+    if (step === 'name') {
+      return name.trim().length >= 2
     }
+
+    return true
   }
 
-  const canFinishFinalStep = () => {
-    if (mode !== 'cycle') return true
+  const canFinishFinalStep = (): boolean => {
+    if (!supportsPredictions) return true
 
     return (
-      !!lastPeriodDate &&
       periodLength > 0 &&
       isValidResolvedCycleLength &&
       (!useCustomCycleLength || customCycleLength.trim().length > 0)
     )
   }
 
-  const handleFinish = async (shouldCreatePeriod: boolean) => {
+  const handleFinish = async () => {
+    if (loading) return
+
     setLoading(true)
     setError('')
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) throw new Error('No authenticated user')
-
-      const finalCycleLength = mode === 'cycle' ? resolvedCycleLength : null
-
-      if (
-        mode === 'cycle' &&
-        finalCycleLength !== null &&
-        (!Number.isFinite(finalCycleLength) ||
-          finalCycleLength < 15 ||
-          finalCycleLength > 90)
-      ) {
-        throw new Error('Please enter a valid cycle length between 15 and 90 days')
-      }
-
-      const { error: profileErr } = await supabase
-        .from('profiles')
-        .upsert(
-          {
-            id: user.id,
-            name: name.trim(),
-            mode,
-            conditions,
-            cycle_length: finalCycleLength,
-            period_length: mode === 'cycle' ? periodLength : null,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'id' }
-        )
-
-      if (profileErr) throw profileErr
-
-      if (shouldCreatePeriod) {
-        const endDate = new Date(lastPeriodDate)
-        endDate.setDate(endDate.getDate() + (periodLength - 1))
-        const endDateStr = format(endDate, 'yyyy-MM-dd')
-
-        const { error: periodErr } = await supabase.from('periods').insert({
-          user_id: user.id,
-          start_date: selectedDateStr,
-          end_date: endDateStr,
-        })
-
-        if (periodErr) throw periodErr
-      }
+      await setupFlowService.completeOnboarding({
+        name,
+        mode,
+        conditions,
+        cycleLength: supportsPredictions ? resolvedCycleLength : null,
+        periodLength: supportsPredictions ? periodLength : null,
+        lastPeriodStartDate: supportsPredictions ? selectedDateStr : null
+      })
 
       await refetchAll()
       router.replace('/(tabs)')
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong')
+    } catch (err) {
+      const appError = toAppError(err, {
+        code: 'DB_WRITE_FAILED',
+        userMessage: 'We could not complete your account setup right now.',
+        retryable: true
+      })
+      setError(appError.userMessage)
     } finally {
       setLoading(false)
     }
@@ -204,25 +189,29 @@ export default function OnboardingScreen() {
 
     if (step === 'final') {
       if (!canFinishFinalStep()) return
-      await handleFinish(mode === 'cycle')
+      await handleFinish()
     }
   }
 
   const back = () => {
+    if (loading) return
     const prev = STEPS[stepIndex - 1]
     if (prev) setStep(prev)
   }
-  
-  const toggleCondition = (key: string) => {
+
+  const toggleCondition = (key: ConditionKey) => {
     setConditions((prev) =>
-      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
+      prev.includes(key) ? prev.filter((value) => value !== key) : [...prev, key]
     )
   }
 
   return (
     <SafeAreaView style={s.safe}>
       <View style={s.header}>
-        <Text style={s.stepLabel}>Step {stepIndex + 1} of {totalSteps}</Text>
+        <Text style={s.stepLabel}>
+          Step {stepIndex + 1} of {totalSteps}
+        </Text>
+
         <View style={s.progressRow}>
           {STEPS.map((st, i) => (
             <View
@@ -230,7 +219,7 @@ export default function OnboardingScreen() {
               style={[
                 s.progressDot,
                 i < stepIndex && s.progressDotDone,
-                i === stepIndex && s.progressDotActive,
+                i === stepIndex && s.progressDotActive
               ]}
             />
           ))}
@@ -246,7 +235,10 @@ export default function OnboardingScreen() {
 
             <TextInput
               value={name}
-              onChangeText={setName}
+              onChangeText={(value) => {
+                setName(value)
+                if (error) setError('')
+              }}
               placeholder="Your first name"
               placeholderTextColor={colors.textMuted}
               style={s.textInput}
@@ -257,6 +249,7 @@ export default function OnboardingScreen() {
 
           <View style={s.footer}>
             {!!error && <Text style={s.error}>{error}</Text>}
+
             <Pressable
               style={[s.btn, (!canAdvance() || loading) && s.btnDisabled]}
               onPress={advance}
@@ -282,18 +275,18 @@ export default function OnboardingScreen() {
             <View style={s.modeList}>
               {MODES.map((item) => {
                 const active = mode === item.key
+
                 return (
                   <Pressable
                     key={item.key}
                     style={[s.modeCard, active && s.modeCardActive]}
-                    onPress={() => setMode(item.key)}
+                    onPress={() => {
+                      setMode(item.key)
+                      if (error) setError('')
+                    }}
                   >
-                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>
-                      {item.label}
-                    </Text>
-                    <Text style={[s.modeDesc, active && s.modeDescActive]}>
-                      {item.desc}
-                    </Text>
+                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>{item.label}</Text>
+                    <Text style={[s.modeDesc, active && s.modeDescActive]}>{item.desc}</Text>
                   </Pressable>
                 )
               })}
@@ -302,6 +295,7 @@ export default function OnboardingScreen() {
 
           <View style={s.footer}>
             {!!error && <Text style={s.error}>{error}</Text>}
+
             <Pressable
               style={[s.btn, loading && s.btnDisabled]}
               onPress={advance}
@@ -324,7 +318,7 @@ export default function OnboardingScreen() {
       {step === 'conditions' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>4 of 4</Text>
+            <Text style={s.stepCount}>3 of 4</Text>
             <Text style={s.question}>Do you have any of these conditions?</Text>
             <Text style={s.hint}>
               Select all that apply. This helps us personalise your health insights.
@@ -333,30 +327,32 @@ export default function OnboardingScreen() {
             <View style={s.modeList}>
               {CONDITIONS.map((item) => {
                 const active = conditions.includes(item.key)
+
                 return (
                   <Pressable
                     key={item.key}
                     style={[s.modeCard, active && s.modeCardActive]}
-                    onPress={() => toggleCondition(item.key)}
+                    onPress={() => {
+                      toggleCondition(item.key)
+                      if (error) setError('')
+                    }}
                   >
-                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>
-                      {item.label}
-                    </Text>
-                    <Text style={[s.modeDesc, active && s.modeDescActive]}>
-                      {item.desc}
-                    </Text>
+                    <Text style={[s.modeTitle, active && s.modeTitleActive]}>{item.label}</Text>
+                    <Text style={[s.modeDesc, active && s.modeDescActive]}>{item.desc}</Text>
                   </Pressable>
                 )
               })}
             </View>
 
             <Text style={s.hint}>
-              None of these apply or not sure? That's okay — you can update this anytime in your profile.
+              None of these apply or not sure? That&apos;s okay. You can update this anytime in your
+              profile.
             </Text>
           </ScrollView>
 
           <View style={s.footer}>
             {!!error && <Text style={s.error}>{error}</Text>}
+
             <Pressable
               style={[s.btn, loading && s.btnDisabled]}
               onPress={advance}
@@ -368,6 +364,7 @@ export default function OnboardingScreen() {
                 <Text style={s.btnText}>Continue →</Text>
               )}
             </Pressable>
+
             <Pressable style={s.ghostBtn} onPress={back}>
               <Text style={s.ghostBtnText}>← Back</Text>
             </Pressable>
@@ -378,17 +375,14 @@ export default function OnboardingScreen() {
       {step === 'final' && (
         <>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={s.content}>
-            <Text style={s.stepCount}>3 of 3</Text>
+            <Text style={s.stepCount}>4 of 4</Text>
 
-            {mode === 'cycle' ? (
+            {supportsPredictions ? (
               <>
                 <Text style={s.question}>When did your last period start?</Text>
                 <Text style={s.hint}>Your best guess is fine too 🌿</Text>
 
-                <Pressable
-                  style={s.dateField}
-                  onPress={() => setShowDatePicker(true)}
-                >
+                <Pressable style={s.dateField} onPress={() => setShowDatePicker(true)}>
                   <Text style={s.dateFieldText}>{selectedDateDisplay}</Text>
                 </Pressable>
 
@@ -405,66 +399,59 @@ export default function OnboardingScreen() {
                   />
                 )}
 
-                <Text style={s.questionSmall}>
-                  How many days does your period usually last?
-                </Text>
+                <Text style={s.questionSmall}>How many days does your period usually last?</Text>
 
                 <View style={s.optionRow}>
-                  {[2, 3, 4, 5, 6, 7].map((n) => (
+                  {[2, 3, 4, 5, 6, 7].map((value) => (
                     <Pressable
-                      key={n}
-                      style={[s.optionBtn, periodLength === n && s.optionSelected]}
-                      onPress={() => setPeriodLength(n)}
+                      key={value}
+                      style={[s.optionBtn, periodLength === value && s.optionSelected]}
+                      onPress={() => {
+                        setPeriodLength(value)
+                        if (error) setError('')
+                      }}
                     >
                       <Text
-                        style={[
-                          s.optionBtnText,
-                          periodLength === n && s.optionSelectedText,
-                        ]}
+                        style={[s.optionBtnText, periodLength === value && s.optionSelectedText]}
                       >
-                        {n}
+                        {value}
                       </Text>
                     </Pressable>
                   ))}
 
                   <Pressable
                     style={[s.optionBtn, periodLength === 8 && s.optionSelected]}
-                    onPress={() => setPeriodLength(8)}
+                    onPress={() => {
+                      setPeriodLength(8)
+                      if (error) setError('')
+                    }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        periodLength === 8 && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, periodLength === 8 && s.optionSelectedText]}>
                       7+
                     </Text>
                   </Pressable>
                 </View>
 
-                <Text style={s.questionSmall}>
-                  How long is your usual Cycle?
-                </Text>
-                <Text style={s.hint}>
-                  From the first day of one period to the next 🌙
-                </Text>
+                <Text style={s.questionSmall}>How long is your usual cycle?</Text>
+                <Text style={s.hint}>From the first day of one period to the next 🌙</Text>
 
                 <View style={s.optionRow}>
-                  {[21, 28, 30, 35].map((n) => (
+                  {[21, 28, 30, 35].map((value) => (
                     <Pressable
-                      key={n}
+                      key={value}
                       style={[
                         s.optionBtn,
                         !useCustomCycleLength &&
                           !isCycleLengthUnknown &&
-                          cycleLength === n &&
-                          s.optionSelected,
+                          cycleLength === value &&
+                          s.optionSelected
                       ]}
                       onPress={() => {
                         setUseCustomCycleLength(false)
                         setIsCycleLengthUnknown(false)
                         setCustomCycleLength('')
-                        setCycleLength(n)
+                        setCycleLength(value)
+                        if (error) setError('')
                       }}
                     >
                       <Text
@@ -472,11 +459,11 @@ export default function OnboardingScreen() {
                           s.optionBtnText,
                           !useCustomCycleLength &&
                             !isCycleLengthUnknown &&
-                            cycleLength === n &&
-                            s.optionSelectedText,
+                            cycleLength === value &&
+                            s.optionSelectedText
                         ]}
                       >
-                        {n}d
+                        {value}d
                       </Text>
                     </Pressable>
                   ))}
@@ -486,35 +473,24 @@ export default function OnboardingScreen() {
                     onPress={() => {
                       setUseCustomCycleLength(true)
                       setIsCycleLengthUnknown(false)
+                      if (error) setError('')
                     }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        useCustomCycleLength && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, useCustomCycleLength && s.optionSelectedText]}>
                       Custom
                     </Text>
                   </Pressable>
 
                   <Pressable
-                    style={[
-                      s.optionBtn,
-                      isCycleLengthUnknown && s.optionSelected,
-                    ]}
+                    style={[s.optionBtn, isCycleLengthUnknown && s.optionSelected]}
                     onPress={() => {
                       setUseCustomCycleLength(false)
                       setIsCycleLengthUnknown(true)
                       setCustomCycleLength('')
+                      if (error) setError('')
                     }}
                   >
-                    <Text
-                      style={[
-                        s.optionBtnText,
-                        isCycleLengthUnknown && s.optionSelectedText,
-                      ]}
-                    >
+                    <Text style={[s.optionBtnText, isCycleLengthUnknown && s.optionSelectedText]}>
                       I’m not sure
                     </Text>
                   </Pressable>
@@ -526,6 +502,7 @@ export default function OnboardingScreen() {
                     onChangeText={(value) => {
                       const cleaned = value.replace(/[^0-9]/g, '')
                       setCustomCycleLength(cleaned)
+                      if (error) setError('')
                     }}
                     keyboardType="number-pad"
                     placeholder="Enter cycle length in days"
@@ -537,17 +514,14 @@ export default function OnboardingScreen() {
                 {useCustomCycleLength &&
                   customCycleLength.trim().length > 0 &&
                   !isValidResolvedCycleLength && (
-                    <Text style={s.error}>
-                      Enter a valid cycle length between 15 and 90 days.
-                    </Text>
+                    <Text style={s.error}>Enter a valid cycle length between 15 and 90 days.</Text>
                   )}
               </>
             ) : (
               <>
-                <Text style={s.question}>Almost there, {name}</Text>
+                <Text style={s.question}>Almost there, {name.trim()}</Text>
                 <Text style={s.hint}>
-                  Your Àràbìrín is ready. We’ll personalise everything based on
-                  your journey.
+                  Your Àràbìrín is ready. We’ll personalise everything based on your journey.
                 </Text>
               </>
             )}
@@ -555,11 +529,9 @@ export default function OnboardingScreen() {
 
           <View style={s.footer}>
             {!!error && <Text style={s.error}>{error}</Text>}
+
             <Pressable
-              style={[
-                s.btn,
-                (loading || !canFinishFinalStep()) && s.btnDisabled,
-              ]}
+              style={[s.btn, (loading || !canFinishFinalStep()) && s.btnDisabled]}
               onPress={advance}
               disabled={loading || !canFinishFinalStep()}
             >

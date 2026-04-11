@@ -1,14 +1,7 @@
-import {
-  getPhaseLabel,
-  getPhaseSupportMessage,
-  getRingInnerLabel,
-} from '../../../utils/homeHelper'
+import { getPhaseLabel, getPhaseSupportMessage, getRingInnerLabel } from '../../../utils/homeHelper'
 import type { SupportedPhase } from './types'
 
-export function getCycleRingProgress(
-  currentCycleDay: number | null,
-  cycleLength: number
-): number {
+export function getCycleRingProgress(currentCycleDay: number | null, cycleLength: number): number {
   if (!currentCycleDay || !cycleLength || cycleLength <= 0) return 0
   return Math.min(currentCycleDay / cycleLength, 1)
 }
@@ -17,7 +10,7 @@ export function getCycleRingStatusText({
   phase,
   currentCycleDay,
   cycleLength,
-  nextPeriodDisplay,
+  nextPeriodDisplay
 }: {
   phase: SupportedPhase
   currentCycleDay: number | null

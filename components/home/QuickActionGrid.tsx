@@ -25,10 +25,7 @@ function renderIcon(icon: HomeQuickAction['icon'], colors: any) {
   }
 }
 
-export default function QuickActionGrid({
-  colors,
-  actions,
-}: QuickActionGridProps) {
+export default function QuickActionGrid({ colors, actions }: QuickActionGridProps) {
   const styles = makeQuickActionGridStyles(colors)
   const router = useRouter()
 

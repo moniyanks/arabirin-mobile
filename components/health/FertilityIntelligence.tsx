@@ -10,18 +10,17 @@ import {
   calculateFertilityInsight,
   CYCLE_QUALITY_LABELS,
   CYCLE_QUALITY_COLORS,
-  FERTILE_STATUS_MESSAGES,
+  FERTILE_STATUS_MESSAGES
 } from '../../utils/fertilityIntelligence'
 
 export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
-  const s      = useMemo(() => makeFertilityIntelligenceStyles(colors), [colors])
+  const s = useMemo(() => makeFertilityIntelligenceStyles(colors), [colors])
   const router = useRouter()
   const { profile, periods, symptomLogs } = useAppData()
 
   const [expanded, setExpanded] = useState(false)
 
   const mode = profile?.mode ?? 'cycle'
-  if (mode !== 'ttc') return null
 
   const insight = useMemo(
     () => calculateFertilityInsight(periods, symptomLogs, profile),
@@ -31,32 +30,38 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
   const qualityColor = CYCLE_QUALITY_COLORS[insight.cycleQuality]
   const statusMessage = FERTILE_STATUS_MESSAGES[insight.fertileWindowStatus]
 
-  const formatDateShort = (d: string | null) =>
-    d ? format(parseISO(d), 'd MMM') : '—'
+  const formatDateShort = (d: string | null) => (d ? format(parseISO(d), 'd MMM') : '—')
+
+  if (mode !== 'ttc') return null
 
   return (
     <View style={s.card}>
-      {/* Header */}
       <View style={s.cardHeader}>
         <View style={[s.dot, { backgroundColor: colors.accentRose }]} />
         <Text style={s.cardTitle}>Fertility Intelligence</Text>
-        <View style={[s.confidencePill, {
-          backgroundColor: colors.accentRose + '20',
-          borderColor:     colors.accentRose + '50',
-        }]}>
+        <View
+          style={[
+            s.confidencePill,
+            {
+              backgroundColor: colors.accentRose + '20',
+              borderColor: colors.accentRose + '50'
+            }
+          ]}
+        >
           <Text style={[s.confidencePillText, { color: colors.accentRose }]}>
-            {insight.confidence === 'high'   ? 'High confidence' :
-             insight.confidence === 'medium' ? 'Good confidence' : 'Building accuracy'}
+            {insight.confidence === 'high'
+              ? 'High confidence'
+              : insight.confidence === 'medium'
+                ? 'Good confidence'
+                : 'Building accuracy'}
           </Text>
         </View>
       </View>
 
-      {/* Fertile window status */}
       <View style={s.statusCard}>
         <Text style={s.statusMessage}>{statusMessage}</Text>
       </View>
 
-      {/* Fertile window dates */}
       {insight.fertileStart && (
         <View style={s.datesRow}>
           <View style={s.dateCard}>
@@ -74,7 +79,6 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
         </View>
       )}
 
-      {/* Days until fertile */}
       {insight.fertileWindowStatus === 'before_fertile' && insight.daysUntilFertile !== null && (
         <View style={s.countdownCard}>
           <Text style={s.countdownNumber}>{insight.daysUntilFertile}</Text>
@@ -84,7 +88,6 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
         </View>
       )}
 
-      {/* Cycle quality */}
       <Pressable style={s.qualityRow} onPress={() => setExpanded(!expanded)}>
         <View style={s.qualityLeft}>
           <Text style={s.qualityLabel}>Cycle quality</Text>
@@ -93,15 +96,19 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
           </Text>
         </View>
         <View style={s.qualityBar}>
-          <View style={[s.qualityFill, {
-            width: `${insight.cycleQualityScore}%` as any,
-            backgroundColor: qualityColor,
-          }]} />
+          <View
+            style={[
+              s.qualityFill,
+              {
+                width: `${insight.cycleQualityScore}%` as any,
+                backgroundColor: qualityColor
+              }
+            ]}
+          />
         </View>
         <ChevronRight color={colors.textMuted} size={16} strokeWidth={1.5} />
       </Pressable>
 
-      {/* Expanded quality factors */}
       {expanded && (
         <View style={s.factorsList}>
           {insight.cycleQualityFactors.map((factor, i) => (
@@ -112,10 +119,15 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
           ))}
           {insight.lutealPhaseLength && (
             <View style={s.factorItem}>
-              <View style={[s.factorDot, {
-                backgroundColor: insight.lutealStatus === 'short'
-                  ? colors.accentRose : colors.accentSage,
-              }]} />
+              <View
+                style={[
+                  s.factorDot,
+                  {
+                    backgroundColor:
+                      insight.lutealStatus === 'short' ? colors.accentRose : colors.accentSage
+                  }
+                ]}
+              />
               <Text style={s.factorText}>
                 Luteal phase: {insight.lutealPhaseLength} days
                 {insight.lutealStatus === 'short' ? ' (short)' : ' (normal)'}
@@ -123,54 +135,46 @@ export function FertilityIntelligence({ colors }: { colors: ThemeColors }) {
             </View>
           )}
           <Text style={s.factorsNote}>
-            Based on {insight.cyclesAnalysed} cycle{insight.cyclesAnalysed !== 1 ? 's' : ''} analysed
+            Based on {insight.cyclesAnalysed} cycle
+            {insight.cyclesAnalysed !== 1 ? 's' : ''} analysed
           </Text>
         </View>
       )}
 
-      {/* TTC symptom tracking summary */}
-      {(insight.cervicalMucusLogs > 0 || insight.ovulationPainLogs > 0 || insight.spottingLogs > 0) && (
+      {(insight.cervicalMucusLogs > 0 ||
+        insight.ovulationPainLogs > 0 ||
+        insight.spottingLogs > 0) && (
         <View style={s.symptomSummary}>
           <Text style={s.symptomSummaryTitle}>TTC SYMPTOMS LOGGED</Text>
           <View style={s.symptomRow}>
             {insight.cervicalMucusLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Cervical mucus × {insight.cervicalMucusLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Cervical mucus × {insight.cervicalMucusLogs}</Text>
               </View>
             )}
             {insight.ovulationPainLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Ovulation pain × {insight.ovulationPainLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Ovulation pain × {insight.ovulationPainLogs}</Text>
               </View>
             )}
             {insight.spottingLogs > 0 && (
               <View style={s.symptomChip}>
-                <Text style={s.symptomChipText}>
-                  Spotting × {insight.spottingLogs}
-                </Text>
+                <Text style={s.symptomChipText}>Spotting × {insight.spottingLogs}</Text>
               </View>
             )}
           </View>
         </View>
       )}
 
-      {/* Disclaimer */}
       <View style={s.disclaimer}>
         <AlertCircle color={colors.textMuted} size={13} strokeWidth={1.5} />
         <Text style={s.disclaimerText}>
-          Predictions are estimates based on your logged data. Always confirm with a healthcare provider.
+          Predictions are estimates based on your logged data. Always confirm with a healthcare
+          provider.
         </Text>
       </View>
 
-      {/* Appointment CTA */}
-      <Pressable
-        style={s.ctaBtn}
-        onPress={() => router.push('/(modals)/appointment')}
-      >
+      <Pressable style={s.ctaBtn} onPress={() => router.push('/(modals)/appointment')}>
         <Text style={s.ctaBtnText}>Prepare for your appointment →</Text>
       </Pressable>
     </View>

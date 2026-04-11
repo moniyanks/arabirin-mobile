@@ -1,9 +1,4 @@
-type SupportedCondition =
-  | 'fibroids'
-  | 'sickle_cell'
-  | 'thalassemia'
-  | 'pcos'
-  | 'endo'
+type SupportedCondition = 'fibroids' | 'sickle_cell' | 'thalassemia' | 'pcos' | 'endo'
 
 export type PregnancyConditionOverlay = {
   title: string
@@ -36,7 +31,7 @@ export function getContextAwarePregnancyOverlay(params: {
       title: 'A more layered season of care',
       message:
         'Pregnancy can already bring pressure, tenderness, or shifting energy. With fibroids in the picture, gentle tracking may help you notice what is changing over time.',
-      focusAreas: ['Pressure', 'Pain', 'Bleeding', 'Energy'],
+      focusAreas: ['Pressure', 'Pain', 'Bleeding', 'Energy']
     })
   }
 
@@ -45,7 +40,7 @@ export function getContextAwarePregnancyOverlay(params: {
       title: 'Your body may need softer pacing',
       message:
         'Pregnancy can place more demands on the body. If you live with sickle cell, rest, hydration, and noticing changes in how you feel may be especially important.',
-      focusAreas: ['Pain', 'Energy', 'Hydration', 'Breath'],
+      focusAreas: ['Pain', 'Energy', 'Hydration', 'Breath']
     })
   }
 
@@ -54,7 +49,7 @@ export function getContextAwarePregnancyOverlay(params: {
       title: 'A gentler check-in may go a long way',
       message:
         'Your body may be carrying extra demands right now. Gentle tracking can help you notice shifts in fatigue, breath, or how supported you feel day to day.',
-      focusAreas: ['Fatigue', 'Breath', 'Energy', 'Dizziness'],
+      focusAreas: ['Fatigue', 'Breath', 'Energy', 'Dizziness']
     })
   }
 
@@ -63,7 +58,7 @@ export function getContextAwarePregnancyOverlay(params: {
       title: 'Your story may not follow a textbook pattern',
       message:
         'If PCOS has shaped your cycle history, pregnancy may still bring questions or unpredictability. Gentle check-ins can help you stay connected to what feels true in your body.',
-      focusAreas: ['Energy', 'Mood', 'Pain', 'Sleep'],
+      focusAreas: ['Energy', 'Mood', 'Pain', 'Sleep']
     })
   }
 
@@ -72,7 +67,7 @@ export function getContextAwarePregnancyOverlay(params: {
       title: 'Your body may carry memory as well as change',
       message:
         'If endometriosis has been part of your story, pregnancy may still come with tenderness, fatigue, or sensations that deserve noticing without judgment.',
-      focusAreas: ['Pain', 'Fatigue', 'Pressure', 'Rest'],
+      focusAreas: ['Pain', 'Fatigue', 'Pressure', 'Rest']
     })
   }
 
@@ -94,6 +89,6 @@ export function getContextAwarePregnancyOverlay(params: {
       weeks <= 13
         ? 'This early chapter may already carry more complexity. We’ll keep your check-ins grounded in what deserves gentle noticing, without assuming every pregnancy feels the same.'
         : 'Your pregnancy may carry additional layers of care. We’ll keep your check-ins grounded in what deserves noticing, while leaving room for your experience to be your own.',
-    focusAreas: combinedFocusAreas,
+    focusAreas: combinedFocusAreas
   }
 }

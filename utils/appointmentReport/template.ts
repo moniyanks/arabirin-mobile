@@ -1,13 +1,7 @@
 import { appointmentReportCss } from '../../styles/appointmentReport'
-import type { ReportViewModel, ConditionCard, TopSymptom } from './types'
-import {
-  REPORT_BRAND_NAME,
-  REPORT_COMPANY_NAME,
-  REPORT_CONTACT_EMAIL,
-} from './config'
+import type { ReportViewModel, ConditionCard, TopSymptom, MoodSummaryItem } from './types'
+import { REPORT_BRAND_NAME, REPORT_COMPANY_NAME, REPORT_CONTACT_EMAIL } from './config'
 import { escapeHtml } from './helpers'
-
-// ── Partial renderers ──
 
 function renderPatientField(label: string, value: string): string {
   return `
@@ -26,9 +20,8 @@ function renderDataRow(label: string, value: string, accent = false): string {
 }
 
 function renderSymptomBar(symptom: TopSymptom, maxCount: number): string {
-  const pct = maxCount > 0
-    ? Math.min((symptom.count / maxCount) * 100, 100)
-    : 0
+  const pct = maxCount > 0 ? Math.min((symptom.count / maxCount) * 100, 100) : 0
+
   return `
     <div class="symptom-bar-row">
       <div class="symptom-bar-label">${escapeHtml(symptom.label)}</div>
@@ -41,7 +34,9 @@ function renderSymptomBar(symptom: TopSymptom, maxCount: number): string {
 
 function renderConditionCard(card: ConditionCard): string {
   const signals = card.signals
-    .map((s) => `<span class="signal-chip${s.met ? ' met' : ''}">${escapeHtml(s.label)}</span>`)
+    .map((signal) => {
+      return `<span class="signal-chip${signal.met ? ' met' : ''}">${escapeHtml(signal.label)}</span>`
+    })
     .join('')
 
   const note = !card.enoughData
@@ -67,14 +62,15 @@ function renderQuestion(text: string, index: number): string {
     </div>`
 }
 
-function renderSource(source: string): string {
-  return `<div class="source-item">${escapeHtml(source)}</div>`
+function renderMoodRow(item: MoodSummaryItem): string {
+  return renderDataRow(
+    item.mood.charAt(0).toUpperCase() + item.mood.slice(1),
+    `${item.count}× logged`
+  )
 }
 
-// ── Main renderer ──
-
 export function renderAppointmentReportHtml(vm: ReportViewModel): string {
-  const { cycleSummary: cs, flowSummary: fs } = vm
+  const { cycleSummary: cs, flowSummary: fs, trackingSummary } = vm
   const maxSymptomCount = vm.topSymptoms[0]?.count ?? 1
 
   return `<!DOCTYPE html>
@@ -102,9 +98,11 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
   <div class="patient-banner">
     ${renderPatientField('Prepared for', vm.preparedFor)}
     ${renderPatientField('Health journey', escapeHtml(vm.modeLabel))}
-    ${vm.trackedConditionsLabel
-      ? renderPatientField('Tracked conditions', escapeHtml(vm.trackedConditionsLabel))
-      : ''}
+    ${
+      vm.trackedConditionsLabel
+        ? renderPatientField('Tracked conditions', escapeHtml(vm.trackedConditionsLabel))
+        : ''
+    }
     ${renderPatientField('Report date', escapeHtml(vm.generatedDate))}
   </div>
 
@@ -117,6 +115,34 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
 
   <div class="body">
 
+    <!-- 🔥 NEW: TRACKING SUMMARY -->
+    ${
+      trackingSummary
+        ? `
+    <div class="section">
+      <div class="section-title">Your Tracking Summary</div>
+      <div class="highlight-box">
+        ${escapeHtml(trackingSummary.summary)}
+      </div>
+
+      ${
+        trackingSummary.notes.length > 0
+          ? `
+      <div style="margin-top:10px;">
+        <div class="helper-text" style="margin-bottom:6px;">From your logs</div>
+        ${trackingSummary.notes
+          .map(
+            (note) =>
+              `<div class="data-row"><span class="data-value">${escapeHtml(note)}</span></div>`
+          )
+          .join('')}
+      </div>`
+          : ''
+      }
+    </div>`
+        : ''
+    }
+
     <div class="section">
       <div class="section-title">Cycle Summary</div>
       <div class="two-col">
@@ -127,56 +153,74 @@ export function renderAppointmentReportHtml(vm: ReportViewModel): string {
           ${cs.cycleRange ? renderDataRow('Cycle range', cs.cycleRange) : ''}
         </div>
         <div>
-          ${cs.lastPeriodStarted
-            ? renderDataRow('Last period started', cs.lastPeriodStarted, true)
-            : ''}
-          ${cs.nextPeriodPredicted
-            ? renderDataRow('Next period predicted', cs.nextPeriodPredicted, true)
-            : ''}
-          ${cs.fertileWindow
-            ? renderDataRow('Fertile window', cs.fertileWindow)
-            : ''}
+          ${cs.lastPeriodStarted ? renderDataRow('Last period started', cs.lastPeriodStarted, true) : ''}
+          ${cs.nextPeriodPredicted ? renderDataRow('Next period predicted', cs.nextPeriodPredicted, true) : ''}
+          ${cs.fertileWindow ? renderDataRow('Estimated fertile window', cs.fertileWindow) : ''}
           ${renderDataRow('Prediction confidence', cs.predictionConfidence)}
         </div>
       </div>
+
+      ${
+        cs.recentPeriodStarts.length > 0
+          ? `
+      <div style="margin-top:12px;">
+        <div class="helper-text" style="margin-bottom:6px;">Most recent period starts</div>
+        ${cs.recentPeriodStarts.map((date) => renderDataRow('Period start', date)).join('')}
+      </div>`
+          : ''
+      }
     </div>
 
-    ${fs.hasAnyFlow ? `
+    ${
+      fs.hasAnyFlow
+        ? `
     <div class="section">
       <div class="section-title">Flow Severity</div>
       <div class="two-col">
-        ${fs.heavyFlow  > 0 ? renderDataRow('Heavy flow',  `${fs.heavyFlow} days logged`,  true) : ''}
-        ${fs.mediumFlow > 0 ? renderDataRow('Medium flow', `${fs.mediumFlow} days logged`)       : ''}
-        ${fs.lightFlow  > 0 ? renderDataRow('Light flow',  `${fs.lightFlow} days logged`)        : ''}
+        ${fs.heavyFlow > 0 ? renderDataRow('Heavy flow', `${fs.heavyFlow} days logged`, true) : ''}
+        ${fs.mediumFlow > 0 ? renderDataRow('Medium flow', `${fs.mediumFlow} days logged`) : ''}
+        ${fs.lightFlow > 0 ? renderDataRow('Light flow', `${fs.lightFlow} days logged`) : ''}
       </div>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
-    ${vm.topSymptoms.length > 0 ? `
+    ${
+      vm.topSymptoms.length > 0
+        ? `
     <div class="section">
-      <div class="section-title">
-        Symptom Patterns (${vm.symptomEntryCount} total entries)
-      </div>
-      ${vm.topSymptoms.map((s) => renderSymptomBar(s, maxSymptomCount)).join('')}
-    </div>` : ''}
+      <div class="section-title">Symptom Patterns (${vm.symptomEntryCount} total entries)</div>
+      ${vm.topSymptoms.map((symptom) => renderSymptomBar(symptom, maxSymptomCount)).join('')}
+    </div>`
+        : ''
+    }
 
-    ${vm.conditionCards.length > 0 ? `
+    ${
+      vm.moodSummary.length > 0
+        ? `
+    <div class="section">
+      <div class="section-title">Mood Patterns</div>
+      ${vm.moodSummary.map(renderMoodRow).join('')}
+    </div>`
+        : ''
+    }
+
+    ${
+      vm.conditionCards.length > 0
+        ? `
     <div class="section">
       <div class="section-title">Condition Pattern Analysis</div>
       ${vm.conditionCards.map(renderConditionCard).join('')}
       <div class="helper-text" style="margin-top:8px;font-style:italic;">
-        Pattern analysis is based on logged symptoms only and does not
-        constitute a medical diagnosis.
+        Pattern analysis is based on logged symptoms only and does not constitute a medical diagnosis.
       </div>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
 
     <div class="section">
       <div class="section-title">Questions for Your Healthcare Provider</div>
       ${vm.questions.map(renderQuestion).join('')}
-    </div>
-
-    <div class="section">
-      <div class="section-title">Research Sources</div>
-      ${vm.researchSources.map(renderSource).join('')}
     </div>
 
   </div>

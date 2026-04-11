@@ -2,10 +2,7 @@ import { useMemo } from 'react'
 import { View, Text, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import {
-  TrendingUp, Users, Activity,
-  Brain, AlertCircle, ChevronRight,
-} from 'lucide-react-native'
+import { TrendingUp, Activity, Brain, AlertCircle, ChevronRight } from 'lucide-react-native'
 import { useColors } from '../../styles'
 import { makeInsightsStyles } from '../../styles/screens/insights'
 import { useAppData } from '../../context/AppDataContext'
@@ -15,25 +12,29 @@ import type { Insight } from '../../utils/bodyIntelligence'
 import MedicalDisclaimer from '../../components/common/MedicalDisclaimer'
 
 const SYMPTOM_LABELS: Record<string, string> = {
-  cramps: 'Cramps', bloating: 'Bloating', headache: 'Headache',
-  backPain: 'Back pain', breastTenderness: 'Breast tenderness',
-  nausea: 'Nausea', insomnia: 'Insomnia',
+  cramps: 'Cramps',
+  bloating: 'Bloating',
+  headache: 'Headache',
+  backPain: 'Back pain',
+  breastTenderness: 'Breast tenderness',
+  nausea: 'Nausea',
+  insomnia: 'Insomnia'
 }
 
 function getCycleInterpretation(value: number | string) {
   if (value === '—') return null
   const n = Number(value)
   if (n < 21) return { text: 'Shorter than typical (21–35 days)', sage: false }
-  if (n > 35) return { text: 'Longer than typical (21–35 days)',  sage: false }
-  return             { text: 'Within typical range (21–35 days)', sage: true  }
+  if (n > 35) return { text: 'Longer than typical (21–35 days)', sage: false }
+  return { text: 'Within typical range (21–35 days)', sage: true }
 }
 
 function getPeriodInterpretation(value: number | string) {
   if (value === '—') return null
   const n = Number(value)
   if (n < 2) return { text: 'Shorter than typical (2–7 days)', sage: false }
-  if (n > 7) return { text: 'Longer than typical (2–7 days)',  sage: false }
-  return            { text: 'Within typical range (2–7 days)', sage: true  }
+  if (n > 7) return { text: 'Longer than typical (2–7 days)', sage: false }
+  return { text: 'Within typical range (2–7 days)', sage: true }
 }
 
 function getCycleStability(periods: Array<{ startDate: string }>) {
@@ -42,25 +43,28 @@ function getCycleStability(periods: Array<{ startDate: string }>) {
   for (let i = 1; i < periods.length; i++) {
     lengths.push(daysBetween(periods[i - 1].startDate, periods[i].startDate))
   }
-  const avg      = lengths.reduce((a, b) => a + b, 0) / lengths.length
+  const avg = lengths.reduce((a, b) => a + b, 0) / lengths.length
   const irregular = lengths.some((l) => Math.abs(l - avg) > 7)
   return {
     stable: !irregular,
-    label:  irregular ? 'Variable cycle' : 'Stable cycle',
-    range:  `${Math.min(...lengths)}–${Math.max(...lengths)} days over last ${periods.length} cycles`,
+    label: irregular ? 'Variable cycle' : 'Stable cycle',
+    range: `${Math.min(...lengths)}–${Math.max(...lengths)} days over last ${periods.length} cycles`
   }
 }
 
 function getConfidenceLabel(count: number) {
   if (count === 0) return null
-  if (count >= 5) return { label: 'High',     desc: 'Based on 5+ cycles'             }
-  if (count >= 3) return { label: 'Good',     desc: `Based on ${count} cycles`       }
-  return              { label: 'Building', desc: `Based on ${count} cycle${count > 1 ? 's' : ''}` }
+  if (count >= 5) return { label: 'High', desc: 'Based on 5+ cycles' }
+  if (count >= 3) return { label: 'Good', desc: `Based on ${count} cycles` }
+  return { label: 'Building', desc: `Based on ${count} cycle${count > 1 ? 's' : ''}` }
 }
 
 // Simple bar chart using RN Views
 function SimpleBarChart({
-  data, maxValue, colors, s,
+  data,
+  maxValue,
+  colors,
+  s
 }: {
   data: Array<{ name: string; days: number }>
   maxValue: number
@@ -85,14 +89,14 @@ function SimpleBarChart({
 
 export default function InsightsScreen() {
   const colors = useColors()
-  const s      = useMemo(() => makeInsightsStyles(colors), [colors])
+  const s = useMemo(() => makeInsightsStyles(colors), [colors])
   const router = useRouter()
   const { profile, periods, symptomLogs, cycleLength } = useAppData()
 
   const hasEnoughData = periods.length >= 2
 
-  const metrics = useMemo(() =>
-    buildBodyMetrics(periods, symptomLogs, profile),
+  const metrics = useMemo(
+    () => buildBodyMetrics(periods, symptomLogs, profile),
     [periods, symptomLogs, profile]
   )
 
@@ -102,7 +106,8 @@ export default function InsightsScreen() {
     const completed = periods.filter((p) => p.endDate)
     if (!completed.length) return '—'
     return Math.round(
-      completed.reduce((sum, p) => sum + daysBetween(p.startDate, p.endDate!) + 1, 0) / completed.length
+      completed.reduce((sum, p) => sum + daysBetween(p.startDate, p.endDate!) + 1, 0) /
+        completed.length
     )
   }, [periods])
 
@@ -130,7 +135,7 @@ export default function InsightsScreen() {
     if (periods.length < 2) return []
     return periods.slice(1).map((p, i) => ({
       name: `C${i + 1}`,
-      days: daysBetween(periods[i].startDate, p.startDate),
+      days: daysBetween(periods[i].startDate, p.startDate)
     }))
   }, [periods])
 
@@ -139,7 +144,9 @@ export default function InsightsScreen() {
     const counts: Record<string, number> = {}
     symptomLogs.forEach((log) => {
       if (log.cramps && log.cramps !== 'none') counts.cramps = (counts.cramps || 0) + 1
-      log.extras?.forEach((ex) => { counts[ex] = (counts[ex] || 0) + 1 })
+      log.extras?.forEach((ex) => {
+        counts[ex] = (counts[ex] || 0) + 1
+      })
     })
     return Object.entries(counts)
       .map(([key, count]) => ({ name: SYMPTOM_LABELS[key] || key, count }))
@@ -147,17 +154,15 @@ export default function InsightsScreen() {
       .slice(0, 6)
   }, [symptomLogs])
 
-  const stability  = getCycleStability(periods)
+  const stability = getCycleStability(periods)
   const confidence = getConfidenceLabel(periods.length)
-  const cycleInterp  = getCycleInterpretation(cycleLength)
+  const cycleInterp = getCycleInterpretation(cycleLength)
   const periodInterp = getPeriodInterpretation(avgPeriodLength)
-  const maxCycleDays = cycleLengthData.length
-    ? Math.max(...cycleLengthData.map((d) => d.days))
-    : 35
+  const maxCycleDays = cycleLengthData.length ? Math.max(...cycleLengthData.map((d) => d.days)) : 35
 
   const getInsightColor = (insight: Insight) => {
     if (insight.severity === 'attention') return colors.accentRose
-    if (insight.type === 'cycle')         return colors.accentSage
+    if (insight.type === 'cycle') return colors.accentSage
     return colors.accentGold
   }
 
@@ -189,8 +194,18 @@ export default function InsightsScreen() {
               </View>
 
               {stability && (
-                <View style={[s.stabilityRow, stability.stable ? s.stabilityStable : s.stabilityVariable]}>
-                  <View style={[s.stabilityDot, stability.stable ? s.stabilityDotStable : s.stabilityDotVariable]} />
+                <View
+                  style={[
+                    s.stabilityRow,
+                    stability.stable ? s.stabilityStable : s.stabilityVariable
+                  ]}
+                >
+                  <View
+                    style={[
+                      s.stabilityDot,
+                      stability.stable ? s.stabilityDotStable : s.stabilityDotVariable
+                    ]}
+                  />
                   <View>
                     <Text style={s.stabilityTitle}>{stability.label}</Text>
                     <Text style={s.stabilityRange}>{stability.range}</Text>
@@ -225,35 +240,46 @@ export default function InsightsScreen() {
                 <View style={s.emptyInsightsState}>
                   <Text style={s.emptyInsightsTitle}>Your patterns are still taking shape</Text>
                   <Text style={s.emptyInsightsText}>
-                    Keep logging symptoms, flow, and cycle changes to unlock more personalised insights over time.
+                    Keep logging symptoms, flow, and cycle changes to unlock more personalised
+                    insights over time.
                   </Text>
                 </View>
               ) : (
                 insights.map((insight) => (
                   <View key={insight.id} style={s.insightItem}>
-                    <View style={[s.insightIconWrap, { backgroundColor: getInsightColor(insight) + '18' }]}>
-                      {insight.severity === 'attention'
-                        ? <AlertCircle color={colors.accentRose} size={15} strokeWidth={1.5} />
-                        : insight.type === 'cycle'
-                          ? <TrendingUp color={colors.accentSage} size={15} strokeWidth={1.5} />
-                          : <Brain color={colors.accentGold} size={15} strokeWidth={1.5} />
-                      }
+                    <View
+                      style={[
+                        s.insightIconWrap,
+                        { backgroundColor: getInsightColor(insight) + '18' }
+                      ]}
+                    >
+                      {insight.severity === 'attention' ? (
+                        <AlertCircle color={colors.accentRose} size={15} strokeWidth={1.5} />
+                      ) : insight.type === 'cycle' ? (
+                        <TrendingUp color={colors.accentSage} size={15} strokeWidth={1.5} />
+                      ) : (
+                        <Brain color={colors.accentGold} size={15} strokeWidth={1.5} />
+                      )}
                     </View>
                     <View style={s.insightBody}>
                       <View style={s.insightTopRow}>
                         <Text style={s.insightTitle}>{insight.title}</Text>
-                        <View style={[
-                          s.confidenceChip,
-                          insight.confidence === 'high'   && s.confidenceChipHigh,
-                          insight.confidence === 'medium' && s.confidenceChipMedium,
-                          insight.confidence === 'low'    && s.confidenceChipLow,
-                        ]}>
-                          <Text style={[
-                            s.confidenceChipText,
-                            insight.confidence === 'high'   && s.confidenceChipTextHigh,
-                            insight.confidence === 'medium' && s.confidenceChipTextMedium,
-                            insight.confidence === 'low'    && s.confidenceChipTextLow,
-                          ]}>
+                        <View
+                          style={[
+                            s.confidenceChip,
+                            insight.confidence === 'high' && s.confidenceChipHigh,
+                            insight.confidence === 'medium' && s.confidenceChipMedium,
+                            insight.confidence === 'low' && s.confidenceChipLow
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              s.confidenceChipText,
+                              insight.confidence === 'high' && s.confidenceChipTextHigh,
+                              insight.confidence === 'medium' && s.confidenceChipTextMedium,
+                              insight.confidence === 'low' && s.confidenceChipTextLow
+                            ]}
+                          >
                             {insight.confidence}
                           </Text>
                         </View>
@@ -295,10 +321,12 @@ export default function InsightsScreen() {
                     <View key={item.name} style={s.symptomRow}>
                       <Text style={s.symptomName}>{item.name}</Text>
                       <View style={s.symptomTrack}>
-                        <View style={[
-                          s.symptomFill,
-                          { width: `${(item.count / symptomFrequencyData[0].count) * 100}%` },
-                        ]} />
+                        <View
+                          style={[
+                            s.symptomFill,
+                            { width: `${(item.count / symptomFrequencyData[0].count) * 100}%` }
+                          ]}
+                        />
                       </View>
                       <Text style={s.symptomCount}>{item.count}x</Text>
                     </View>
@@ -311,22 +339,29 @@ export default function InsightsScreen() {
             <Text style={s.sectionLabel}>Your cycle stats</Text>
             <View style={s.statsGrid}>
               {[
-                { value: cycleLength,       label: 'Avg Cycle',     unit: 'days', interp: cycleInterp  },
-                { value: avgPeriodLength,   label: 'Avg Period',    unit: 'days', interp: periodInterp },
-                { value: periods.length,    label: 'Periods Logged', unit: 'total', interp: null       },
+                { value: cycleLength, label: 'Avg Cycle', unit: 'days', interp: cycleInterp },
+                { value: avgPeriodLength, label: 'Avg Period', unit: 'days', interp: periodInterp },
+                { value: periods.length, label: 'Periods Logged', unit: 'total', interp: null },
                 {
                   value: periods.length < 3 ? '—' : stability?.stable ? '✓' : '~',
                   label: 'Cycle Pattern',
-                  unit: periods.length < 3 ? 'Need more data' : stability?.stable ? 'Regular' : 'Irregular',
-                  interp: null,
-                },
+                  unit:
+                    periods.length < 3
+                      ? 'Need more data'
+                      : stability?.stable
+                        ? 'Regular'
+                        : 'Irregular',
+                  interp: null
+                }
               ].map((stat, i) => (
                 <View key={i} style={s.statCard}>
                   <Text style={s.statValue}>{stat.value}</Text>
                   <Text style={s.statLabel}>{stat.label}</Text>
                   <Text style={s.statUnit}>{stat.unit}</Text>
                   {stat.interp && (
-                    <Text style={[s.statInterp, stat.interp.sage ? s.statInterpSage : s.statInterpRose]}>
+                    <Text
+                      style={[s.statInterp, stat.interp.sage ? s.statInterpSage : s.statInterpRose]}
+                    >
                       {stat.interp.text}
                     </Text>
                   )}

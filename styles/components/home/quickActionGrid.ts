@@ -4,21 +4,21 @@ import { theme } from '../..'
 export function makeQuickActionGridStyles(colors: any) {
   return StyleSheet.create({
     section: {
-      marginBottom: 18,
+      marginBottom: 18
     },
 
     sectionTitle: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 20,
       color: colors.accentGold,
-      marginBottom: 12,
+      marginBottom: 12
     },
 
     grid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      gap: 12,
+      gap: 12
     },
 
     card: {
@@ -34,7 +34,7 @@ export function makeQuickActionGridStyles(colors: any) {
       shadowOpacity: 0.12,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 4 },
-      elevation: 2,
+      elevation: 2
     },
 
     iconWrap: {
@@ -44,21 +44,21 @@ export function makeQuickActionGridStyles(colors: any) {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: 'rgba(217,155,155,0.08)',
-      marginBottom: 12,
+      marginBottom: 12
     },
 
     cardTitle: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 15,
       color: colors.accentGold,
-      marginBottom: 6,
+      marginBottom: 6
     },
 
     cardSubtitle: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       lineHeight: 18,
-      color: colors.textMuted,
-    },
+      color: colors.textMuted
+    }
   })
 }

@@ -22,10 +22,7 @@ function getRhythmDisplayText(rhythm: CheckInRhythmInsight): string | null {
   return `${rhythm.count} days in rhythm`
 }
 
-export default function BodyAwarenessCard({
-  colors,
-  rhythm,
-}: BodyAwarenessCardProps) {
+export default function BodyAwarenessCard({ colors, rhythm }: BodyAwarenessCardProps) {
   const styles = useMemo(() => makeHomeStyles(colors), [colors])
   const router = useRouter()
 
@@ -38,7 +35,7 @@ export default function BodyAwarenessCard({
       style={({ pressed }) => [
         styles.awarenessCard,
         isInactive && styles.awarenessCardInactive,
-        pressed && styles.awarenessCardPressed,
+        pressed && styles.awarenessCardPressed
       ]}
       accessibilityRole="button"
       accessibilityLabel="Open today’s check-in"
@@ -51,9 +48,7 @@ export default function BodyAwarenessCard({
       <View style={styles.awarenessBody}>
         <Text style={styles.awarenessTitle}>{rhythm.title}</Text>
 
-        {rhythmDisplayText ? (
-          <Text style={styles.awarenessStreak}>{rhythmDisplayText}</Text>
-        ) : null}
+        {rhythmDisplayText ? <Text style={styles.awarenessStreak}>{rhythmDisplayText}</Text> : null}
 
         <Text style={styles.awarenessSubtitle}>{rhythm.subtitle}</Text>
       </View>

@@ -10,29 +10,23 @@ type BodyInsightCardProps = {
   message: string
 }
 
-export default function BodyInsightCard({
-  colors,
-  title,
-  message,
-}: BodyInsightCardProps) {
+export default function BodyInsightCard({ colors, title, message }: BodyInsightCardProps) {
   const styles = makeHomeStyles(colors)
   const router = useRouter()
 
-  const resolvedTitle =
-    title === 'Body insight' ? 'A little more to notice' : title
-
+  const resolvedTitle = title?.trim() ? title : 'Body Intelligence'
+  const resolvedMessage = message?.trim()
+    ? message
+    : 'Start wherever you are. Even a small check-in helps your body tell its story.'
   return (
-    <Pressable
-      style={styles.intelligenceCard}
-      onPress={() => router.push('/(tabs)/insights')}
-    >
+    <Pressable style={styles.intelligenceCard} onPress={() => router.push('/(tabs)/insights')}>
       <View style={styles.intelligenceIconWrap}>
         <Brain color={colors.accentRose} size={20} strokeWidth={1.8} />
       </View>
 
       <View style={styles.intelligenceBody}>
         <Text style={styles.intelligenceTitle}>{resolvedTitle}</Text>
-        <Text style={styles.intelligenceDesc}>{message}</Text>
+        <Text style={styles.intelligenceDesc}>{resolvedMessage}</Text>
       </View>
 
       <ChevronRight color={colors.textMuted} size={20} strokeWidth={1.8} />

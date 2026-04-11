@@ -16,7 +16,7 @@ export default function NoticeTodayCard({
   styles,
   items,
   rhythm,
-  onPressCheckIn,
+  onPressCheckIn
 }: NoticeTodayCardProps) {
   if (!items.length) return null
 
@@ -39,16 +39,11 @@ export default function NoticeTodayCard({
   const ctaLabel = hasCheckedInToday ? 'View' : 'Begin'
 
   return (
-    <Pressable
-      style={styles.checkInCard}
-      onPress={onPressCheckIn}
-    >
+    <Pressable style={styles.checkInCard} onPress={onPressCheckIn}>
       <View style={styles.checkInContent}>
         <Text style={styles.checkInTitle}>{title}</Text>
 
-        {rhythmText ? (
-          <Text style={styles.checkInRhythm}>{rhythmText}</Text>
-        ) : null}
+        {rhythmText ? <Text style={styles.checkInRhythm}>{rhythmText}</Text> : null}
 
         <View style={styles.checkInTags}>
           {items.map((item) => (

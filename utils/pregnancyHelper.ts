@@ -48,7 +48,7 @@ export function getGestationalAge(lmpDate: string, now: Date = new Date()) {
   return {
     totalDays,
     weeks,
-    days,
+    days
   }
 }
 

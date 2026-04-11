@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
-import { Appearance, ColorSchemeName } from 'react-native'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { Appearance } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useEffect } from 'react'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -17,19 +16,22 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('dark')
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Load saved theme on app start
-    useEffect(() => {
-        const loadTheme = async () => {
-            try {
-                const saved = await AsyncStorage.getItem('themeMode')
-                if (saved === 'light' || saved === 'dark') {
-                    setThemeModeState(saved)
-                }
-            } catch (e) {}
-            setIsLoaded(true)
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('themeMode')
+        if (saved === 'light' || saved === 'dark' || saved === 'system') {
+          setThemeModeState(saved)
         }
-        loadTheme()
-    }, [])
+      } catch {
+        // Intentionally ignore storage read failures and fall back to default theme.
+      } finally {
+        setIsLoaded(true)
+      }
+    }
+
+    void loadTheme()
+  }, [])
 
   const systemScheme: 'light' | 'dark' =
     Appearance.getColorScheme() === 'dark' ? 'dark' : 'light'
@@ -39,25 +41,21 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
 
   const setThemeMode = (mode: ThemeMode) => {
     setThemeModeState(mode)
-    AsyncStorage.setItem('themeMode', mode).catch(() => {})
+    void AsyncStorage.setItem('themeMode', mode)
   }
 
   const value = useMemo(
     () => ({
       themeMode,
       setThemeMode,
-      resolvedScheme,
+      resolvedScheme
     }),
     [themeMode, resolvedScheme]
   )
 
   if (!isLoaded) return null
 
-  return (
-    <ThemeModeContext.Provider value={value}>
-      {children}
-    </ThemeModeContext.Provider>
-  )
+  return <ThemeModeContext.Provider value={value}>{children}</ThemeModeContext.Provider>
 }
 
 export function useThemeMode() {

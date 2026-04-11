@@ -1,21 +1,22 @@
 import type { PhaseKey } from './cycleHelper'
 import { normalizeConditionKeys } from './conditions'
+import type { AppMode } from '../constants/appMode'
 
-export function getModeContext(mode?: string) {
+export function getModeContext(mode?: AppMode): string {
   switch (mode) {
-    case 'pregnant':
-      return 'Pregnancy journey'
-    case 'postpartum':
-      return 'Postpartum recovery'
-    case 'healing':
-      return 'Loss or recovery'
-    case 'perimenopause':
-      return 'Perimenopause support'
     case 'ttc':
-      return 'Trying to conceive'
+      return 'Stay close to your body’s rhythm. Small changes can say a lot.'
+    case 'pregnant':
+      return 'A gentle space to notice what your body may need today.'
+    case 'postpartum':
+      return 'Recovery can shift from day to day. Let today be a gentle check-in.'
+    case 'healing':
+      return 'Move at your own pace. Your body does not need urgency here.'
+    case 'perimenopause':
+      return 'Changing patterns can still be understood with care and attention.'
     case 'cycle':
     default:
-      return 'Cycle awareness'
+      return 'A softer way to understand what your body may be telling you today.'
   }
 }
 
@@ -98,7 +99,7 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'Your body is doing deep, steady work. Use today’s check-ins to notice energy, mood, and anything that feels different.',
+        'Your body is doing deep, steady work. Let today be a gentle check-in with your energy, mood, and anything that feels different.'
     }
   }
 
@@ -106,7 +107,7 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'Recovery is rarely linear. Tracking bleeding, energy, and mood can help you notice what support you need.',
+        'Recovery is rarely linear. Today’s check-in can help you notice what feels lighter, heavier, or in need of care.'
     }
   }
 
@@ -114,7 +115,7 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'Your body may need gentleness right now. Logging how you feel can help you recognise patterns without pressure.',
+        'There is no right pace here. Use today’s check-in to notice what your body may be asking for.'
     }
   }
 
@@ -122,7 +123,7 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'Cycle shifts can feel unpredictable during this transition. Tracking changes over time can make them easier to understand.',
+        'This season can feel less predictable. Gentle tracking can make changing patterns easier to understand over time.'
     }
   }
 
@@ -130,15 +131,14 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'Small patterns matter. Consistent logging can make your fertile window and symptom rhythm easier to notice over time.',
+        'Small shifts can matter here. The more gently you check in, the easier it becomes to notice your body’s rhythm.'
     }
   }
 
   if (symptomLogs.length === 0 || periodsCount < 2) {
     return {
       title: 'Body Intelligence',
-      message:
-        'We’re still learning your body patterns. Log a few more cycles and symptoms to unlock deeper insights.',
+      message: 'Start wherever you are. Even a small check-in helps your body tell its story.'
     }
   }
 
@@ -146,7 +146,15 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'During your period, symptoms like cramps, flow changes, mood shifts, and low energy can be especially useful to track.',
+        'Your body may need more softness right now. Notice pain, bleeding, energy, and what helps you feel supported.'
+    }
+  }
+
+  if (phase === 'follicular') {
+    return {
+      title: 'Body Intelligence',
+      message:
+        'Energy may be returning. This can be a good time to notice what feels easier, steadier, or more possible.'
     }
   }
 
@@ -154,14 +162,21 @@ export function getBodyIntelligenceMessage(params: {
     return {
       title: 'Body Intelligence',
       message:
-        'This part of your cycle can bring noticeable changes in energy, mood, and body signals. Today is a good day to check in.',
+        'Your body may feel more open, responsive, or outward right now. Notice what feels natural rather than forcing it.'
+    }
+  }
+
+  if (phase === 'luteal') {
+    return {
+      title: 'Body Intelligence',
+      message:
+        'A quieter phase may be unfolding. You might need more rest, more patience, or more care than usual.'
     }
   }
 
   return {
     title: 'Body Intelligence',
-    message:
-      'Your recent logs are starting to form a clearer picture. The more consistently you track, the more helpful your insights become.',
+    message: 'Stay close to how you feel today. Your body is always giving you something to notice.'
   }
 }
 
@@ -170,7 +185,7 @@ export function getEnhancedBodyInsight({
   phase,
   cycleDay,
   nextPeriodDisplay,
-  conditions = [],
+  conditions = []
 }: {
   mode: string
   phase: string
@@ -178,7 +193,7 @@ export function getEnhancedBodyInsight({
   nextPeriodDisplay: string
   conditions?: string[]
 }) {
- const normalizedConditions = normalizeConditionKeys(conditions)
+  const normalizedConditions = normalizeConditionKeys(conditions)
 
   const hasFibroids = normalizedConditions.includes('fibroids')
   const hasPCOS = normalizedConditions.includes('pcos')
@@ -189,7 +204,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'Your body is speaking',
       message:
-        'Keep logging to uncover patterns in your energy, symptoms, and overall rhythm.',
+        'Stay close to what feels different, steady, or in need of care. Small patterns often become clearer with time.'
     }
   }
 
@@ -197,7 +212,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'This phase may need closer attention',
       message:
-        'If your bleeding, pain, or fatigue feels heavier than usual, it may be helpful to keep a close record this cycle.',
+        'If your bleeding, pain, or fatigue feels heavier than usual, it may be helpful to keep a close record this cycle.'
     }
   }
 
@@ -205,7 +220,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'Your rhythm may not always feel predictable',
       message:
-        'Keep tracking changes in timing, mood, energy, and body signals so patterns become easier to recognise over time.',
+        'Keep tracking changes in timing, mood, energy, and body signals so patterns become easier to recognise over time.'
     }
   }
 
@@ -213,7 +228,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'This phase may call for gentler pacing',
       message:
-        'Pay attention to energy, pain, and how your body feels through bleeding days so your patterns are easier to understand over time.',
+        'Pay attention to energy, pain, and how your body feels through bleeding days so your patterns are easier to understand over time.'
     }
   }
 
@@ -222,7 +237,7 @@ export function getEnhancedBodyInsight({
       title: 'Your body may need more softness right now',
       message: cycleDay
         ? `You’re in day ${cycleDay} of your cycle. This is a good time to notice bleeding, pain, energy, and rest needs.`
-        : 'This is a good time to notice bleeding, pain, energy, and rest needs.',
+        : 'This is a good time to notice bleeding, pain, energy, and rest needs.'
     }
   }
 
@@ -231,7 +246,7 @@ export function getEnhancedBodyInsight({
       title: 'Your body may be rebuilding energy',
       message: cycleDay
         ? `Cycle day ${cycleDay} can bring a sense of renewal, steadier energy, and more openness to routine.`
-        : 'This phase can bring a sense of renewal, steadier energy, and more openness to routine.',
+        : 'This phase can bring a sense of renewal, steadier energy, and more openness to routine.'
     }
   }
 
@@ -239,7 +254,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'Your body may feel more responsive right now',
       message:
-        'This window can bring shifts in energy, mood, body awareness, and cervical changes worth noticing.',
+        'This window can bring shifts in energy, mood, body awareness, and cervical changes worth noticing.'
     }
   }
 
@@ -247,7 +262,7 @@ export function getEnhancedBodyInsight({
     return {
       title: 'Your body may be at a peak moment in the cycle',
       message:
-        'You may notice stronger body signals right now. This is a good time to pay attention to how you feel physically and emotionally.',
+        'You may notice stronger body signals right now. This is a good time to pay attention to how you feel physically and emotionally.'
     }
   }
 
@@ -257,12 +272,12 @@ export function getEnhancedBodyInsight({
       message:
         nextPeriodDisplay !== '—'
           ? `As your next period approaches around ${nextPeriodDisplay}, you may notice changes in mood, appetite, energy, or tenderness.`
-          : 'As your next period approaches, you may notice changes in mood, appetite, energy, or tenderness.',
+          : 'As your next period approaches, you may notice changes in mood, appetite, energy, or tenderness.'
     }
   }
 
   return {
     title: 'Your body is showing a pattern',
-    message: 'Keep logging to better understand what is shifting across your cycle.',
+    message: 'Keep logging to better understand what is shifting across your cycle.'
   }
 }

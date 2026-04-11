@@ -5,7 +5,7 @@ export function makeAppointmentStyles(c: ThemeColors) {
   return StyleSheet.create({
     safe: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     topBar: {
       flexDirection: 'row',
@@ -15,33 +15,33 @@ export function makeAppointmentStyles(c: ThemeColors) {
       paddingTop: 16,
       paddingBottom: 12,
       borderBottomWidth: 1,
-      borderBottomColor: c.borderRose,
+      borderBottomColor: c.borderRose
     },
     topBarTitle: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 24,
-      color: c.accentGold,
+      color: c.accentGold
     },
     topBarSub: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       color: c.textMuted,
-      marginTop: 2,
+      marginTop: 2
     },
     closeBtn: {
       width: 36,
       height: 36,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     container: {
-      flex: 1,
+      flex: 1
     },
     content: {
       paddingHorizontal: 16,
       paddingTop: 16,
       paddingBottom: 48,
-      gap: 2,
+      gap: 2
     },
 
     // Report header
@@ -52,17 +52,17 @@ export function makeAppointmentStyles(c: ThemeColors) {
       borderRadius: 16,
       padding: 16,
       gap: 4,
-      marginBottom: 10,
+      marginBottom: 10
     },
     reportName: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 22,
-      color: c.accentGold,
+      color: c.accentGold
     },
     reportMeta: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     // Disclaimer
@@ -72,13 +72,13 @@ export function makeAppointmentStyles(c: ThemeColors) {
       borderColor: c.borderRose,
       borderRadius: 12,
       padding: 12,
-      marginBottom: 10,
+      marginBottom: 10
     },
     disclaimerText: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       lineHeight: 18,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     // Sections
@@ -91,12 +91,12 @@ export function makeAppointmentStyles(c: ThemeColors) {
       borderColor: c.borderRose,
       borderRadius: 12,
       padding: 16,
-      marginTop: 8,
+      marginTop: 8
     },
     sectionTitle: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 15,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     sectionBody: {
       backgroundColor: c.bgSecondary,
@@ -107,13 +107,13 @@ export function makeAppointmentStyles(c: ThemeColors) {
       borderBottomRightRadius: 12,
       padding: 16,
       gap: 12,
-      marginTop: -8,
+      marginTop: -8
     },
     emptyText: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       color: c.textMuted,
-      lineHeight: 20,
+      lineHeight: 20
     },
 
     // Data rows
@@ -123,23 +123,23 @@ export function makeAppointmentStyles(c: ThemeColors) {
       justifyContent: 'space-between',
       paddingVertical: 6,
       borderBottomWidth: 1,
-      borderBottomColor: 'rgba(217,155,155,0.08)',
+      borderBottomColor: 'rgba(217,155,155,0.08)'
     },
     dataLabel: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       color: c.textMuted,
-      flex: 1,
+      flex: 1
     },
     dataValue: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 13,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
 
     // Sub sections
     subSection: {
-      gap: 4,
+      gap: 4
     },
     subSectionTitle: {
       fontFamily: theme.fonts.sansSemiBold,
@@ -147,7 +147,7 @@ export function makeAppointmentStyles(c: ThemeColors) {
       textTransform: 'uppercase',
       letterSpacing: 1,
       color: c.accentRose,
-      marginBottom: 4,
+      marginBottom: 4
     },
 
     // Questions
@@ -156,7 +156,7 @@ export function makeAppointmentStyles(c: ThemeColors) {
       fontSize: 13,
       color: c.textMuted,
       lineHeight: 20,
-      marginBottom: 8,
+      marginBottom: 8
     },
     questionItem: {
       flexDirection: 'row',
@@ -164,7 +164,7 @@ export function makeAppointmentStyles(c: ThemeColors) {
       alignItems: 'flex-start',
       paddingVertical: 8,
       borderBottomWidth: 1,
-      borderBottomColor: 'rgba(217,155,155,0.08)',
+      borderBottomColor: 'rgba(217,155,155,0.08)'
     },
     questionNumber: {
       width: 24,
@@ -174,19 +174,19 @@ export function makeAppointmentStyles(c: ThemeColors) {
       borderWidth: 1,
       borderColor: c.borderRose,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     questionNumberText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 11,
-      color: c.accentRose,
+      color: c.accentRose
     },
     questionText: {
       flex: 1,
       fontFamily: theme.fonts.sans,
       fontSize: 14,
       lineHeight: 21,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
 
     // Share button
@@ -198,41 +198,41 @@ export function makeAppointmentStyles(c: ThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
       gap: 10,
-      marginTop: 24,
+      marginTop: 24
     },
     shareBtnText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 16,
-      color: c.bgPrimary,
+      color: c.bgPrimary
     },
     footerNote: {
       fontFamily: theme.fonts.sans,
       fontSize: 11,
       color: c.textMuted,
       textAlign: 'center',
-      marginTop: 12,
+      marginTop: 12
     },
     sourcesCard: {
-        backgroundColor: c.bgSecondary,
-        borderWidth: 1,
-        borderColor: c.borderRose,
-        borderRadius: 12,
-        padding: 14,
-        marginTop: 16,
-        gap: 8,
+      backgroundColor: c.bgSecondary,
+      borderWidth: 1,
+      borderColor: c.borderRose,
+      borderRadius: 12,
+      padding: 14,
+      marginTop: 16,
+      gap: 8
     },
     sourcesTitle: {
-        fontFamily: theme.fonts.sansSemiBold,
-        fontSize: 11,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        color: c.textMuted,
+      fontFamily: theme.fonts.sansSemiBold,
+      fontSize: 11,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      color: c.textMuted
     },
     sourcesText: {
-        fontFamily: theme.fonts.sans,
-        fontSize: 11,
-        lineHeight: 18,
-        color: c.textMuted,
-    },
+      fontFamily: theme.fonts.sans,
+      fontSize: 11,
+      lineHeight: 18,
+      color: c.textMuted
+    }
   })
 }

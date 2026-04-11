@@ -14,7 +14,7 @@ export default function EmptyStateCard({
   title,
   description,
   ctaLabel,
-  onPress,
+  onPress
 }: EmptyStateCardProps) {
   return (
     <View style={styles.emptyStateCard}>

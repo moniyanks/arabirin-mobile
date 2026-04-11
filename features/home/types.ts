@@ -1,5 +1,5 @@
 import type { AppMode } from '../../constants/appMode'
-import type { Profile, Period, SymptomLog } from '../../context/AppDataContext'
+import type { Profile, Period, SymptomLog } from '../../types/appData'
 
 export type HomeShortcut = {
   key: string

@@ -32,18 +32,19 @@ export function CalendarDayCell({
   isFertile,
   isOvulation,
   colors,
-  onPress,
+  onPress
 }: Props) {
-  const textColor =
-    isPeriod || isOvulation ? colors.bgPrimary : colors.textPrimary
+  const textColor = isPeriod || isOvulation ? colors.bgPrimary : colors.textPrimary
 
   const fillStyle = [
     styles.fill,
     isPeriod && { backgroundColor: colors.accentRose },
     !isPeriod && isOvulation && { backgroundColor: colors.accentSage },
-    !isPeriod && !isOvulation && isFertile && {
-      backgroundColor: 'rgba(155, 168, 141, 0.18)',
-    },
+    !isPeriod &&
+      !isOvulation &&
+      isFertile && {
+        backgroundColor: 'rgba(155, 168, 141, 0.18)'
+      }
   ]
 
   return (
@@ -89,13 +90,7 @@ export function CalendarDayCell({
         )}
 
         <View style={fillStyle} />
-        <Text
-          style={[
-            styles.dayText,
-            { color: textColor },
-            !inCurrentMonth && { opacity: 0.35 },
-          ]}
-        >
+        <Text style={[styles.dayText, { color: textColor }, !inCurrentMonth && { opacity: 0.35 }]}>
           {dayNumber}
         </Text>
       </View>
@@ -107,23 +102,23 @@ const styles = StyleSheet.create({
   wrap: {
     width: '14.285%',
     paddingVertical: 6,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   outer: {
     width: OUTER_SIZE,
     height: OUTER_SIZE,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   fill: {
     position: 'absolute',
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   dayText: {
     fontFamily: theme.fonts.sans,
-    fontSize: 14,
-  },
+    fontSize: 14
+  }
 })

@@ -7,7 +7,7 @@ import {
   isSameDay,
   isSameMonth,
   startOfMonth,
-  startOfWeek,
+  startOfWeek
 } from 'date-fns'
 import type { Period, FertileWindow } from './cycleHelper'
 
@@ -70,7 +70,7 @@ export function buildMonthGrid(
       isPeriod,
       isPredictedPeriod,
       isFertile: !!fertileMatch,
-      isOvulation: !!ovulationMatch,
+      isOvulation: !!ovulationMatch
     })
 
     cursor = addDays(cursor, 1)
@@ -102,15 +102,14 @@ export function getSelectedDateInfo(params: {
   if (mode !== 'cycle') {
     return {
       title: 'Daily check-in',
-      message:
-        'Use this day to log symptoms, notes, and anything you want to keep track of.',
+      message: 'Use this day to log symptoms, notes, and anything you want to keep track of.'
     }
   }
 
   if (isPeriod) {
     return {
       title: 'Period day',
-      message: 'You logged this day as part of your period.',
+      message: 'You logged this day as part of your period.'
     }
   }
 
@@ -118,7 +117,7 @@ export function getSelectedDateInfo(params: {
     return {
       title: 'Ovulation',
       message:
-        'This is your estimated ovulation day, when your ovary is most likely to release an egg.',
+        'This is your estimated ovulation day, when your ovary is most likely to release an egg.'
     }
   }
 
@@ -126,7 +125,7 @@ export function getSelectedDateInfo(params: {
     return {
       title: 'Fertile window',
       message:
-        'You are in your fertile window, the days leading up to ovulation when pregnancy is most likely.',
+        'You are in your fertile window, the days leading up to ovulation when pregnancy is most likely.'
     }
   }
 
@@ -134,13 +133,12 @@ export function getSelectedDateInfo(params: {
     return {
       title: 'Predicted period',
       message:
-        'This day falls within your predicted next period based on your recent cycle history.',
+        'This day falls within your predicted next period based on your recent cycle history.'
     }
   }
 
   return {
     title: 'No logged event',
-    message:
-      'No period or fertility event is currently associated with this date.',
+    message: 'No period or fertility event is currently associated with this date.'
   }
 }

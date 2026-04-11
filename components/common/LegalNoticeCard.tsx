@@ -13,16 +13,16 @@ export default function LegalNoticeCard() {
   const items = [
     {
       label: 'Privacy Policy',
-      route: '/legal?tab=privacy',
+      route: '/legal?tab=privacy'
     },
     {
       label: 'Terms of Service',
-      route: '/legal?tab=terms',
+      route: '/legal?tab=terms'
     },
     {
       label: 'Medical Disclaimer',
-      route: '/legal?tab=medical',
-    },
+      route: '/legal?tab=medical'
+    }
   ]
 
   return (
@@ -36,10 +36,7 @@ export default function LegalNoticeCard() {
         {items.map((item, index) => (
           <Pressable
             key={item.label}
-            style={[
-              s.row,
-              index !== items.length - 1 && s.rowBorder,
-            ]}
+            style={[s.row, index !== items.length - 1 && s.rowBorder]}
             onPress={() => router.push(item.route as any)}
           >
             <Text style={s.rowText}>{item.label}</Text>

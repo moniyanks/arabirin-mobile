@@ -1,16 +1,8 @@
 import { HOME_CONFIG } from './homeConfig'
-import type {
-  BuildHomeViewModelParams,
-  HomeShortcut,
-  HomeViewModel,
-} from './types'
+import type { BuildHomeViewModelParams, HomeShortcut, HomeViewModel } from './types'
 import { getGreetingText } from '../../utils/greetingHelper'
 import { normalizeAppMode } from '../../constants/appMode'
-import {
-  getCurrentCycleDay,
-  getNextPeriodDate,
-  getPhaseInfo,
-} from '../../utils/cycleHelper'
+import { getCurrentCycleDay, getNextPeriodDate, getPhaseInfo } from '../../utils/cycleHelper'
 import { calculateFertilityInsight } from '../../utils/fertilityIntelligence'
 import { getPregnancyHomeInsight } from '../../utils/pregnancyHomeHelper'
 import { getContextAwarePregnancyOverlay } from '../../utils/contextAwarePregnancyHelper'
@@ -21,13 +13,13 @@ import { extractPregnancyWeek } from './lib/formatters'
 import {
   buildCycleInsightMessage,
   buildPregnancyInsightMessage,
-  buildTtcInsightMessage,
+  buildTtcInsightMessage
 } from './lib/contentBuilders'
 import {
   buildCycleHero,
   buildGenericHero,
   buildPregnancyHero,
-  buildTtcHero,
+  buildTtcHero
 } from './lib/heroBuilders'
 import { getCycleConditionOverlay } from './lib/cycleConditionOverlay'
 import { getCheckInRhythmInsight } from '../../utils/streakHelper'
@@ -40,7 +32,7 @@ const CYCLE_SHORTCUTS: HomeShortcut[] = [
   { key: 'cramps', label: 'Cramps', icon: '⚡' },
   { key: 'mood', label: 'Mood', icon: '💭' },
   { key: 'energy', label: 'Energy', icon: '✦' },
-  { key: 'sleep', label: 'Sleep', icon: '◌' },
+  { key: 'sleep', label: 'Sleep', icon: '◌' }
 ]
 
 const TTC_SHORTCUTS: HomeShortcut[] = [
@@ -48,7 +40,7 @@ const TTC_SHORTCUTS: HomeShortcut[] = [
   { key: 'ovulationPain', label: 'O-Pain', icon: '⚡' },
   { key: 'spotting', label: 'Spotting', icon: '◉' },
   { key: 'mood', label: 'Mood', icon: '💭' },
-  { key: 'energy', label: 'Energy', icon: '✦' },
+  { key: 'energy', label: 'Energy', icon: '✦' }
 ]
 
 const PREGNANCY_SHORTCUTS: HomeShortcut[] = [
@@ -56,13 +48,13 @@ const PREGNANCY_SHORTCUTS: HomeShortcut[] = [
   { key: 'mood', label: 'Mood', icon: '💭' },
   { key: 'sleep', label: 'Sleep', icon: '◌' },
   { key: 'pain', label: 'Pain', icon: '⚡' },
-  { key: 'notes', label: 'Notes', icon: '◉' },
+  { key: 'notes', label: 'Notes', icon: '◉' }
 ]
 
 const DEFAULT_SHORTCUTS: HomeShortcut[] = [
   { key: 'energy', label: 'Energy', icon: '✦' },
   { key: 'mood', label: 'Mood', icon: '💭' },
-  { key: 'sleep', label: 'Sleep', icon: '◌' },
+  { key: 'sleep', label: 'Sleep', icon: '◌' }
 ]
 
 export function buildHomeViewModel({
@@ -70,7 +62,7 @@ export function buildHomeViewModel({
   periods,
   symptomLogs,
   cycleLength,
-  periodLength,
+  periodLength
 }: BuildHomeViewModelParams): HomeViewModel {
   const mode = normalizeAppMode(profile?.mode)
   const config = HOME_CONFIG[mode]
@@ -83,15 +75,13 @@ export function buildHomeViewModel({
   const phase = normalizePhase(rawPhaseInfo.phase)
 
   const fertilityInsight =
-    mode === 'ttc'
-      ? calculateFertilityInsight(periods, symptomLogs, profile)
-      : null
+    mode === 'ttc' ? calculateFertilityInsight(periods, symptomLogs, profile) : null
 
   const pregnancyInsight =
     mode === 'pregnant'
       ? getPregnancyHomeInsight({
           lmpDate: profile?.pregnancy_lmp_date ?? null,
-          dueDate: profile?.pregnancy_due_date ?? null,
+          dueDate: profile?.pregnancy_due_date ?? null
         })
       : null
 
@@ -99,7 +89,7 @@ export function buildHomeViewModel({
     mode === 'pregnant' && pregnancyInsight
       ? getContextAwarePregnancyOverlay({
           conditions: profile?.conditions || [],
-          weeks: extractPregnancyWeek(pregnancyInsight.weekLabel),
+          weeks: extractPregnancyWeek(pregnancyInsight.weekLabel)
         })
       : null
 
@@ -107,7 +97,7 @@ export function buildHomeViewModel({
     mode === 'cycle'
       ? getCycleConditionOverlay({
           conditions: profile?.conditions || [],
-          phase,
+          phase
         })
       : null
   const logDates = extractLogDatesFromSymptomLogs(symptomLogs)
@@ -125,26 +115,26 @@ export function buildHomeViewModel({
       phase,
       fertilityInsight,
       pregnancyInsight,
-      cycleConditionOverlay,
+      cycleConditionOverlay
     }),
     insight: buildInsight({
       mode,
       phase,
       fertilityInsight,
       pregnancyOverlay,
-      cycleConditionOverlay,
+      cycleConditionOverlay
     }),
     noticeToday:
       cycleConditionOverlay?.noticeToday ??
       buildNoticeToday({
         mode,
         phase,
-        pregnancyOverlay,
+        pregnancyOverlay
       }),
     rhythm,
     primaryAction: {
       label: getPrimaryActionLabel(mode),
-      route: '/(tabs)/calendar',
+      route: '/(tabs)/calendar'
     },
     shortcuts: getShortcuts(mode),
     quickActions: config.quickActions,
@@ -155,8 +145,8 @@ export function buildHomeViewModel({
       mode,
       periods,
       symptomLogs,
-      pregnancyInsight,
-    }),
+      pregnancyInsight
+    })
   }
 }
 
@@ -168,7 +158,7 @@ function buildHero({
   phase,
   fertilityInsight,
   pregnancyInsight,
-  cycleConditionOverlay,
+  cycleConditionOverlay
 }: {
   mode: string
   currentCycleDay: number | null
@@ -192,18 +182,14 @@ function buildHero({
       currentCycleDay,
       cycleLength,
       nextPeriodDate,
-      phase,
+      phase
     })
 
     if (baseHero?.kind === 'cycle' && cycleConditionOverlay) {
       return {
         ...baseHero,
-        subtitle:
-          cycleConditionOverlay.heroSubtitleOverride ??
-          baseHero.subtitle,
-        meta:
-          cycleConditionOverlay.heroMetaOverride ??
-          baseHero.meta,
+        subtitle: cycleConditionOverlay.heroSubtitleOverride ?? baseHero.subtitle,
+        meta: cycleConditionOverlay.heroMetaOverride ?? baseHero.meta
       }
     }
 
@@ -218,7 +204,7 @@ function buildInsight({
   phase,
   fertilityInsight,
   pregnancyOverlay,
-  cycleConditionOverlay,
+  cycleConditionOverlay
 }: {
   mode: string
   phase: SupportedPhase
@@ -233,7 +219,7 @@ function buildInsight({
   if (mode === 'ttc' && fertilityInsight) {
     return {
       title: 'Body insight',
-      message: buildTtcInsightMessage(fertilityInsight),
+      message: buildTtcInsightMessage(fertilityInsight)
     }
   }
 
@@ -241,7 +227,7 @@ function buildInsight({
     if (cycleConditionOverlay?.insightOverride) {
       return {
         title: 'Body insight',
-        message: cycleConditionOverlay.insightOverride,
+        message: cycleConditionOverlay.insightOverride
       }
     }
 
@@ -251,14 +237,14 @@ function buildInsight({
   return {
     title: 'Body insight',
     message:
-      'Small, consistent check-ins help turn daily experiences into patterns you can actually understand.',
+      'Small, consistent check-ins help turn daily experiences into patterns you can actually understand.'
   }
 }
 
 function buildNoticeToday({
   mode,
   phase,
-  pregnancyOverlay,
+  pregnancyOverlay
 }: {
   mode: string
   phase: SupportedPhase
@@ -324,7 +310,7 @@ function buildEmptyState({
   mode,
   periods,
   symptomLogs,
-  pregnancyInsight,
+  pregnancyInsight
 }: {
   mode: string
   periods: unknown[]
@@ -336,8 +322,7 @@ function buildEmptyState({
 
   if (mode === 'pregnant') {
     const hasPregnancyTimeline =
-      Boolean(pregnancyInsight?.weekLabel) ||
-      Boolean(pregnancyInsight?.dueDateLabel)
+      Boolean(pregnancyInsight?.weekLabel) || Boolean(pregnancyInsight?.dueDateLabel)
 
     if (hasLogs || hasPregnancyTimeline) {
       return null
@@ -346,7 +331,7 @@ function buildEmptyState({
     return {
       title: 'Begin your pregnancy tracking',
       description: 'Start with a gentle daily check-in.',
-      ctaLabel: 'Log today’s check-in',
+      ctaLabel: 'Log today’s check-in'
     }
   }
 
@@ -359,21 +344,21 @@ function buildEmptyState({
       return {
         title: 'Start tracking your fertile rhythm',
         description: 'Log your cycle and body signs to build fertility insights.',
-        ctaLabel: 'Log your first entry',
+        ctaLabel: 'Log your first entry'
       }
 
     case 'cycle':
       return {
         title: 'Start tracking your cycle',
         description: 'Add your first log to begin building your rhythm.',
-        ctaLabel: 'Log your first entry',
+        ctaLabel: 'Log your first entry'
       }
 
     default:
       return {
         title: 'Start tracking',
         description: 'A few small logs can unlock meaningful insights.',
-        ctaLabel: 'Log today’s check-in',
+        ctaLabel: 'Log today’s check-in'
       }
   }
 }

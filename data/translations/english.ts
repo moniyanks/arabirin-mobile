@@ -5,19 +5,19 @@ const en = {
     morning: 'Good morning',
     afternoon: 'Good afternoon',
     evening: 'Good evening',
-    night: 'Good night',
+    night: 'Good night'
   },
   nav: {
     home: 'Home',
     calendar: 'Calendar',
     health: 'Health',
     insights: 'Insights',
-    sisters: 'Sisters',
+    sisters: 'Sisters'
   },
   onboarding: {
     welcome: 'Welcome to Àràbìrín',
-    subtitle: 'Your body holds wisdom. Let\'s help you understand it.',
-    begin: 'Let\'s begin →',
+    subtitle: "Your body holds wisdom. Let's help you understand it.",
+    begin: "Let's begin →",
     nameQuestion: 'What shall we call you?',
     nameHint: 'Just your first name is fine 🌸',
     namePlaceholder: 'Enter your name',
@@ -28,7 +28,7 @@ const en = {
     cycleLengthHint: 'From first day of period to next period',
     notSure: 'Not sure',
     continue: 'Continue →',
-    finish: 'Take me in 🌸',
+    finish: 'Take me in 🌸'
   },
   phaseLabels: {
     period: 'MENSTRUAL',
@@ -36,7 +36,7 @@ const en = {
     fertile: 'FERTILE',
     ovulation: 'OVULATION',
     luteal: 'LUTEAL',
-    unknown: 'CYCLE',
+    unknown: 'CYCLE'
   },
   phaseMessages: {
     period: 'Rest and be gentle with yourself. Your body is releasing.',
@@ -44,7 +44,7 @@ const en = {
     ovulation: 'You are at your peak. Bold and magnetic today.',
     fertile: 'Your fertile window. A powerful time in your cycle.',
     luteal: 'Turn inward. Rest, reflect and nourish yourself.',
-    unknown: 'Track your cycle to see your phase message.',
+    unknown: 'Track your cycle to see your phase message.'
   },
   symptoms: {
     title: 'How are you feeling?',
@@ -55,19 +55,23 @@ const en = {
     other: 'Other symptoms',
     notes: 'Notes (optional)',
     notesPlaceholder: 'Anything else you want to remember about today...',
-    save: 'Save Today\'s Log',
+    save: "Save Today's Log",
     saved: 'Saved beautifully 🌸',
     moods: { happy: 'Happy', calm: 'Calm', anxious: 'Anxious', irritable: 'Irritable', sad: 'Sad' },
     flows: { none: 'None', spotting: 'Spotting', light: 'Light', medium: 'Medium', heavy: 'Heavy' },
     crampLevels: { none: 'None', mild: 'Mild', moderate: 'Moderate', severe: 'Severe' },
     energyLevels: { high: 'High', medium: 'Medium', low: 'Low' },
     extras: {
-      bloating: 'Bloating', headache: 'Headache', backPain: 'Back Pain',
-      breastTenderness: 'Breast Tenderness', nausea: 'Nausea', insomnia: 'Insomnia',
-    },
+      bloating: 'Bloating',
+      headache: 'Headache',
+      backPain: 'Back Pain',
+      breastTenderness: 'Breast Tenderness',
+      nausea: 'Nausea',
+      insomnia: 'Insomnia'
+    }
   },
   healthHub: {
-    title: 'Black Women\'s Health Hub',
+    title: "Black Women's Health Hub",
     subtitle: 'Conditions that disproportionately affect us',
     fibroids: 'Fibroids',
     fibroidsDesc: 'Up to 80% of Black women develop fibroids by age 50',
@@ -76,7 +80,7 @@ const en = {
     pcos: 'PCOS',
     pcosDesc: 'Polycystic ovary syndrome affects 1 in 10 women',
     maternal: 'Maternal Health',
-    maternalDesc: 'Black women are 3x more likely to die in childbirth',
+    maternalDesc: 'Black women are 3x more likely to die in childbirth'
   },
   log: {
     history: 'Period History',
@@ -89,7 +93,7 @@ const en = {
     save: 'Save',
     cancel: 'Cancel',
     edit: 'Edit',
-    delete: 'Delete',
+    delete: 'Delete'
   },
   insights: {
     title: 'Your Insights',
@@ -102,8 +106,8 @@ const en = {
     shortestCycle: 'Shortest',
     noInsights: 'Log at least 2 periods to see your insights',
     regular: 'Regular',
-    irregular: 'Irregular',
-  },
+    irregular: 'Irregular'
+  }
 }
 
 export type Translations = typeof en

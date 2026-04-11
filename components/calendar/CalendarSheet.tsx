@@ -6,7 +6,7 @@ import {
   Pressable,
   ScrollView,
   ActivityIndicator,
-  TextInput,
+  TextInput
 } from 'react-native'
 import { X } from 'lucide-react-native'
 import { supabase } from '../../lib/supabase'
@@ -41,7 +41,7 @@ const moodOptions = [
   { key: 'calm', label: 'Calm' },
   { key: 'anxious', label: 'Anxious' },
   { key: 'irritable', label: 'Irritable' },
-  { key: 'sad', label: 'Sad' },
+  { key: 'sad', label: 'Sad' }
 ]
 
 const flowOptions = [
@@ -49,20 +49,20 @@ const flowOptions = [
   { key: 'spotting', dots: 1, label: 'Spotting' },
   { key: 'light', dots: 2, label: 'Light' },
   { key: 'medium', dots: 3, label: 'Medium' },
-  { key: 'heavy', dots: 4, label: 'Heavy' },
+  { key: 'heavy', dots: 4, label: 'Heavy' }
 ]
 
 const crampOptions = [
   { key: 'none', label: 'None' },
   { key: 'mild', label: 'Mild' },
   { key: 'moderate', label: 'Moderate' },
-  { key: 'severe', label: 'Severe' },
+  { key: 'severe', label: 'Severe' }
 ]
 
 const energyOptions = [
   { key: 'high', bars: 3, label: 'High' },
   { key: 'medium', bars: 2, label: 'Medium' },
-  { key: 'low', bars: 1, label: 'Low' },
+  { key: 'low', bars: 1, label: 'Low' }
 ]
 
 const extraOptions = [
@@ -71,37 +71,37 @@ const extraOptions = [
   { key: 'backPain', label: 'Back pain' },
   { key: 'breastTenderness', label: 'Breast Tenderness' },
   { key: 'nausea', label: 'Nausea' },
-  { key: 'insomnia', label: 'Insomnia' },
+  { key: 'insomnia', label: 'Insomnia' }
 ]
 
 const CONDITION_EXTRAS: Record<string, Array<{ key: string; label: string }>> = {
   fibroids: [
-    { key: 'pelvicPressure',    label: 'Pelvic pressure'     },
-    { key: 'urinaryFrequency',  label: 'Frequent urination'  },
-    { key: 'painDuringSex',     label: 'Pain during sex'     },
+    { key: 'pelvicPressure', label: 'Pelvic pressure' },
+    { key: 'urinaryFrequency', label: 'Frequent urination' },
+    { key: 'painDuringSex', label: 'Pain during sex' }
   ],
   endo: [
-    { key: 'pelvicPain',             label: 'Pelvic pain'               },
-    { key: 'painDuringSex',          label: 'Pain during sex'           },
-    { key: 'painBowelMovements',     label: 'Pain with bowel movements' },
-    { key: 'fatigue',                label: 'Fatigue'                   },
+    { key: 'pelvicPain', label: 'Pelvic pain' },
+    { key: 'painDuringSex', label: 'Pain during sex' },
+    { key: 'painBowelMovements', label: 'Pain with bowel movements' },
+    { key: 'fatigue', label: 'Fatigue' }
   ],
   pcos: [
-    { key: 'hairLoss',   label: 'Hair thinning' },
-    { key: 'acne',       label: 'Acne'          },
-    { key: 'spotting',   label: 'Spotting'      },
+    { key: 'hairLoss', label: 'Hair thinning' },
+    { key: 'acne', label: 'Acne' },
+    { key: 'spotting', label: 'Spotting' }
   ],
   thalassemia: [
-    { key: 'fatigue',        label: 'Severe fatigue'  },
-    { key: 'paleSkin',       label: 'Pale skin'       },
-    { key: 'boneAche',       label: 'Bone ache'       },
-    { key: 'breathlessness', label: 'Breathlessness'  },
+    { key: 'fatigue', label: 'Severe fatigue' },
+    { key: 'paleSkin', label: 'Pale skin' },
+    { key: 'boneAche', label: 'Bone ache' },
+    { key: 'breathlessness', label: 'Breathlessness' }
   ],
   ttc: [
-    { key: 'cervicalMucus',   label: 'Cervical mucus changes' },
-    { key: 'ovulationPain',   label: 'Ovulation pain'         },
-    { key: 'spotting',        label: 'Spotting'                },
-  ],
+    { key: 'cervicalMucus', label: 'Cervical mucus changes' },
+    { key: 'ovulationPain', label: 'Ovulation pain' },
+    { key: 'spotting', label: 'Spotting' }
+  ]
 }
 
 // ── Sub-components — styles passed from parent, no useMemo inside ──
@@ -110,7 +110,7 @@ function MoodSection({
   styles,
   colors,
   value,
-  onChange,
+  onChange
 }: {
   styles: ReturnType<typeof makeCalendarSheetStyles>
   colors: ThemeColors
@@ -130,12 +130,17 @@ function MoodSection({
                 styles.moodBtn,
                 {
                   borderColor: active ? colors.accentRose : colors.borderRose,
-                  backgroundColor: colors.bgSecondary,
-                },
+                  backgroundColor: colors.bgSecondary
+                }
               ]}
               onPress={() => onChange(option.key)}
             >
-              <Text style={[styles.moodLabel, { color: active ? colors.accentRose : colors.textPrimary }]}>
+              <Text
+                style={[
+                  styles.moodLabel,
+                  { color: active ? colors.accentRose : colors.textPrimary }
+                ]}
+              >
                 {option.label}
               </Text>
             </Pressable>
@@ -150,7 +155,7 @@ function FlowSection({
   styles,
   colors,
   value,
-  onChange,
+  onChange
 }: {
   styles: ReturnType<typeof makeCalendarSheetStyles>
   colors: ThemeColors
@@ -170,24 +175,39 @@ function FlowSection({
                 styles.flowBtn,
                 {
                   borderColor: active ? colors.accentRose : colors.borderRose,
-                  backgroundColor: colors.bgSecondary,
-                },
+                  backgroundColor: colors.bgSecondary
+                }
               ]}
               onPress={() => onChange(option.key)}
             >
               <View style={styles.flowDots}>
                 {option.dots === 0 ? (
-                  <Text style={[styles.flowNone, { color: active ? colors.accentRose : colors.textMuted }]}>—</Text>
+                  <Text
+                    style={[
+                      styles.flowNone,
+                      { color: active ? colors.accentRose : colors.textMuted }
+                    ]}
+                  >
+                    —
+                  </Text>
                 ) : (
                   Array.from({ length: option.dots }).map((_, i) => (
                     <View
                       key={i}
-                      style={[styles.flowDot, { backgroundColor: active ? colors.accentRose : colors.textMuted }]}
+                      style={[
+                        styles.flowDot,
+                        { backgroundColor: active ? colors.accentRose : colors.textMuted }
+                      ]}
                     />
                   ))
                 )}
               </View>
-              <Text style={[styles.flowLabel, { color: active ? colors.accentRose : colors.textPrimary }]}>
+              <Text
+                style={[
+                  styles.flowLabel,
+                  { color: active ? colors.accentRose : colors.textPrimary }
+                ]}
+              >
                 {option.label}
               </Text>
             </Pressable>
@@ -204,7 +224,7 @@ function ChipSection({
   colors,
   options,
   value,
-  onChange,
+  onChange
 }: {
   title: string
   styles: ReturnType<typeof makeCalendarSheetStyles>
@@ -215,7 +235,9 @@ function ChipSection({
 }) {
   return (
     <View style={styles.sectionWrap}>
-      <Text style={[styles.sectionEyebrow, { color: colors.accentGold }]}>{title.toUpperCase()}</Text>
+      <Text style={[styles.sectionEyebrow, { color: colors.accentGold }]}>
+        {title.toUpperCase()}
+      </Text>
       <View style={styles.optionRow}>
         {options.map((option) => {
           const active = value === option.key
@@ -226,12 +248,17 @@ function ChipSection({
                 styles.optionBtn,
                 {
                   borderColor: active ? colors.accentRose : colors.borderRose,
-                  backgroundColor: colors.bgSecondary,
-                },
+                  backgroundColor: colors.bgSecondary
+                }
               ]}
               onPress={() => onChange(option.key)}
             >
-              <Text style={[styles.optionText, { color: active ? colors.accentRose : colors.textPrimary }]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  { color: active ? colors.accentRose : colors.textPrimary }
+                ]}
+              >
                 {option.label}
               </Text>
             </Pressable>
@@ -246,7 +273,7 @@ function EnergySection({
   styles,
   colors,
   value,
-  onChange,
+  onChange
 }: {
   styles: ReturnType<typeof makeCalendarSheetStyles>
   colors: ThemeColors
@@ -266,8 +293,8 @@ function EnergySection({
                 styles.energyBtn,
                 {
                   borderColor: active ? colors.accentRose : colors.borderRose,
-                  backgroundColor: colors.bgSecondary,
-                },
+                  backgroundColor: colors.bgSecondary
+                }
               ]}
               onPress={() => onChange(option.key)}
             >
@@ -277,12 +304,20 @@ function EnergySection({
                     key={i}
                     style={[
                       styles.energyBar,
-                      { height: 4 + i * 3, backgroundColor: active ? colors.accentRose : colors.textMuted },
+                      {
+                        height: 4 + i * 3,
+                        backgroundColor: active ? colors.accentRose : colors.textMuted
+                      }
                     ]}
                   />
                 ))}
               </View>
-              <Text style={[styles.energyLabel, { color: active ? colors.accentRose : colors.textPrimary }]}>
+              <Text
+                style={[
+                  styles.energyLabel,
+                  { color: active ? colors.accentRose : colors.textPrimary }
+                ]}
+              >
                 {option.label}
               </Text>
             </Pressable>
@@ -297,7 +332,7 @@ function ExtrasSection({
   styles,
   colors,
   values,
-  onToggle,
+  onToggle
 }: {
   styles: ReturnType<typeof makeCalendarSheetStyles>
   colors: ThemeColors
@@ -317,13 +352,19 @@ function ExtrasSection({
                 styles.optionBtn,
                 {
                   borderColor: active ? colors.accentRose : colors.borderRose,
-                  backgroundColor: colors.bgSecondary,
-                },
+                  backgroundColor: colors.bgSecondary
+                }
               ]}
               onPress={() => onToggle(option.key)}
             >
-              <Text style={[styles.optionText, { color: active ? colors.accentRose : colors.textPrimary }]}>
-                {active ? '✓ ' : ''}{option.label}
+              <Text
+                style={[
+                  styles.optionText,
+                  { color: active ? colors.accentRose : colors.textPrimary }
+                ]}
+              >
+                {active ? '✓ ' : ''}
+                {option.label}
               </Text>
             </Pressable>
           )
@@ -344,10 +385,10 @@ export function CalendarSheet({
   existingLog,
   journeyMode,
   onClose,
-  onSaved,
+  onSaved
 }: Props) {
   const s = useMemo(() => makeCalendarSheetStyles(colors), [colors])
-  const { periodLength, addPeriod} = useAppData()
+  const { periodLength, addPeriod } = useAppData()
 
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -381,22 +422,31 @@ export function CalendarSheet({
   }
 
   const toggleExtra = (key: string) => {
-    setExtras((prev) =>
-      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
-    )
+    setExtras((prev) => (prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]))
   }
 
   const saveSymptomLog = async () => {
     try {
       setLoading(true)
       setError('')
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
       if (!user) throw new Error('No authenticated user')
 
       const { error: upsertError } = await supabase
         .from('symptom_logs')
         .upsert(
-          { user_id: user.id, log_date: dateStr, mood, flow, cramps, energy, extras, notes: notes.trim() || null },
+          {
+            user_id: user.id,
+            log_date: dateStr,
+            mood,
+            flow,
+            cramps,
+            energy,
+            extras,
+            notes: notes.trim() || null
+          },
           { onConflict: 'user_id,log_date' }
         )
       if (upsertError) throw upsertError
@@ -414,7 +464,9 @@ export function CalendarSheet({
     try {
       setLoading(true)
       setError('')
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
       if (!user) throw new Error('No authenticated user')
 
       // ── Use periodLength to calculate correct end date ──
@@ -426,7 +478,7 @@ export function CalendarSheet({
       const { error } = await supabase.from('periods').insert({
         user_id: user.id,
         start_date: dateStr,
-        end_date: endDate,
+        end_date: endDate
       })
       if (error) throw error
       if (onSaved) await onSaved()
@@ -438,44 +490,54 @@ export function CalendarSheet({
   }
 
   const extendPeriod = async () => {
-  try {
-    setLoading(true)
-    setError('')
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('No authenticated user')
+    try {
+      setLoading(true)
+      setError('')
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error('No authenticated user')
 
-    const yesterday = format(subDays(parseISO(dateStr), 1), 'yyyy-MM-dd')
+      const yesterday = format(subDays(parseISO(dateStr), 1), 'yyyy-MM-dd')
 
-    const { error,data } = await supabase
-      .from('periods')
-      .update({ end_date: dateStr })
-      .eq('user_id', user.id)
-      .eq('end_date', yesterday)
-      
+      const { error, data } = await supabase
+        .from('periods')
+        .update({ end_date: dateStr })
+        .eq('user_id', user.id)
+        .eq('end_date', yesterday)
 
-
-    if (error) throw error
-    if (onSaved) await onSaved()
-    handleClose()
-  } catch (err: any) {
-    setError(err.message || 'Unable to extend period.')
-    setLoading(false)
+      if (error) throw error
+      if (onSaved) await onSaved()
+      handleClose()
+    } catch (err: any) {
+      setError(err.message || 'Unable to extend period.')
+      setLoading(false)
+    }
   }
-}
 
   const title =
-    mode === 'symptoms' ? 'Log symptoms'
-    : mode === 'predicted' ? 'Predicted period'
-    : mode === 'fertile' ? 'Fertile window'
-    : mode === 'ovulation' ? 'Ovulation'
-    : mode === 'extend'    ? 'Still bleeding?'
-    : 'Log for this day'
+    mode === 'symptoms'
+      ? 'Log symptoms'
+      : mode === 'predicted'
+        ? 'Predicted period'
+        : mode === 'fertile'
+          ? 'Fertile window'
+          : mode === 'ovulation'
+            ? 'Ovulation'
+            : mode === 'extend'
+              ? 'Still bleeding?'
+              : 'Log for this day'
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={handleClose}>
       <View style={s.overlay}>
         <Pressable style={s.backdrop} onPress={handleClose} />
-        <View style={[s.sheet, { backgroundColor: colors.bgPrimary, borderTopColor: colors.borderRose }]}>
+        <View
+          style={[
+            s.sheet,
+            { backgroundColor: colors.bgPrimary, borderTopColor: colors.borderRose }
+          ]}
+        >
           <View style={s.handleWrap}>
             <View style={[s.handle, { backgroundColor: colors.borderRose }]} />
           </View>
@@ -498,14 +560,25 @@ export function CalendarSheet({
                     style={[s.periodStartBtn, isPeriodStart && s.periodStartBtnActive]}
                     onPress={() => setIsPeriodStart(!isPeriodStart)}
                   >
-                    <Text style={[s.periodStartBtnText, isPeriodStart && s.periodStartBtnTextActive]}>
-                      {isPeriodStart ? '◉ Period started this day ✓' : '◉ My period started this day'}
+                    <Text
+                      style={[s.periodStartBtnText, isPeriodStart && s.periodStartBtnTextActive]}
+                    >
+                      {isPeriodStart
+                        ? '◉ Period started this day ✓'
+                        : '◉ My period started this day'}
                     </Text>
                   </Pressable>
                 )}
                 <MoodSection styles={s} colors={colors} value={mood} onChange={setMood} />
                 <FlowSection styles={s} colors={colors} value={flow} onChange={setFlow} />
-                <ChipSection title="Cramps" styles={s} colors={colors} options={crampOptions} value={cramps} onChange={setCramps} />
+                <ChipSection
+                  title="Cramps"
+                  styles={s}
+                  colors={colors}
+                  options={crampOptions}
+                  value={cramps}
+                  onChange={setCramps}
+                />
                 <EnergySection styles={s} colors={colors} value={energy} onChange={setEnergy} />
                 <ExtrasSection styles={s} colors={colors} values={extras} onToggle={toggleExtra} />
                 {journeyMode && CONDITION_EXTRAS[journeyMode] && (
@@ -523,15 +596,21 @@ export function CalendarSheet({
                               s.optionBtn,
                               {
                                 borderColor: active ? colors.accentRose : colors.borderRose,
-                                backgroundColor: colors.bgSecondary,
-                              },
+                                backgroundColor: colors.bgSecondary
+                              }
                             ]}
                             onPress={() => toggleExtra(option.key)}
                           >
-                            <Text style={[s.optionText, {
-                              color: active ? colors.accentRose : colors.textPrimary,
-                            }]}>
-                              {active ? '✓ ' : ''}{option.label}
+                            <Text
+                              style={[
+                                s.optionText,
+                                {
+                                  color: active ? colors.accentRose : colors.textPrimary
+                                }
+                              ]}
+                            >
+                              {active ? '✓ ' : ''}
+                              {option.label}
                             </Text>
                           </Pressable>
                         )
@@ -541,9 +620,18 @@ export function CalendarSheet({
                 )}
 
                 <View style={s.sectionWrap}>
-                  <Text style={[s.sectionEyebrow, { color: colors.textMuted }]}>NOTES (OPTIONAL)</Text>
+                  <Text style={[s.sectionEyebrow, { color: colors.textMuted }]}>
+                    NOTES (OPTIONAL)
+                  </Text>
                   <TextInput
-                    style={[s.notesInput, { backgroundColor: colors.bgSecondary, borderColor: colors.borderRose, color: colors.textPrimary }]}
+                    style={[
+                      s.notesInput,
+                      {
+                        backgroundColor: colors.bgSecondary,
+                        borderColor: colors.borderRose,
+                        color: colors.textPrimary
+                      }
+                    ]}
                     placeholder="Anything else you want to remember?"
                     placeholderTextColor={colors.textMuted}
                     value={notes}
@@ -555,14 +643,20 @@ export function CalendarSheet({
 
                 {!!error && <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>}
                 <Pressable
-                  style={[s.primaryBtn, { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }]}
+                  style={[
+                    s.primaryBtn,
+                    { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }
+                  ]}
                   onPress={saveSymptomLog}
                   disabled={loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>{saved ? 'Saved ✓' : 'Save'}</Text>
-                  }
+                  {loading ? (
+                    <ActivityIndicator color={colors.bgPrimary} />
+                  ) : (
+                    <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>
+                      {saved ? 'Saved ✓' : 'Save'}
+                    </Text>
+                  )}
                 </Pressable>
               </>
             )}
@@ -577,17 +671,26 @@ export function CalendarSheet({
                 </Text>
                 {!!error && <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>}
                 <Pressable
-                  style={[s.primaryBtn, { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }]}
+                  style={[
+                    s.primaryBtn,
+                    { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }
+                  ]}
                   onPress={confirmPredictedPeriod}
                   disabled={loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>Yes, it started</Text>
-                  }
+                  {loading ? (
+                    <ActivityIndicator color={colors.bgPrimary} />
+                  ) : (
+                    <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>
+                      Yes, it started
+                    </Text>
+                  )}
                 </Pressable>
                 <Pressable
-                  style={[s.secondaryBtn, { borderColor: colors.borderRose, backgroundColor: colors.bgSecondary }]}
+                  style={[
+                    s.secondaryBtn,
+                    { borderColor: colors.borderRose, backgroundColor: colors.bgSecondary }
+                  ]}
                   onPress={handleClose}
                   disabled={loading}
                 >
@@ -599,10 +702,12 @@ export function CalendarSheet({
             {mode === 'fertile' && (
               <>
                 <Text style={[s.description, { color: colors.textMuted }]}>
-                  You are in your fertile window, the days leading up to ovulation when pregnancy is most likely.
+                  You are in your fertile window, the days leading up to ovulation when pregnancy is
+                  most likely.
                 </Text>
                 <Text style={[s.description, { color: colors.textMuted }]}>
-                  This is an estimate based on your cycle history and may shift over time as Àràbìrín learns your pattern.
+                  This is an estimate based on your cycle history and may shift over time as
+                  Àràbìrín learns your pattern.
                 </Text>
               </>
             )}
@@ -610,10 +715,12 @@ export function CalendarSheet({
             {mode === 'ovulation' && (
               <>
                 <Text style={[s.description, { color: colors.textMuted }]}>
-                  This is your estimated ovulation day, when your ovary is most likely to release an egg.
+                  This is your estimated ovulation day, when your ovary is most likely to release an
+                  egg.
                 </Text>
                 <Text style={[s.description, { color: colors.textMuted }]}>
-                  Ovulation timing can vary from cycle to cycle, so treat this as a guide rather than a guarantee.
+                  Ovulation timing can vary from cycle to cycle, so treat this as a guide rather
+                  than a guarantee.
                 </Text>
               </>
             )}
@@ -626,23 +733,28 @@ export function CalendarSheet({
                 <Text style={[s.description, { color: colors.textMuted }]}>
                   Tap below to extend it by one day.
                 </Text>
-                {!!error && (
-                  <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>
-                )}
+                {!!error && <Text style={[s.error, { color: colors.accentRose }]}>{error}</Text>}
                 <Pressable
-                  style={[s.primaryBtn, { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }]}
+                  style={[
+                    s.primaryBtn,
+                    { backgroundColor: colors.accentRose, opacity: loading ? 0.6 : 1 }
+                  ]}
                   onPress={extendPeriod}
                   disabled={loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>
-                        Yes, extend by one day
-                      </Text>
-                  }
+                  {loading ? (
+                    <ActivityIndicator color={colors.bgPrimary} />
+                  ) : (
+                    <Text style={[s.primaryBtnText, { color: colors.bgPrimary }]}>
+                      Yes, extend by one day
+                    </Text>
+                  )}
                 </Pressable>
                 <Pressable
-                  style={[s.secondaryBtn, { borderColor: colors.borderRose, backgroundColor: colors.bgSecondary }]}
+                  style={[
+                    s.secondaryBtn,
+                    { borderColor: colors.borderRose, backgroundColor: colors.bgSecondary }
+                  ]}
                   onPress={handleClose}
                   disabled={loading}
                 >

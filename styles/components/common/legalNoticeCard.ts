@@ -10,14 +10,14 @@ export function makeLegalNoticeCardStyles(colors: any) {
       borderRadius: 20,
       paddingHorizontal: 18,
       paddingVertical: 18,
-      marginBottom: 18,
+      marginBottom: 18
     },
 
     title: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 20,
       color: colors.accentGold,
-      marginBottom: 6,
+      marginBottom: 6
     },
 
     subtitle: {
@@ -25,12 +25,12 @@ export function makeLegalNoticeCardStyles(colors: any) {
       fontSize: 13,
       lineHeight: 19,
       color: colors.textMuted,
-      marginBottom: 14,
+      marginBottom: 14
     },
 
     list: {
       borderTopWidth: 1,
-      borderTopColor: colors.borderRose,
+      borderTopColor: colors.borderRose
     },
 
     row: {
@@ -38,18 +38,18 @@ export function makeLegalNoticeCardStyles(colors: any) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingVertical: 12,
+      paddingVertical: 12
     },
 
     rowBorder: {
       borderBottomWidth: 1,
-      borderBottomColor: colors.borderRose,
+      borderBottomColor: colors.borderRose
     },
 
     rowText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 14,
-      color: colors.accentGold,
-    },
+      color: colors.accentGold
+    }
   })
 }

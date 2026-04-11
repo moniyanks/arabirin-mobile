@@ -13,23 +13,30 @@ import {
   SCORE_LEVEL_LABELS,
   SCORE_DESCRIPTIONS,
   MIN_LOGS_FOR_SCORE,
-  type ConditionKey,
+  type ConditionKey
 } from '../../utils/conditionIntelligence'
-import type { Period, SymptomLog, Profile } from '../../context/AppDataContext'
+import type { Period, SymptomLog, Profile } from '../../types/appData'
 
 // ── Single condition card — extracted to avoid hooks-in-loop violation ──
 function ConditionCard({
-  condition, colors, s, periods, symptomLogs, profile,
-  expanded, onToggleExpand, onAppointmentPress,
+  condition,
+  colors,
+  s,
+  periods,
+  symptomLogs,
+  profile,
+  expanded,
+  onToggleExpand,
+  onAppointmentPress
 }: {
-  condition:          ConditionKey
-  colors:             ThemeColors
-  s:                  ReturnType<typeof makeConditionIntelligenceStyles>
-  periods:            Period[]
-  symptomLogs:        SymptomLog[]
-  profile:            Profile
-  expanded:           boolean
-  onToggleExpand:     () => void
+  condition: ConditionKey
+  colors: ThemeColors
+  s: ReturnType<typeof makeConditionIntelligenceStyles>
+  periods: Period[]
+  symptomLogs: SymptomLog[]
+  profile: Profile
+  expanded: boolean
+  onToggleExpand: () => void
   onAppointmentPress: () => void
 }) {
   const score = useMemo(
@@ -39,7 +46,7 @@ function ConditionCard({
 
   const conditionColor = CONDITION_COLORS[condition]
   const conditionLabel = CONDITION_LABELS[condition]
-  const logsNeeded     = Math.max(0, MIN_LOGS_FOR_SCORE - score.logsAnalysed)
+  const logsNeeded = Math.max(0, MIN_LOGS_FOR_SCORE - score.logsAnalysed)
 
   // ── Not enough data ──
   if (!score.hasEnoughData) {
@@ -51,17 +58,19 @@ function ConditionCard({
         </View>
         <Text style={s.buildingTitle}>Building your profile</Text>
         <Text style={s.buildingDesc}>
-          Log {logsNeeded} more symptom {logsNeeded !== 1 ? 'entries' : 'entry'} to unlock
-          your {conditionLabel} insights.
+          Log {logsNeeded} more symptom {logsNeeded !== 1 ? 'entries' : 'entry'} to unlock your{' '}
+          {conditionLabel} insights.
         </Text>
         <View style={s.progressTrack}>
-          <View style={[
-            s.progressFill,
-            {
-              width: `${Math.min((score.logsAnalysed / MIN_LOGS_FOR_SCORE) * 100, 100)}%` as any,
-              backgroundColor: conditionColor,
-            },
-          ]} />
+          <View
+            style={[
+              s.progressFill,
+              {
+                width: `${Math.min((score.logsAnalysed / MIN_LOGS_FOR_SCORE) * 100, 100)}%` as any,
+                backgroundColor: conditionColor
+              }
+            ]}
+          />
         </View>
         <Text style={s.progressLabel}>
           {score.logsAnalysed} of {MIN_LOGS_FOR_SCORE} entries
@@ -76,10 +85,15 @@ function ConditionCard({
       <View style={s.cardHeader}>
         <View style={[s.dot, { backgroundColor: conditionColor }]} />
         <Text style={s.cardTitle}>{conditionLabel} Insights</Text>
-        <View style={[s.pill, {
-          backgroundColor: conditionColor + '20',
-          borderColor:     conditionColor + '50',
-        }]}>
+        <View
+          style={[
+            s.pill,
+            {
+              backgroundColor: conditionColor + '20',
+              borderColor: conditionColor + '50'
+            }
+          ]}
+        >
           <Text style={[s.pillText, { color: conditionColor }]}>
             {SCORE_LEVEL_LABELS[score.level]}
           </Text>
@@ -87,10 +101,15 @@ function ConditionCard({
       </View>
 
       <View style={s.scoreTrack}>
-        <View style={[s.scoreFill, {
-          width: `${score.percentage}%` as any,
-          backgroundColor: conditionColor,
-        }]} />
+        <View
+          style={[
+            s.scoreFill,
+            {
+              width: `${score.percentage}%` as any,
+              backgroundColor: conditionColor
+            }
+          ]}
+        />
         <View style={[s.zoneMarker, { left: '30%' as any }]} />
         <View style={[s.zoneMarker, { left: '60%' as any }]} />
       </View>
@@ -120,20 +139,35 @@ function ConditionCard({
         <View style={s.signals}>
           {score.signals.map((signal, i) => (
             <View key={i} style={s.signalRow}>
-              <View style={[s.signalDot, {
-                backgroundColor: signal.met ? conditionColor : colors.borderRose,
-              }]} />
+              <View
+                style={[
+                  s.signalDot,
+                  {
+                    backgroundColor: signal.met ? conditionColor : colors.borderRose
+                  }
+                ]}
+              />
               <View style={{ flex: 1 }}>
-                <Text style={[s.signalLabel, {
-                  color: signal.met ? colors.textPrimary : colors.textMuted,
-                }]}>
+                <Text
+                  style={[
+                    s.signalLabel,
+                    {
+                      color: signal.met ? colors.textPrimary : colors.textMuted
+                    }
+                  ]}
+                >
                   {signal.label}
                 </Text>
                 <Text style={s.signalDetail}>{signal.detail}</Text>
               </View>
-              <Text style={[s.signalWeight, {
-                color: signal.met ? conditionColor : colors.textMuted,
-              }]}>
+              <Text
+                style={[
+                  s.signalWeight,
+                  {
+                    color: signal.met ? conditionColor : colors.textMuted
+                  }
+                ]}
+              >
                 {signal.weight}%
               </Text>
             </View>
@@ -160,7 +194,7 @@ function ConditionCard({
 
 // ── Main export ──
 export function ConditionIntelligence({ colors }: { colors: ThemeColors }) {
-  const s      = useMemo(() => makeConditionIntelligenceStyles(colors), [colors])
+  const s = useMemo(() => makeConditionIntelligenceStyles(colors), [colors])
   const router = useRouter()
   const { profile, periods, symptomLogs } = useAppData()
 
@@ -183,9 +217,7 @@ export function ConditionIntelligence({ colors }: { colors: ThemeColors }) {
           profile={profile}
           expanded={expandedCondition === condition}
           onToggleExpand={() =>
-            setExpandedCondition(
-              expandedCondition === condition ? null : condition
-            )
+            setExpandedCondition(expandedCondition === condition ? null : condition)
           }
           onAppointmentPress={() => router.push('/(modals)/appointment')}
         />

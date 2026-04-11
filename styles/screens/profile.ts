@@ -5,38 +5,38 @@ export function makeProfileStyles(c: ThemeColors) {
   return StyleSheet.create({
     safe: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     container: {
-      flex: 1,
+      flex: 1
     },
     content: {
       paddingHorizontal: 16,
       paddingTop: 8,
       paddingBottom: 48,
-      gap: 12,
+      gap: 12
     },
 
     cardRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
     },
     cardValue: {
-        fontFamily: theme.fonts.sans,
-        fontSize: 15,
-        color: c.textPrimary,
+      fontFamily: theme.fonts.sans,
+      fontSize: 15,
+      color: c.textPrimary
     },
     editBtn: {
-        fontFamily: theme.fonts.sansMedium,
-        fontSize: 13,
-        color: c.accentRose,
+      fontFamily: theme.fonts.sansMedium,
+      fontSize: 13,
+      color: c.accentRose
     },
 
     // Avatar
     avatarSection: {
       alignItems: 'center',
-      paddingVertical: 24,
+      paddingVertical: 24
     },
     avatar: {
       width: 72,
@@ -47,30 +47,30 @@ export function makeProfileStyles(c: ThemeColors) {
       borderColor: c.borderRose,
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 12,
+      marginBottom: 12
     },
     avatarLetter: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 32,
-      color: c.accentRose,
+      color: c.accentRose
     },
     avatarName: {
       fontFamily: theme.fonts.serifSemiBold,
       fontSize: 24,
       color: c.accentGold,
-      marginBottom: 4,
+      marginBottom: 4
     },
     avatarMode: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     // BMI stats
     statsRow: {
       flexDirection: 'row',
       gap: 8,
-      marginBottom: 4,
+      marginBottom: 4
     },
     statCard: {
       flex: 1,
@@ -79,7 +79,7 @@ export function makeProfileStyles(c: ThemeColors) {
       borderColor: c.borderRose,
       borderRadius: 12,
       paddingVertical: 10,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     statLabel: {
       fontFamily: theme.fonts.sans,
@@ -87,12 +87,12 @@ export function makeProfileStyles(c: ThemeColors) {
       textTransform: 'uppercase',
       letterSpacing: 0.8,
       color: c.textMuted,
-      marginBottom: 4,
+      marginBottom: 4
     },
     statValue: {
       fontFamily: theme.fonts.serif,
       fontSize: 18,
-      color: c.accentGold,
+      color: c.accentGold
     },
 
     // Cards
@@ -102,14 +102,14 @@ export function makeProfileStyles(c: ThemeColors) {
       borderColor: c.borderRose,
       borderRadius: 16,
       padding: 16,
-      gap: 12,
+      gap: 12
     },
     cardLabel: {
       fontFamily: theme.fonts.sans,
       fontSize: 11,
       textTransform: 'uppercase',
       letterSpacing: 1.2,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     // Input
@@ -122,19 +122,19 @@ export function makeProfileStyles(c: ThemeColors) {
       paddingHorizontal: 14,
       fontFamily: theme.fonts.sans,
       fontSize: 15,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     errorText: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
-      color: '#ff8080',
+      color: '#ff8080'
     },
 
     // Mode grid
     modeGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: 8
     },
     modeBtn: {
       paddingHorizontal: 14,
@@ -142,26 +142,26 @@ export function makeProfileStyles(c: ThemeColors) {
       borderRadius: 999,
       borderWidth: 1,
       borderColor: c.borderRose,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     modeBtnSelected: {
       borderColor: c.accentRose,
-      backgroundColor: 'rgba(217,155,155,0.1)',
+      backgroundColor: 'rgba(217,155,155,0.1)'
     },
     modeBtnText: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textMuted
     },
     modeBtnTextSelected: {
-      color: c.accentRose,
+      color: c.accentRose
     },
 
     // Option buttons
     optionRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: 8
     },
     optionBtn: {
       paddingHorizontal: 14,
@@ -169,19 +169,19 @@ export function makeProfileStyles(c: ThemeColors) {
       borderRadius: 999,
       borderWidth: 1,
       borderColor: c.borderRose,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     optionSelected: {
       borderColor: c.accentRose,
-      backgroundColor: 'rgba(217,155,155,0.1)',
+      backgroundColor: 'rgba(217,155,155,0.1)'
     },
     optionBtnText: {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textMuted
     },
     optionSelectedText: {
-      color: c.accentRose,
+      color: c.accentRose
     },
 
     // Save button
@@ -189,24 +189,24 @@ export function makeProfileStyles(c: ThemeColors) {
       fontFamily: theme.fonts.sans,
       fontSize: 13,
       color: '#ff8080',
-      textAlign: 'center',
+      textAlign: 'center'
     },
     saveBtn: {
       backgroundColor: c.accentRose,
       borderRadius: 14,
       paddingVertical: 16,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     saveBtnSaved: {
-      backgroundColor: c.accentSage,
+      backgroundColor: c.accentSage
     },
     saveBtnDisabled: {
-      opacity: 0.5,
+      opacity: 0.5
     },
     saveBtnText: {
       fontFamily: theme.fonts.sansSemiBold,
       fontSize: 15,
-      color: c.bgPrimary,
+      color: c.bgPrimary
     },
 
     // Version / logout / delete
@@ -214,36 +214,36 @@ export function makeProfileStyles(c: ThemeColors) {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       color: c.textMuted,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     logoutBtn: {
       paddingVertical: 14,
       borderRadius: 10,
       borderWidth: 1,
       borderColor: c.borderRose,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     logoutBtnText: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 15,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     deleteBtn: {
       paddingVertical: 14,
       alignItems: 'center',
-      gap: 6,
+      gap: 6
     },
     deleteBtnText: {
       fontFamily: theme.fonts.sansMedium,
       fontSize: 14,
-      color: '#ff8080',
+      color: '#ff8080'
     },
     deleteWarning: {
       fontFamily: theme.fonts.sans,
       fontSize: 11,
       color: c.textMuted,
       textAlign: 'center',
-      lineHeight: 16,
+      lineHeight: 16
     },
 
     cardHint: {
@@ -251,35 +251,35 @@ export function makeProfileStyles(c: ThemeColors) {
       fontSize: 13,
       color: c.textMuted,
       lineHeight: 18,
-      marginTop: -4,
+      marginTop: -4
     },
 
     cardTitle: {
       fontSize: 16,
       color: c.accentGold,
-      marginBottom: 4,
+      marginBottom: 4
     },
     sectionHeading: {
       fontSize: 18,
       color: c.accentGold,
       marginTop: 8,
-      marginBottom: 10,
+      marginBottom: 10
     },
     deleteSupportText: {
       fontSize: 12,
       lineHeight: 18,
       color: c.textMuted,
-      marginTop: 8,
+      marginTop: 8
     },
     rowBetween: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'space-between'
     },
 
     appearanceTextWrap: {
       flex: 1,
-      paddingRight: 12,
-    },
+      paddingRight: 12
+    }
   })
 }

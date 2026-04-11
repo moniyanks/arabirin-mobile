@@ -5,32 +5,32 @@ export function makeHomeStyles(c: any) {
   return StyleSheet.create({
     safe: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     container: {
       flex: 1,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
     content: {
       paddingHorizontal: 16,
       paddingTop: 8,
-      paddingBottom: 32,
+      paddingBottom: 32
     },
     topBar: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 18,
+      marginBottom: 18
     },
     logo: {
       ...theme.typography.displayMd,
-      color: c.accentRose,
+      color: c.accentRose
     },
     tagline: {
       marginTop: 2,
       ...theme.typography.label,
       color: c.textMuted,
-      opacity: 0.9,
+      opacity: 0.9
     },
     avatar: {
       width: 40,
@@ -40,25 +40,25 @@ export function makeHomeStyles(c: any) {
       borderColor: c.borderSoft,
       backgroundColor: c.bgSecondary,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     avatarText: {
       ...theme.typography.button,
-      color: c.accentGold,
+      color: c.accentGold
     },
     greetingBlock: {
-      marginBottom: 18,
+      marginBottom: 18
     },
     greeting: {
       ...theme.typography.displayLg,
       color: c.textPrimary,
       textAlign: 'center',
-      marginBottom: 6,
+      marginBottom: 6
     },
     context: {
       ...theme.typography.bodyMd,
       color: c.textMuted,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     heroCard: {
       backgroundColor: c.cardSoft,
@@ -73,7 +73,7 @@ export function makeHomeStyles(c: any) {
       shadowOpacity: 0.25,
       shadowRadius: 14,
       shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
+      elevation: 4
     },
     phaseBadge: {
       paddingHorizontal: 16,
@@ -82,70 +82,68 @@ export function makeHomeStyles(c: any) {
       borderWidth: 1,
       borderColor: c.borderRose,
       backgroundColor: 'rgba(217,155,155,0.08)',
-      marginBottom: 12,
+      marginBottom: 12
     },
     phaseBadgeText: {
       ...theme.typography.label,
-      color: c.accentRose,
+      color: c.accentRose
     },
     heroTitle: {
       ...theme.typography.displayMd,
       color: c.accentGold,
       textAlign: 'center',
-      marginBottom: 8,
+      marginBottom: 8
     },
     heroMessage: {
       ...theme.typography.bodyMd,
       color: c.textMuted,
       textAlign: 'center',
-      marginTop: 4,
+      marginTop: 4
     },
     predictionRow: {
-      backgroundColor: c.bgSecondary,
+      backgroundColor: c.bgPrimary,
       borderWidth: 1,
-      borderColor: c.borderSoft,
-      borderRadius: 14,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      marginBottom: 12,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      borderColor: c.borderRose,
+      borderRadius: 16,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      marginBottom: 14,
+      alignSelf: 'stretch'
     },
     predictionLabel: {
       ...theme.typography.label,
       color: c.textMuted,
-      marginBottom: 4,
+      marginBottom: 4
     },
     predictionDate: {
-      ...theme.typography.titleLg,
-      color: c.accentRose,
+      ...theme.typography.displayMd,
+      color: c.accentRose
     },
     confidencePill: {
       borderRadius: 999,
       paddingHorizontal: 12,
-      paddingVertical: 7,
+      paddingVertical: 7
     },
     confidenceText: {
-      ...theme.typography.label,
+      ...theme.typography.label
     },
     confidenceHigh: {
-      backgroundColor: 'rgba(155,168,141,0.18)',
+      backgroundColor: 'rgba(155,168,141,0.18)'
     },
     confidenceMedium: {
-      backgroundColor: 'rgba(243,229,216,0.12)',
+      backgroundColor: 'rgba(243,229,216,0.12)'
     },
     confidenceLow: {
-      backgroundColor: 'rgba(217,155,155,0.14)',
+      backgroundColor: 'rgba(217,155,155,0.14)'
     },
     confidenceHighText: {
-      color: c.accentSage,
+      color: c.accentSage
     },
     confidenceMediumText: {
-      color: c.accentGold,
+      color: c.accentGold
     },
     confidenceLowText: {
-      color: c.accentRose,
+      color: c.accentRose
     },
     logBanner: {
       backgroundColor: c.accentRose,
@@ -155,15 +153,15 @@ export function makeHomeStyles(c: any) {
       marginBottom: 18,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'space-between'
     },
     logBannerText: {
       ...theme.typography.titleMd,
-      color: c.bgPrimary,
+      color: c.bgPrimary
     },
     shortcutRow: {
       gap: 10,
-      paddingBottom: 2,
+      paddingBottom: 2
     },
     shortcutBtn: {
       backgroundColor: c.bgSecondary,
@@ -175,31 +173,31 @@ export function makeHomeStyles(c: any) {
       alignItems: 'center',
       justifyContent: 'center',
       minWidth: 72,
-      gap: 5,
+      gap: 5
     },
     shortcutIcon: {
       fontSize: 14,
       color: c.accentRose,
-      opacity: 0.9,
+      opacity: 0.9
     },
     shortcutLabel: {
       ...theme.typography.bodySm,
-      color: c.textMuted,
+      color: c.textMuted
     },
     shortcutsSection: {
-      marginBottom: 18,
+      marginBottom: 18
     },
 
     shortcutsHeading: {
       ...theme.typography.label,
       color: c.textMuted,
       marginBottom: 10,
-      paddingLeft: 2,
+      paddingLeft: 2
     },
     statsRow: {
       flexDirection: 'row',
       gap: 10,
-      marginBottom: 18,
+      marginBottom: 18
     },
     statCard: {
       flex: 1,
@@ -209,16 +207,16 @@ export function makeHomeStyles(c: any) {
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 10,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     statLabel: {
       ...theme.typography.label,
       color: c.textMuted,
-      marginBottom: 6,
+      marginBottom: 6
     },
     statValue: {
       ...theme.typography.displayMd,
-      color: c.accentGold,
+      color: c.accentGold
     },
     intelligenceCard: {
       backgroundColor: c.bgSecondary,
@@ -234,7 +232,7 @@ export function makeHomeStyles(c: any) {
       shadowOpacity: 0.18,
       shadowRadius: 14,
       shadowOffset: { width: 0, height: 6 },
-      elevation: 3,
+      elevation: 3
     },
     intelligenceIconWrap: {
       width: 38,
@@ -244,26 +242,26 @@ export function makeHomeStyles(c: any) {
       justifyContent: 'center',
       backgroundColor: 'rgba(216,154,159,0.08)',
       borderWidth: 1,
-      borderColor: c.borderRose,
+      borderColor: c.borderRose
     },
     intelligenceBody: {
-      flex: 1,
+      flex: 1
     },
     intelligenceTitle: {
       ...theme.typography.titleMd,
       color: c.textPrimary,
-      marginBottom: 6,
+      marginBottom: 6
     },
     intelligenceDesc: {
       ...theme.typography.bodyMd,
       color: c.textMuted,
-      flexShrink: 1,
+      flexShrink: 1
     },
     quickActionGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 10,
-      marginBottom: 18,
+      marginBottom: 18
     },
     quickActionCard: {
       width: '48.5%',
@@ -272,15 +270,15 @@ export function makeHomeStyles(c: any) {
       borderColor: c.borderSoft,
       borderRadius: 16,
       padding: 14,
-      gap: 8,
+      gap: 8
     },
     quickActionTitle: {
       ...theme.typography.titleMd,
-      color: c.textPrimary,
+      color: c.textPrimary
     },
     quickActionDesc: {
       ...theme.typography.bodySm,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     ringHeroCard: {
@@ -297,26 +295,26 @@ export function makeHomeStyles(c: any) {
       shadowOpacity: 0.18,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 6 },
-      elevation: 3,
+      elevation: 3
     },
 
     ringWrap: {
       alignItems: 'center',
       justifyContent: 'center',
       marginTop: 12,
-      marginBottom: 18,
+      marginBottom: 18
     },
 
     ringCenter: {
       position: 'absolute',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
 
     ringCenterLabel: {
       ...theme.typography.label,
       color: c.textMuted,
-      marginBottom: 4,
+      marginBottom: 4
     },
 
     ringCenterValue: {
@@ -324,21 +322,21 @@ export function makeHomeStyles(c: any) {
       fontSize: 34,
       lineHeight: 40,
       color: c.accentGold,
-      textAlign: 'center',
+      textAlign: 'center'
     },
 
     ringCenterSubLabel: {
       ...theme.typography.bodyMd,
       color: c.textMuted,
       marginTop: 4,
-      textAlign: 'center',
+      textAlign: 'center'
     },
 
     ringCenterValueAlt: {
       ...theme.typography.displayLg,
       color: c.accentGold,
       textAlign: 'center',
-      maxWidth: 120,
+      maxWidth: 120
     },
 
     emptyStateCard: {
@@ -348,22 +346,22 @@ export function makeHomeStyles(c: any) {
       borderRadius: 20,
       padding: 24,
       alignItems: 'center',
-      gap: 12,
+      gap: 12
     },
     emptyStateIcon: {
       fontSize: 48,
-      color: c.accentRose,
+      color: c.accentRose
     },
     emptyStateTitle: {
       ...theme.typography.displayMd,
       color: c.accentGold,
-      textAlign: 'center',
+      textAlign: 'center'
     },
     emptyStateDesc: {
       ...theme.typography.bodyMd,
       color: c.textMuted,
       textAlign: 'center',
-      paddingHorizontal: 8,
+      paddingHorizontal: 8
     },
     emptyStateBtn: {
       backgroundColor: c.accentRose,
@@ -372,17 +370,17 @@ export function makeHomeStyles(c: any) {
       paddingHorizontal: 32,
       alignItems: 'center',
       width: '100%',
-      marginTop: 4,
+      marginTop: 4
     },
     emptyStateBtnText: {
       ...theme.typography.button,
-      color: c.bgPrimary,
+      color: c.bgPrimary
     },
     emptyStateGrid: {
       flexDirection: 'row',
       gap: 10,
       width: '100%',
-      marginTop: 8,
+      marginTop: 8
     },
     emptyStateGridCard: {
       flex: 1,
@@ -391,15 +389,15 @@ export function makeHomeStyles(c: any) {
       borderColor: c.borderSoft,
       borderRadius: 14,
       padding: 14,
-      gap: 6,
+      gap: 6
     },
     emptyStateGridTitle: {
       ...theme.typography.titleMd,
-      color: c.accentGold,
+      color: c.accentGold
     },
     emptyStateGridDesc: {
       ...theme.typography.bodySm,
-      color: c.textMuted,
+      color: c.textMuted
     },
 
     awarenessCard: {
@@ -411,7 +409,7 @@ export function makeHomeStyles(c: any) {
       marginBottom: 18,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 14,
+      gap: 14
     },
     awarenessIconWrap: {
       width: 36,
@@ -421,31 +419,31 @@ export function makeHomeStyles(c: any) {
       justifyContent: 'center',
       backgroundColor: 'rgba(217,155,155,0.08)',
       borderWidth: 1,
-      borderColor: c.borderSoft,
+      borderColor: c.borderSoft
     },
     awarenessCardInactive: {
-      borderColor: c.accentRose,
+      borderColor: c.accentRose
     },
     awarenessCardPressed: {
       opacity: 0.96,
-      transform: [{ scale: 0.995 }],
-    },  
+      transform: [{ scale: 0.995 }]
+    },
     awarenessBody: {
-      flex: 1,
+      flex: 1
     },
     awarenessTitle: {
       ...theme.typography.titleMd,
       color: c.textPrimary,
-      marginBottom: 4,
+      marginBottom: 4
     },
     awarenessStreak: {
       ...theme.typography.bodySm,
       color: c.accentRose,
-      marginBottom: 4,
-    },  
+      marginBottom: 4
+    },
     awarenessSubtitle: {
       ...theme.typography.bodySm,
-      color: c.textMuted,
+      color: c.textMuted
     },
     pregnancyFocusCard: {
       backgroundColor: c.bgSecondary,
@@ -454,18 +452,18 @@ export function makeHomeStyles(c: any) {
       borderRadius: 16,
       padding: 16,
       marginBottom: 18,
-      gap: 10,
+      gap: 10
     },
 
     pregnancyFocusLabel: {
       ...theme.typography.label,
-      color: c.accentRose,
+      color: c.accentRose
     },
 
     pregnancyFocusRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: 8
     },
 
     pregnancyFocusChip: {
@@ -474,14 +472,14 @@ export function makeHomeStyles(c: any) {
       borderRadius: 999,
       borderWidth: 1,
       borderColor: c.borderSoft,
-      backgroundColor: c.bgPrimary,
+      backgroundColor: c.bgPrimary
     },
 
     pregnancyFocusChipText: {
       ...theme.typography.bodySm,
-      color: c.textPrimary,
-    }, 
-    
+      color: c.textPrimary
+    },
+
     checkInCard: {
       backgroundColor: c.cardSoft,
       borderRadius: 20,
@@ -490,20 +488,20 @@ export function makeHomeStyles(c: any) {
       justifyContent: 'space-between',
       alignItems: 'center',
       borderWidth: 0.5,
-      borderColor: c.borderSoft,
+      borderColor: c.borderSoft
     },
 
     checkInTitle: {
       color: c.textPrimary,
       fontSize: 18,
       fontWeight: '700',
-      marginBottom: 10,
+      marginBottom: 10
     },
 
     checkInTags: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: 8
     },
 
     checkInTag: {
@@ -512,30 +510,64 @@ export function makeHomeStyles(c: any) {
       paddingVertical: 6,
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: c.borderSoft,
+      borderColor: c.borderSoft
     },
 
     checkInTagText: {
       color: c.textPrimary,
       fontSize: 12,
-      fontWeight: '600',
+      fontWeight: '600'
     },
     checkInRhythm: {
       color: c.accentRose,
       fontSize: 13,
       fontWeight: '600',
-      marginBottom: 8,
-    },  
+      marginBottom: 8
+    },
 
     checkInCTA: {
       color: c.accentRose,
       fontWeight: '700',
-      fontSize: 14,
+      fontSize: 14
     },
     checkInContent: {
       flex: 1,
-      paddingRight: 12,
+      paddingRight: 12
     },
-    
+    journeyCard: {
+      backgroundColor: c.cardSoft,
+      borderRadius: 29,
+      padding: 18,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: c.borderSoft,
+      marginBottom: 18
+    },
+
+    journeyCardTitle: {
+      ...theme.typography.titleMd,
+      color: c.textPrimary
+    },
+
+    journeyCardText: {
+      ...theme.typography.bodyMd,
+      color: c.textMuted
+    },
+
+    journeyCardButton: {
+      marginTop: 8,
+      alignSelf: 'flex-start',
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 999,
+      backgroundColor: c.bgPrimary,
+      borderWidth: 1,
+      borderColor: c.borderSoft
+    },
+
+    journeyCardButtonText: {
+      ...theme.typography.label,
+      color: c.accentRose
+    }
   })
 }

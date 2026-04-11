@@ -11,14 +11,14 @@ export function makeMedicalDisclaimerStyles(colors: any) {
       borderRadius: 14,
       backgroundColor: 'rgba(217,155,155,0.06)',
       borderWidth: 1,
-      borderColor: 'rgba(217,155,155,0.12)',
+      borderColor: 'rgba(217,155,155,0.12)'
     },
 
     text: {
       fontFamily: theme.fonts.sans,
       fontSize: 12,
       lineHeight: 18,
-      color: colors.textMuted,
-    },
+      color: colors.textMuted
+    }
   })
 }

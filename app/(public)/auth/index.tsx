@@ -1,16 +1,57 @@
 import { useState } from 'react'
 import {
-  View, Text, TextInput, Pressable,
-  KeyboardAvoidingView, Platform,
-  ScrollView, ActivityIndicator,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator
 } from 'react-native'
+import Svg, { Circle } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { supabase } from '../../../lib/supabase'
+
+import { authFlowService } from '../../../services/authFlowService'
 import { useColors } from '../../../styles'
 import { makeAuthStyles } from '../../../styles/screens/auth'
+import ArabirinIcon from '../../../assets/icons/arabirin.svg'
 
 type Step = 'welcome' | 'email' | 'otp'
+
+function ArcDecoration({ color }: { color: string }) {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        height: 280
+      }}
+    >
+      <Svg width="390" height="280" viewBox="0 0 390 280" fill="none">
+        <Circle cx="195" cy="-20" r="160" stroke={color} strokeWidth={0.5} opacity={0.12} />
+        <Circle cx="195" cy="-20" r="210" stroke={color} strokeWidth={0.4} opacity={0.07} />
+        <Circle cx="195" cy="-20" r="260" stroke={color} strokeWidth={0.35} opacity={0.04} />
+      </Svg>
+    </View>
+  )
+}
+
+function normalizeEmailInput(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+function formatAuthError(error: unknown): string {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message
+  }
+
+  return 'Something went wrong. Please try again.'
+}
 
 export default function AuthScreen() {
   const colors = useColors()
@@ -23,58 +64,39 @@ export default function AuthScreen() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const canSubmitEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeEmailInput(email))
+  const canSubmitOtp = otp.replace(/\D/g, '').length === 6
+
   const handleSendOtp = async () => {
-    if (!email.includes('@')) return
+    if (!canSubmitEmail || loading) return
+
     setLoading(true)
     setError('')
+
     try {
-      const { error: err } = await supabase.auth.signInWithOtp({ email })
-      if (err) throw err
+      const normalizedEmail = await authFlowService.requestOtp(email)
+      setEmail(normalizedEmail)
+      setOtp('')
       setStep('otp')
-    } catch (err: any) {
-      setError(err.message || 'Failed to send code')
+    } catch (err) {
+      setError(formatAuthError(err))
     } finally {
       setLoading(false)
     }
   }
 
   const handleVerifyOtp = async () => {
-    if (otp.length !== 6) return
+    if (!canSubmitOtp || loading) return
+
     setLoading(true)
     setError('')
+
     try {
-      const { error: err } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'email',
-      })
-      if (err) throw new Error('Invalid or expired code. Please request a new one.')
-
-      // Check what user needs next and navigate directly
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Authentication failed')
-
-      const { data: consent } = await supabase
-        .from('user_consents')
-        .select('user_id')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      if (!consent) {
-        router.replace('/(setup)/consent')
-      } else if (!profile) {
-        router.replace('/(setup)/onboarding')
-      } else {
-        router.replace('/(tabs)')
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to verify code')
+      const normalizedOtp = otp.replace(/\D/g, '').slice(0, 6)
+      const result = await authFlowService.verifyOtpAndResolveRoute(email, normalizedOtp)
+      router.replace(result.route)
+    } catch (err) {
+      setError(formatAuthError(err))
     } finally {
       setLoading(false)
     }
@@ -87,104 +109,138 @@ export default function AuthScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={s.scroll}
+          contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <View style={s.inner}>
-
-            {/* ── Welcome ── */}
             {step === 'welcome' && (
               <View style={s.welcomeContainer}>
-                <Text style={s.logoMark}>◉</Text>
-                <Text style={s.appName}>Welcome to Àràbìrín</Text>
+                <ArcDecoration color={colors.accentRose} />
+
+                <View style={s.logoMark}>
+                  <ArabirinIcon width={80} height={80} color={colors.accentRose} />
+                </View>
+
+                <Text style={s.appName}>Welcome to{'\n'}Àràbìrín</Text>
+
                 <Text style={s.subtitle}>
-                  Your body holds wisdom.{'\n'}Let's help you understand it.
+                  Your body holds wisdom.{'\n'}Let&apos;s help you understand it.
                 </Text>
+
                 <Pressable style={s.btn} onPress={() => setStep('email')}>
-                  <Text style={s.btnText}>Let's Begin →</Text>
+                  <Text style={s.btnText}>Let&apos;s Begin →</Text>
+                </Pressable>
+
+                <Pressable style={s.ghostBtn} onPress={() => setStep('email')}>
+                  <Text style={s.ghostBtnText}>
+                    Already have an account?{' '}
+                    <Text style={{ textDecorationLine: 'underline' }}>Sign in</Text>
+                  </Text>
                 </Pressable>
               </View>
             )}
 
-            {/* ── Email ── */}
             {step === 'email' && (
               <View style={s.stepContainer}>
-                <Text style={s.stepLabel}>Sign in or create an account</Text>
-                <Text style={s.heading}>What’s your email?</Text>
-                <Text style={s.hint}>
-                  We’ll send you a one-time code.{'\n'}No password needed.
-                </Text>
+                <Text style={s.stepLabel}>Sign in</Text>
+                <Text style={s.heading}>Enter your email</Text>
+                <Text style={s.hint}>We&apos;ll send you a secure one-time sign-in code.</Text>
+
                 <TextInput
                   style={s.input}
-                  placeholder="your@email.com"
+                  placeholder="you@example.com"
                   placeholderTextColor={colors.textMuted}
                   value={email}
-                  onChangeText={(v) => setEmail(v.trim())}
-                  keyboardType="email-address"
+                  onChangeText={(value) => {
+                    setEmail(value)
+                    if (error) setError('')
+                  }}
                   autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
                   autoComplete="email"
-                  autoFocus
                 />
+
                 {!!error && <Text style={s.error}>{error}</Text>}
+
                 <Pressable
-                  style={[s.btn, (!email.includes('@') || loading) && s.btnDisabled]}
+                  style={[s.btn, (!canSubmitEmail || loading) && s.btnDisabled]}
                   onPress={handleSendOtp}
-                  disabled={!email.includes('@') || loading}
+                  disabled={!canSubmitEmail || loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={s.btnText}>Send code →</Text>
-                  }
+                  {loading ? (
+                    <ActivityIndicator color={colors.accentRose} />
+                  ) : (
+                    <Text style={s.btnText}>Send code →</Text>
+                  )}
                 </Pressable>
+
                 <Pressable
                   style={s.ghostBtn}
-                  onPress={() => setStep('welcome')}
+                  onPress={() => {
+                    if (loading) return
+                    setStep('welcome')
+                    setError('')
+                  }}
                 >
                   <Text style={s.ghostBtnText}>← Back</Text>
                 </Pressable>
               </View>
             )}
 
-            {/* ── OTP ── */}
             {step === 'otp' && (
               <View style={s.stepContainer}>
                 <Text style={s.stepLabel}>Verify</Text>
                 <Text style={s.heading}>Check your email</Text>
                 <Text style={s.hint}>
                   We sent a 6-digit code to{'\n'}
-                  <Text style={s.emailHighlight}>{email}</Text>
+                  <Text style={s.emailHighlight}>{normalizeEmailInput(email)}</Text>
                 </Text>
+
                 <TextInput
                   style={s.otpInput}
                   placeholder="000000"
                   placeholderTextColor={colors.textMuted}
                   value={otp}
-                  onChangeText={(v) => setOtp(v.replace(/\D/g, '').slice(0, 6))}
+                  onChangeText={(value) => {
+                    setOtp(value.replace(/\D/g, '').slice(0, 6))
+                    if (error) setError('')
+                  }}
                   keyboardType="number-pad"
                   autoComplete="one-time-code"
+                  textContentType="oneTimeCode"
                   autoFocus
                 />
+
                 {!!error && <Text style={s.error}>{error}</Text>}
+
                 <Pressable
-                  style={[s.btn, (otp.length < 6 || loading) && s.btnDisabled]}
+                  style={[s.btn, (!canSubmitOtp || loading) && s.btnDisabled]}
                   onPress={handleVerifyOtp}
-                  disabled={otp.length < 6 || loading}
+                  disabled={!canSubmitOtp || loading}
                 >
-                  {loading
-                    ? <ActivityIndicator color={colors.bgPrimary} />
-                    : <Text style={s.btnText}>Verify →</Text>
-                  }
+                  {loading ? (
+                    <ActivityIndicator color={colors.accentRose} />
+                  ) : (
+                    <Text style={s.btnText}>Verify →</Text>
+                  )}
                 </Pressable>
+
                 <Pressable
                   style={s.ghostBtn}
-                  onPress={() => { setStep('email'); setOtp(''); setError('') }}
+                  onPress={() => {
+                    if (loading) return
+                    setStep('email')
+                    setOtp('')
+                    setError('')
+                  }}
                 >
                   <Text style={s.ghostBtnText}>← Use a different email</Text>
                 </Pressable>
               </View>
             )}
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

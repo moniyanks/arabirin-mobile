@@ -22,7 +22,7 @@ export default function HomeSectionRenderer({
   home,
   styles,
   colors,
-  conditions = [],
+  conditions = []
 }: HomeSectionRendererProps) {
   const router = useRouter()
 
@@ -31,20 +31,14 @@ export default function HomeSectionRenderer({
       pathname: '/(tabs)/calendar',
       params: {
         focus: focus.toLowerCase(),
-        openSheet: '1',
-      },
+        openSheet: '1'
+      }
     })
   }
 
   switch (section.type) {
     case 'hero':
-      return (
-        <HeroSection
-          styles={styles}
-          colors={colors}
-          hero={home.hero}
-        />
-      )
+      return <HeroSection styles={styles} colors={colors} hero={home.hero} />
 
     case 'noticeToday':
       return (
@@ -93,28 +87,17 @@ export default function HomeSectionRenderer({
       )
 
     case 'quickActions':
-      return (
-        <QuickActionGrid
-          colors={colors}
-          actions={home.quickActions}
-        />
-      )
+      return <QuickActionGrid colors={colors} actions={home.quickActions} />
 
     case 'sistersPreview':
       return home.showSistersPreview ? (
-        <SistersPreviewCard
-          colors={colors}
-          conditions={conditions}
-          mode={home.mode}
-        />
+        <SistersPreviewCard colors={colors} conditions={conditions} mode={home.mode} />
       ) : null
 
     case 'disclaimer':
       return home.showDisclaimer ? (
         <View style={styles.pregnancyFocusCard}>
-          <Text style={styles.pregnancyFocusLabel}>
-            For education only. Not medical advice.
-          </Text>
+          <Text style={styles.pregnancyFocusLabel}>For education only. Not medical advice.</Text>
         </View>
       ) : null
 
